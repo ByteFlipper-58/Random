@@ -1,7 +1,6 @@
 package com.byteflipper.random.ui.numbers
 
 import android.view.SoundEffectConstants
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -47,23 +46,22 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -74,18 +72,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlin.math.PI
-import kotlin.math.floor
-import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.sin
+import kotlin.math.ceil
 import kotlin.math.sqrt
+
+import com.byteflipper.random.ui.components.FlipCardOverlay
+import com.byteflipper.random.ui.components.rememberFlipCardState
+import com.byteflipper.random.ui.components.FlipCardControls
+import com.byteflipper.random.ui.components.GeneratorConfigDialog
 
 private const val MIN_DELAY_MS = 1_000
 private const val MAX_DELAY_MS = 60_000
@@ -113,54 +109,27 @@ fun NumbersScreen(onBack: () -> Unit) {
     var usedNumbers by rememberSaveable { mutableStateOf(setOf<Int>()) }
     var showResetDialog by rememberSaveable { mutableStateOf(false) }
 
-    // BottomSheet состояние
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
-    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+    // Диалог настроек
+    var showConfigDialog by rememberSaveable { mutableStateOf(false) }
 
     // Значения на сторонах карточки - теперь списки
     var frontValues by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
     var backValues by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
 
-    // Прозрачность текста для плавного появления
-    val frontTextAlpha = remember { Animatable(1f) }
-    val backTextAlpha = remember { Animatable(1f) }
-
-    // Видимость/состояния
-    var isCardVisible by rememberSaveable { mutableStateOf(false) }
-    var isClosing by remember { mutableStateOf(false) }
-    var isSpinning by remember { mutableStateOf(false) }
-
-    // Поворот карточки (по Y)
-    val cardRotation = remember { Animatable(0f) }
-    var lastStopAngle by rememberSaveable { mutableStateOf(0f) }
-
-    // Позиции FAB и карточки
+    // Позиции FAB
     var fabCenterInRoot by remember { mutableStateOf(Offset.Zero) }
     var fabSize by remember { mutableStateOf(IntSize.Zero) }
-    var overlayTopLeftInRoot by remember { mutableStateOf(Offset.Zero) }
-    var overlaySize by remember { mutableStateOf(IntSize.Zero) }
-    var cardCenterInRoot by remember { mutableStateOf(Offset.Zero) }
-
-    // Scrim/blur прогресс
-    val scrimProgress = remember { Animatable(0f) }
-
-    // Параметры закрытия
-    val exitAlpha = remember { Animatable(1f) }
-    val exitRotationZ = remember { Animatable(0f) }
-    val exitTx = remember { Animatable(0f) }
-    val exitTy = remember { Animatable(0f) }
-    val exitScale = remember { Animatable(1f) }
 
     // Пульс FAB
     val fabPulseProgress = remember { Animatable(0f) }
     val fabScale = remember { Animatable(1f) }
 
-    var closeJob: Job? by remember { mutableStateOf(null) }
-    var spinJob: Job? by remember { mutableStateOf(null) }
-
     // Цвета
     val primaryColor = MaterialTheme.colorScheme.primary
-    val scrimSurfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+
+    // Состояние и контроллер для переиспользуемой карточки
+    val flipCardState = rememberFlipCardState()
+    val flipCardController = FlipCardControls(flipCardState)
 
     fun parseIntOrNull(text: String): Int? = text.trim().toIntOrNull()
 
@@ -247,14 +216,6 @@ fun NumbersScreen(onBack: () -> Unit) {
         }
     }
 
-    fun resetExitTransforms() = scope.launch {
-        exitAlpha.snapTo(1f)
-        exitRotationZ.snapTo(0f)
-        exitTx.snapTo(0f)
-        exitTy.snapTo(0f)
-        exitScale.snapTo(1f)
-    }
-
     fun triggerFabPulse() = scope.launch {
         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
         view.playSoundEffect(SoundEffectConstants.CLICK)
@@ -272,168 +233,7 @@ fun NumbersScreen(onBack: () -> Unit) {
         scale.join()
     }
 
-    fun openOverlay() = scope.launch {
-        isCardVisible = true
-        scrimProgress.stop()
-        scrimProgress.animateTo(1f, tween(400, easing = FastOutSlowInEasing))
-    }
-
-    // Улучшенная функция вращения
-    fun spinAndReveal(range: IntRange, count: Int, inputDelayMs: Int) {
-        val actualDelayMs = if (useDelay) {
-            inputDelayMs.coerceIn(MIN_DELAY_MS, MAX_DELAY_MS)
-        } else {
-            1000 // 1 секунда если задержка выключена
-        }
-
-        spinJob?.cancel()
-        spinJob = scope.launch {
-            isSpinning = true
-
-            // Скрываем текущий текст
-            frontTextAlpha.animateTo(0f, tween(100))
-            backTextAlpha.animateTo(0f, tween(100))
-
-            // Расчет параметров вращения
-            val norm = (actualDelayMs - MIN_DELAY_MS).toFloat() / (MAX_DELAY_MS - MIN_DELAY_MS).toFloat()
-            val weight = sqrt(1f - norm)
-            val rpsShort = 2.5f
-            val rpsLong = 0.2f
-            val rps = rpsLong + (rpsShort - rpsLong) * weight
-
-            val totalRotations = max(1f, rps * (actualDelayMs / 1000f))
-            val wholeRotations = floor(totalRotations)
-            val finalRotationDelta = -(wholeRotations * 360f + 180f) // против часовой
-
-            cardRotation.stop()
-            cardRotation.snapTo(lastStopAngle)
-            val startAngle = lastStopAngle
-            val targetAngle = startAngle + finalRotationDelta
-
-            // Определяем какая сторона будет видна в конце
-            fun normalizeAngle(angle: Float): Float {
-                val normalized = ((angle % 360f) + 360f) % 360f
-                return normalized
-            }
-
-            val targetNormalized = normalizeAngle(targetAngle)
-            val targetIsFront = targetNormalized < 90f || targetNormalized > 270f
-
-            // Генерируем новые числа
-            val newNumbers = generateNumbers(range, count)
-
-            // Параметры джиттера
-            val ampShort = 15f
-            val ampLong = 5f
-            val amp0 = ampLong + (ampShort - ampLong) * weight
-
-            // Функция плавного замедления
-            fun easeOutCubic(p: Float): Float {
-                val om = 1f - p
-                return 1f - om * om * om
-            }
-
-            var revealed = false
-            val revealTime = min(400, actualDelayMs / 3) // Когда показывать результат
-
-            val start = withFrameNanos { it }
-            var now = start
-
-            while (true) {
-                now = withFrameNanos { it }
-                val elapsedMs = ((now - start) / 1_000_000).toInt()
-                val progress = (elapsedMs.toFloat() / actualDelayMs).coerceIn(0f, 1f)
-                val eased = easeOutCubic(progress)
-
-                // Джиттер с затуханием
-                val tSec = (now - start) / 1_000_000_000f
-                val amp = amp0 * (1f - eased)
-                val jitter = amp * (
-                        0.5f * sin(2f * PI.toFloat() * 2.7f * tSec) +
-                                0.3f * sin(2f * PI.toFloat() * 4.3f * tSec + 0.5f) +
-                                0.2f * sin(2f * PI.toFloat() * 7.1f * tSec + 1.2f)
-                        )
-
-                val angle = startAngle + finalRotationDelta * eased + jitter
-                cardRotation.snapTo(angle)
-
-                // Показываем результат ближе к концу
-                if (!revealed && actualDelayMs - elapsedMs <= revealTime) {
-                    if (targetIsFront) {
-                        frontValues = newNumbers
-                        scope.launch {
-                            delay(100) // Небольшая задержка для естественности
-                            frontTextAlpha.animateTo(1f, tween(300))
-                        }
-                    } else {
-                        backValues = newNumbers
-                        scope.launch {
-                            delay(100)
-                            backTextAlpha.animateTo(1f, tween(300))
-                        }
-                    }
-                    revealed = true
-                }
-
-                if (progress >= 1f) break
-            }
-
-            // Финальная позиция
-            cardRotation.snapTo(targetAngle)
-            lastStopAngle = targetAngle
-
-            // Убеждаемся что текст видим
-            if (targetIsFront && frontTextAlpha.value < 1f) {
-                frontTextAlpha.animateTo(1f, tween(200))
-            } else if (!targetIsFront && backTextAlpha.value < 1f) {
-                backTextAlpha.animateTo(1f, tween(200))
-            }
-
-            isSpinning = false
-
-            // Тактильная обратная связь
-            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-        }
-    }
-
-    fun startClose() {
-        if (!isCardVisible || isClosing) return
-        isClosing = true
-        spinJob?.cancel()
-        spinJob = null
-        isSpinning = false
-
-        closeJob?.cancel()
-        closeJob = scope.launch {
-            val dx = fabCenterInRoot.x - cardCenterInRoot.x
-            val dy = fabCenterInRoot.y - cardCenterInRoot.y
-
-            val animations = listOf(
-                async { scrimProgress.animateTo(0f, tween(350, easing = FastOutSlowInEasing)) },
-                async { exitRotationZ.animateTo(-360f, tween(450, easing = FastOutSlowInEasing)) },
-                async { exitScale.animateTo(0.5f, spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow)) },
-                async { exitTx.animateTo(dx, spring(dampingRatio = 0.65f, stiffness = Spring.StiffnessLow)) },
-                async { exitTy.animateTo(dy, spring(dampingRatio = 0.65f, stiffness = Spring.StiffnessLow)) },
-                async { exitAlpha.animateTo(0f, tween(400, easing = FastOutSlowInEasing)) }
-            )
-
-            animations.joinAll()
-            triggerFabPulse()
-
-            // Сброс состояния
-            isCardVisible = false
-            isClosing = false
-            lastStopAngle = 0f
-            cardRotation.snapTo(0f)
-            frontValues = emptyList()
-            backValues = emptyList()
-            frontTextAlpha.snapTo(1f)
-            backTextAlpha.snapTo(1f)
-            resetExitTransforms()
-        }
-    }
-
-    BackHandler(enabled = isCardVisible && !isClosing) { startClose() }
+    
 
     // Диалог сброса использованных чисел
     if (showResetDialog) {
@@ -460,213 +260,31 @@ fun NumbersScreen(onBack: () -> Unit) {
         )
     }
 
-    // BottomSheet с настройками
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = bottomSheetState
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 32.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    "Настройки генерации",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                // Количество результатов
-                Column {
-                    Text(
-                        "Количество результатов",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    BasicTextField(
-                        value = countText,
-                        onValueChange = { newValue ->
-                            countText = newValue.filter { ch -> ch.isDigit() }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        textStyle = MaterialTheme.typography.headlineSmall.copy(
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
-                        decorationBox = { innerTextField ->
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                                )
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    if (countText.isEmpty()) {
-                                        Text(
-                                            text = "1",
-                                            style = MaterialTheme.typography.headlineSmall.copy(
-                                                textAlign = TextAlign.Center,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                            )
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            }
-                        }
-                    )
-                }
-
-                // Повторения
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                "Разрешить повторения",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            if (!allowRepetitions && usedNumbers.isNotEmpty()) {
+    // Диалог настроек
+    GeneratorConfigDialog(
+        visible = showConfigDialog,
+        onDismissRequest = { showConfigDialog = false },
+        countText = countText,
+        onCountChange = { countText = it },
+        allowRepetitions = allowRepetitions,
+        onAllowRepetitionsChange = { allowRepetitions = it },
+        usedNumbers = usedNumbers,
+        availableRange = run {
                                 val from = parseIntOrNull(fromText)
                                 val to = parseIntOrNull(toText)
                                 if (from != null && to != null) {
-                                    val range = if (from <= to) from..to else to..from
-                                    val totalCount = range.count()
-                                    val usedCount = usedNumbers.count { it in range }
-                                    Text(
-                                        "Использовано: $usedCount из $totalCount",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                        modifier = Modifier.padding(top = 4.dp)
-                                    )
-                                }
-                            }
-                        }
-                        Switch(
-                            checked = allowRepetitions,
-                            onCheckedChange = { allowRepetitions = it }
-                        )
-                    }
-                }
-
-                // Кнопка сброса истории
-                if (!allowRepetitions && usedNumbers.isNotEmpty()) {
-                    TextButton(
-                        onClick = { resetUsedNumbers() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Сбросить историю использованных чисел")
-                    }
-                }
-
-                // Задержка
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                "Использовать задержку",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Switch(
-                                checked = useDelay,
-                                onCheckedChange = { useDelay = it }
-                            )
-                        }
-
-                        if (useDelay) {
-                            Spacer(Modifier.height(12.dp))
-                            Text(
-                                "Задержка (мс)",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            BasicTextField(
-                                value = delayText,
-                                onValueChange = { newValue ->
-                                    delayText = newValue.filter { ch -> ch.isDigit() }
-                                },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                textStyle = MaterialTheme.typography.headlineSmall.copy(
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ),
-                                decorationBox = { innerTextField ->
-                                    Box(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        if (delayText.isEmpty()) {
-                                            Text(
-                                                text = DEFAULT_DELAY_MS.toString(),
-                                                style = MaterialTheme.typography.headlineSmall.copy(
-                                                    textAlign = TextAlign.Center,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                                                )
-                                            )
-                                        }
-                                        innerTextField()
-                                    }
-                                }
-                            )
-                            Text(
-                                "1000–60000 мс",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        } else {
-                            Text(
-                                "Фиксированная задержка: 1 секунда",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+                if (from <= to) from..to else to..from
+            } else null
+        },
+        onResetUsedNumbers = { resetUsedNumbers() },
+        useDelay = useDelay,
+        onUseDelayChange = { useDelay = it },
+        delayText = delayText,
+        onDelayChange = { delayText = it },
+        minDelayMs = MIN_DELAY_MS,
+        maxDelayMs = MAX_DELAY_MS,
+        defaultDelayMs = DEFAULT_DELAY_MS
+    )
 
     Scaffold(
         topBar = {
@@ -686,7 +304,7 @@ fun NumbersScreen(onBack: () -> Unit) {
             ) {
                 // FAB для настроек
                 SmallFloatingActionButton(
-                    onClick = { showBottomSheet = true },
+                    onClick = { showConfigDialog = true },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 ) {
@@ -731,7 +349,6 @@ fun NumbersScreen(onBack: () -> Unit) {
 
                     FloatingActionButton(
                         onClick = {
-                            if (isClosing) return@FloatingActionButton
                             val result = validateInputs() ?: return@FloatingActionButton
                             val (range, count) = result
                             val delayParsed = if (useDelay) {
@@ -741,10 +358,23 @@ fun NumbersScreen(onBack: () -> Unit) {
                             }
                             val delayMs = delayParsed.coerceIn(MIN_DELAY_MS, MAX_DELAY_MS)
 
-                            if (!isCardVisible) {
-                                openOverlay()
+                            if (!flipCardController.isVisible()) {
+                                flipCardController.open()
                             }
-                            spinAndReveal(range, count, delayMs)
+                            flipCardController.spinAndReveal(
+                                effectiveDelayMs = delayMs,
+                                onReveal = { targetIsFront ->
+                                    val newNumbers = generateNumbers(range, count)
+                                    if (targetIsFront) {
+                                        frontValues = newNumbers
+                                    } else {
+                                        backValues = newNumbers
+                                    }
+                                },
+                                onSpinCompleted = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                }
+                            )
                         },
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -765,8 +395,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Основной контент с blur
-            val blurRadius = (8f * scrimProgress.value).dp
+            // Основной контент с blur (зависит от прогресса скрима карточки)
+            val blurRadius = (8f * flipCardController.scrimProgress.value).dp
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -827,218 +457,138 @@ fun NumbersScreen(onBack: () -> Unit) {
                 )
             }
 
-            // Оверлей с карточкой (остальной код без изменений)
-            if (isCardVisible || scrimProgress.value > 0.01f) {
-                val overlayClickInteraction = remember { MutableInteractionSource() }
+            // Переиспользуемый оверлей с карточкой
+            val resultsCountForSizing = max(frontValues.size, backValues.size)
+            val configuration = LocalConfiguration.current
+            val maxCardSideDp = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(200).dp
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .onGloballyPositioned { coords ->
-                            overlayTopLeftInRoot = coords.positionInRoot()
-                            overlaySize = coords.size
-                        }
-                        .clickable(
-                            interactionSource = overlayClickInteraction,
-                            indication = null,
-                            enabled = isCardVisible && !isClosing && !isSpinning
-                        ) { startClose() }
-                ) {
-                    // Scrim
-                    if (overlaySize.width > 0 && overlaySize.height > 0) {
-                        val maxRadius = hypot(overlaySize.width.toFloat(), overlaySize.height.toFloat())
-                        val fabCenterLocal = fabCenterInRoot - overlayTopLeftInRoot
-                        val radius = max(1f, scrimProgress.value * maxRadius * 1.2f)
-                        val alpha = 0.85f * scrimProgress.value
-
-                        Canvas(modifier = Modifier.fillMaxSize()) {
-                            drawCircle(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(
-                                        scrimSurfaceColor.copy(alpha = 0f),
-                                        scrimSurfaceColor.copy(alpha = alpha * 0.3f),
-                                        scrimSurfaceColor.copy(alpha = alpha * 0.6f),
-                                        scrimSurfaceColor.copy(alpha = alpha)
-                                    ),
-                                    center = fabCenterLocal,
-                                    radius = radius
-                                ),
-                                center = fabCenterLocal,
-                                radius = radius
-                            )
-                        }
-                    }
+            fun computeCardSize(count: Int): androidx.compose.ui.unit.Dp {
+                val base = 280
+                val scale = when {
+                    count <= 10 -> 1.0
+                    count <= 25 -> 1.15
+                    count <= 50 -> 1.3
+                    else -> 1.5
                 }
+                val target = (base * scale).toInt()
+                val clamped = target.coerceIn(240, maxCardSideDp.value.toInt())
+                return clamped.dp
+            }
 
-                // Определяем видимую сторону
-                val currentRotation = cardRotation.value
-                val normalizedRotation = ((currentRotation % 360f) + 360f) % 360f
-                val showFront = normalizedRotation < 90f || normalizedRotation > 270f
+            fun columnsFor(count: Int): Int {
+                if (count <= 1) return 1
+                val approx = ceil(sqrt(count.toDouble())).toInt()
+                return approx.coerceIn(3, 10)
+            }
 
-                // Эффект масштабирования при переворотах
-                val flipProgress = (normalizedRotation % 180f) / 180f
-                val scaleEffect = 1f + 0.08f * sin(flipProgress * PI.toFloat())
-
-                // Карточка
-                Box(
-                    modifier = Modifier
-                        .size(280.dp)
-                        .align(Alignment.Center)
-                        .onGloballyPositioned { coords ->
-                            val bounds = coords.boundsInRoot()
-                            cardCenterInRoot = bounds.center
-                        }
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            enabled = false
-                        ) { /* блокируем клики */ }
-                        .graphicsLayer {
-                            rotationY = currentRotation
-                            rotationZ = exitRotationZ.value
-                            val totalScale = scaleEffect * exitScale.value
-                            scaleX = totalScale
-                            scaleY = totalScale
-                            translationX = exitTx.value
-                            translationY = exitTy.value
-                            cameraDistance = 12f * density
-                            alpha = exitAlpha.value
-                        }
-                ) {
-                    if (showFront) {
-                        // Лицевая сторона
-                        Card(
-                            modifier = Modifier.fillMaxSize(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 8.dp
-                            )
-                        ) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (frontValues.isNotEmpty()) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center,
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .alpha(frontTextAlpha.value)
-                                    ) {
-                                        if (frontValues.size == 1) {
-                                            Text(
-                                                text = frontValues[0].toString(),
-                                                style = MaterialTheme.typography.displayLarge.copy(
-                                                    fontSize = 56.sp
-                                                ),
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                                            )
-                                        } else {
-                                            Text(
-                                                text = "Результаты:",
-                                                style = MaterialTheme.typography.labelLarge,
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-                                            )
-                                            Spacer(Modifier.height(8.dp))
-                                            frontValues.chunked(5).forEach { rowNumbers ->
-                                                Row(
-                                                    horizontalArrangement = Arrangement.Center,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    rowNumbers.forEach { number ->
-                                                        Text(
-                                                            text = number.toString(),
-                                                            style = MaterialTheme.typography.headlineMedium,
-                                                            fontWeight = FontWeight.Bold,
-                                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                                            modifier = Modifier.padding(horizontal = 4.dp)
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        // Обратная сторона (перевёрнута на 180°)
-                        Card(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .graphicsLayer {
-                                    rotationY = 180f
-                                },
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 8.dp
-                            )
-                        ) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (backValues.isNotEmpty()) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center,
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .alpha(backTextAlpha.value)
-                                    ) {
-                                        if (backValues.size == 1) {
-                                            Text(
-                                                text = backValues[0].toString(),
-                                                style = MaterialTheme.typography.displayLarge.copy(
-                                                    fontSize = 56.sp
-                                                ),
-                                                fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                                            )
-                                        } else {
-                                            Text(
-                                                text = "Результаты:",
-                                                style = MaterialTheme.typography.labelLarge,
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
-                                            )
-                                            Spacer(Modifier.height(8.dp))
-                                            backValues.chunked(5).forEach { rowNumbers ->
-                                                Row(
-                                                    horizontalArrangement = Arrangement.Center,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                ) {
-                                                    rowNumbers.forEach { number ->
-                                                        Text(
-                                                            text = number.toString(),
-                                                            style = MaterialTheme.typography.headlineMedium,
-                                                            fontWeight = FontWeight.Bold,
-                                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                                            modifier = Modifier.padding(horizontal = 4.dp)
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            fun numberFontSizeFor(count: Int): androidx.compose.ui.unit.TextUnit {
+                return when {
+                    count <= 10 -> 22.sp
+                    count <= 25 -> 18.sp
+                    count <= 50 -> 16.sp
+                    else -> 14.sp
                 }
             }
-        }
-    }
 
-    // Сброс трансформаций при открытии
-    LaunchedEffect(isCardVisible) {
-        if (isCardVisible) {
-            resetExitTransforms()
+            val dynamicCardSize = computeCardSize(resultsCountForSizing)
+
+            FlipCardOverlay(
+                state = flipCardState,
+                anchorInRoot = fabCenterInRoot,
+                onClosed = {
+                    // Пульс по закрытию + очистка локального результата
+                    triggerFabPulse()
+                    frontValues = emptyList()
+                    backValues = emptyList()
+                },
+                cardSize = dynamicCardSize,
+                frontContent = {
+                    if (frontValues.isNotEmpty()) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            if (frontValues.size == 1) {
+                                Text(
+                                    text = frontValues[0].toString(),
+                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 56.sp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            } else {
+                                val cols = columnsFor(frontValues.size)
+                                val numberSize = numberFontSizeFor(frontValues.size)
+                                Text(
+                                    text = "Результаты:",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                )
+                                Spacer(Modifier.height(6.dp))
+                                frontValues.chunked(cols).forEach { rowNumbers ->
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        rowNumbers.forEach { number ->
+                                            Text(
+                                                text = number.toString(),
+                                                fontSize = numberSize,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                backContent = {
+                    if (backValues.isNotEmpty()) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            if (backValues.size == 1) {
+                                Text(
+                                    text = backValues[0].toString(),
+                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 56.sp),
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            } else {
+                                val cols = columnsFor(backValues.size)
+                                val numberSize = numberFontSizeFor(backValues.size)
+                                Text(
+                                    text = "Результаты:",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                                )
+                                Spacer(Modifier.height(6.dp))
+                                backValues.chunked(cols).forEach { rowNumbers ->
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        rowNumbers.forEach { number ->
+                                            Text(
+                                                text = number.toString(),
+                                                fontSize = numberSize,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            )
         }
     }
 }
