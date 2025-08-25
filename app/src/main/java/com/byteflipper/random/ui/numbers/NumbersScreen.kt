@@ -133,6 +133,14 @@ fun NumbersScreen(onBack: () -> Unit) {
 
     fun parseIntOrNull(text: String): Int? = text.trim().toIntOrNull()
 
+    fun resetUsedNumbers() {
+        usedNumbers = emptySet()
+        showResetDialog = false
+        scope.launch {
+            snackbarHostState.showSnackbar("История использованных чисел очищена")
+        }
+    }
+
     fun validateInputs(): Pair<IntRange, Int>? {
         val from = parseIntOrNull(fromText)
         val to = parseIntOrNull(toText)
@@ -156,12 +164,18 @@ fun NumbersScreen(onBack: () -> Unit) {
         val rangeSize = range.last - range.first + 1
 
         if (!allowRepetitions) {
-            // Проверяем доступные числа
             val availableNumbers = range.toSet() - usedNumbers
             if (availableNumbers.size < count) {
                 if (availableNumbers.isEmpty()) {
-                    // Все числа использованы
-                    showResetDialog = true
+                    scope.launch {
+                        val res = snackbarHostState.showSnackbar(
+                            message = "Все числа использованы",
+                            actionLabel = "Сбросить"
+                        )
+                        if (res == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                            resetUsedNumbers()
+                        }
+                    }
                     return null
                 } else {
                     scope.launch {
@@ -193,13 +207,6 @@ fun NumbersScreen(onBack: () -> Unit) {
         }
     }
 
-    fun resetUsedNumbers() {
-        usedNumbers = emptySet()
-        showResetDialog = false
-        scope.launch {
-            snackbarHostState.showSnackbar("История использованных чисел очищена")
-        }
-    }
 
     // Сброс использованных чисел при изменении диапазона или режима повторений
     LaunchedEffect(fromText, toText, allowRepetitions) {
@@ -235,30 +242,7 @@ fun NumbersScreen(onBack: () -> Unit) {
 
     
 
-    // Диалог сброса использованных чисел
-    if (showResetDialog) {
-        AlertDialog(
-            onDismissRequest = { showResetDialog = false },
-            title = { Text("Все числа использованы") },
-            text = {
-                Text("Все числа из диапазона ${fromText}–${toText} были использованы. Хотите сбросить историю и начать заново?")
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = { resetUsedNumbers() }
-                ) {
-                    Text("Сбросить")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showResetDialog = false }
-                ) {
-                    Text("Отмена")
-                }
-            }
-        )
-    }
+    // Диалог сброса заменён на snackbar с действием (см. validateInputs)
 
     // Диалог настроек
     GeneratorConfigDialog(

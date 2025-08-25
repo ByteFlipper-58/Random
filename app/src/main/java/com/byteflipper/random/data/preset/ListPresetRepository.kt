@@ -16,6 +16,10 @@ class ListPresetRepository(private val dao: ListPresetDao) {
         dao.delete(preset)
     }
 
+    suspend fun getById(id: Long): ListPreset? = withContext(Dispatchers.IO) {
+        dao.getById(id)
+    }
+
     companion object {
         fun fromContext(context: android.content.Context): ListPresetRepository {
             val db = DatabaseModule.provideDatabase(context)

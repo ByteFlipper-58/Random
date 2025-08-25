@@ -12,11 +12,13 @@ import androidx.navigation.compose.composable
 import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.numbers.NumbersScreen
 import com.byteflipper.random.ui.presets.AddListPresetScreen
+import com.byteflipper.random.ui.lists.ListScreen
 
 sealed class Route(val route: String) {
     data object Home : Route("home")
     data object Numbers : Route("numbers")
     data object List : Route("list")
+    data object ListWithId : Route("list/{id}")
     data object AddListPreset : Route("add_list_preset")
     data object Dice : Route("dice")
     data object Lot : Route("lot")
@@ -29,7 +31,8 @@ fun AppNavGraph(navController: NavHostController) {
         composable(Route.Home.route) {
             HomeScreen(
                 onOpenNumbers = { navController.navigate(Route.Numbers.route) },
-                onOpenList = { /* TODO */ },
+                onOpenList = { navController.navigate(Route.List.route) },
+                onOpenListById = { id -> navController.navigate("list/$id") },
                 onOpenDice = { /* TODO */ },
                 onOpenLot = { /* TODO */ },
                 onOpenCoin = { /* TODO */ },
@@ -70,6 +73,52 @@ fun AppNavGraph(navController: NavHostController) {
             }
         ) {
             AddListPresetScreen(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Route.List.route,
+            enterTransition = {
+                scaleIn(initialScale = 0.92f) + fadeIn()
+            },
+            exitTransition = {
+                scaleOut(targetScale = 1.06f) + fadeOut()
+            },
+            popEnterTransition = {
+                scaleIn(initialScale = 1.06f) + fadeIn()
+            },
+            popExitTransition = {
+                scaleOut(targetScale = 0.92f) + fadeOut()
+            }
+        ) {
+            ListScreen(
+                onBack = { navController.popBackStack() },
+                onOpenListById = { id ->
+                    navController.navigate("list/$id") {
+                        popUpTo(Route.Home.route) { inclusive = false }
+                    }
+                }
+            )
+        }
+        composable(
+            route = Route.ListWithId.route,
+            enterTransition = {
+                scaleIn(initialScale = 0.92f) + fadeIn()
+            },
+            exitTransition = {
+                scaleOut(targetScale = 1.06f) + fadeOut()
+            },
+            popEnterTransition = {
+                scaleIn(initialScale = 1.06f) + fadeIn()
+            },
+            popExitTransition = {
+                scaleOut(targetScale = 0.92f) + fadeOut()
+            }
+        ) {
+            val id = it.arguments?.getString("id")?.toLongOrNull()
+            ListScreen(
+                onBack = { navController.popBackStack() },
+                presetId = id,
+                onOpenListById = { nid -> navController.navigate("list/$nid") }
+            )
         }
     }
 }
