@@ -47,6 +47,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,6 +67,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -82,6 +84,9 @@ import com.byteflipper.random.ui.components.FlipCardOverlay
 import com.byteflipper.random.ui.components.rememberFlipCardState
 import com.byteflipper.random.ui.components.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
+import com.byteflipper.random.ui.components.SizedFab
+import com.byteflipper.random.data.settings.Settings
+import com.byteflipper.random.data.settings.SettingsRepository
 
 private const val MIN_DELAY_MS = 1_000
 private const val MAX_DELAY_MS = 60_000
@@ -126,6 +131,10 @@ fun NumbersScreen(onBack: () -> Unit) {
 
     // Цвета
     val primaryColor = MaterialTheme.colorScheme.primary
+    // Настройки приложения (для размера FAB)
+    val context = LocalContext.current
+    val settingsRepo = remember { SettingsRepository.fromContext(context) }
+    val settings: com.byteflipper.random.data.settings.Settings by settingsRepo.settingsFlow.collectAsState(initial = com.byteflipper.random.data.settings.Settings())
 
     // Состояние и контроллер для переиспользуемой карточки
     val flipCardState = rememberFlipCardState()
@@ -331,9 +340,10 @@ fun NumbersScreen(onBack: () -> Unit) {
                         }
                     }
 
-                    FloatingActionButton(
+                    SizedFab(
+                        size = settings.fabSize,
                         onClick = {
-                            val result = validateInputs() ?: return@FloatingActionButton
+                            val result = validateInputs() ?: return@SizedFab
                             val (range, count) = result
                             val delayParsed = if (useDelay) {
                                 parseIntOrNull(delayText) ?: DEFAULT_DELAY_MS

@@ -56,6 +56,7 @@ fun HomeScreen(
     onOpenDice: () -> Unit,
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
+    onOpenSettings: () -> Unit,
     onAddNumbersPreset: () -> Unit,
     onAddListPreset: () -> Unit,
 ) {
@@ -74,7 +75,7 @@ fun HomeScreen(
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Рандом") }, actions = {
-            IconButton(onClick = { /* TODO: settings */ }) { Icon(Icons.Outlined.Settings, contentDescription = "Настройки") }
+            IconButton(onClick = onOpenSettings) { Icon(Icons.Outlined.Settings, contentDescription = "Настройки") }
             IconButton(onClick = { /* TODO: menu */ }) { Icon(Icons.Outlined.MoreVert, contentDescription = "Меню") }
         }) }
     ) { inner ->

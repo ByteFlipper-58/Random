@@ -36,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,6 +60,10 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.random.Random
+import androidx.compose.ui.platform.LocalContext
+import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.data.settings.Settings
+import com.byteflipper.random.ui.components.SizedFab
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -139,7 +144,11 @@ fun DiceScreen(onBack: () -> Unit) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
+            val context = LocalContext.current
+            val settingsRepo = remember { SettingsRepository.fromContext(context) }
+            val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
+            SizedFab(
+                size = settings.fabSize,
                 onClick = { rollAll() },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer

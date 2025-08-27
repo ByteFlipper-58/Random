@@ -42,6 +42,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,6 +74,9 @@ import com.byteflipper.random.ui.components.FlipCardControls
 import com.byteflipper.random.ui.components.FlipCardOverlay
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
 import com.byteflipper.random.ui.components.rememberFlipCardState
+import com.byteflipper.random.ui.components.SizedFab
+import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.data.settings.Settings
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -217,7 +221,11 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     val pos = c.positionInRoot()
                     fabCenterInRoot = Offset(pos.x + fabSize.width / 2f, pos.y + fabSize.height / 2f)
                 }) {
-                    FloatingActionButton(onClick = {
+                    val settingsRepo = remember { SettingsRepository.fromContext(context) }
+                    val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
+                    SizedFab(
+                        size = settings.fabSize,
+                        onClick = {
                         val base = if (presetId == null) {
                             editorItems.map { it.trim() }.filter { it.isNotEmpty() }
                         } else {
@@ -225,7 +233,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                         }
                         if (base.isEmpty()) {
                             scope.launch { snackbarHostState.showSnackbar("Список пуст") }
-                            return@FloatingActionButton
+                            return@SizedFab
                         }
                         if (!allowRepetitions) {
                             val pool = base.map { it.trim() }.filter { it.isNotEmpty() && it !in usedItems }.distinct()
@@ -239,7 +247,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                                         usedItems = emptySet()
                                     }
                                 }
-                                return@FloatingActionButton
+                                return@SizedFab
                             }
                         }
                         val ms = if (useDelay) delayText.toIntOrNull() ?: 3000 else 1000
@@ -255,7 +263,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                                 }
                             }
                         )
-                    }) { Icon(Icons.Outlined.Autorenew, contentDescription = null) }
+                    },
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ) { Icon(Icons.Outlined.Autorenew, contentDescription = null) }
                 }
             }
         },

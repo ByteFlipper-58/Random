@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,6 +67,10 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import com.byteflipper.random.data.settings.Settings
+import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.ui.components.SizedFab
+import androidx.compose.ui.platform.LocalContext
 import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.math.roundToInt
@@ -139,6 +144,9 @@ fun LotScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
     var hapticsEnabled by rememberSaveable { mutableStateOf(true) }
+    val context = LocalContext.current
+    val settingsRepo = remember { SettingsRepository.fromContext(context) }
+    val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
 
     // Поля ввода
     var totalText by rememberSaveable { mutableStateOf("10") }
@@ -229,7 +237,8 @@ fun LotScreen(onBack: () -> Unit) {
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
+            SizedFab(
+                size = settings.fabSize,
                 onClick = {
                     if (cards.isEmpty()) {
                         generateCards()

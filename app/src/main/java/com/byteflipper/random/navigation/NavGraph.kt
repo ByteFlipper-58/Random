@@ -16,6 +16,7 @@ import com.byteflipper.random.ui.lists.ListScreen
 import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.dice.DiceScreen
+import com.byteflipper.random.ui.settings.SettingsScreen
 
 sealed class Route(val route: String) {
     data object Home : Route("home")
@@ -26,6 +27,7 @@ sealed class Route(val route: String) {
     data object Dice : Route("dice")
     data object Lot : Route("lot")
     data object Coin : Route("coin")
+    data object Settings : Route("settings")
 }
 
 @Composable
@@ -39,6 +41,7 @@ fun AppNavGraph(navController: NavHostController) {
                 onOpenDice = { navController.navigate(Route.Dice.route) },
                 onOpenLot = { navController.navigate(Route.Lot.route) },
                 onOpenCoin = { navController.navigate(Route.Coin.route) },
+                onOpenSettings = { navController.navigate(Route.Settings.route) },
                 onAddNumbersPreset = { /* TODO: screen for number presets */ },
                 onAddListPreset = { navController.navigate(Route.AddListPreset.route) }
             )
@@ -110,6 +113,23 @@ fun AppNavGraph(navController: NavHostController) {
             }
         ) {
             CoinScreen(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Route.Settings.route,
+            enterTransition = {
+                scaleIn(initialScale = 0.92f) + fadeIn()
+            },
+            exitTransition = {
+                scaleOut(targetScale = 1.06f) + fadeOut()
+            },
+            popEnterTransition = {
+                scaleIn(initialScale = 1.06f) + fadeIn()
+            },
+            popExitTransition = {
+                scaleOut(targetScale = 0.92f) + fadeOut()
+            }
+        ) {
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.AddListPreset.route,
