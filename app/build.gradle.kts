@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.inappmessaging.display)
+    implementation(libs.play.billing)
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
