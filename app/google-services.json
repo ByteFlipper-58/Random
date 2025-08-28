@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "38255035757",
+    "project_id": "random-c528e",
+    "storage_bucket": "random-c528e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:38255035757:android:6cdda94a14587238a68664",
+        "android_client_info": {
+          "package_name": "com.byteflipper.random"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlHMXNsASeyTn6qo9k4VVVY_xyVZz-6rc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
