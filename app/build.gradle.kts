@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.play.billing)
     implementation(libs.material3)
     implementation(libs.reorderable)
+    implementation("net.kibotu:androidx-splashscreen-compose:1.0.0")
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
