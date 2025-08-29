@@ -20,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import kotlin.math.roundToInt
 
 @Composable
@@ -51,7 +53,7 @@ fun GeneratorConfigDialog(
         onDismissRequest = onDismissRequest,
         title = {
             Text(
-                "Настройки генерации",
+                stringResource(R.string.generator_settings),
                 style = MaterialTheme.typography.titleLarge
             )
         },
@@ -81,7 +83,7 @@ fun GeneratorConfigDialog(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    "Количество результатов",
+                                    stringResource(R.string.result_count),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
@@ -135,7 +137,7 @@ fun GeneratorConfigDialog(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "Разрешить повторения",
+                                stringResource(R.string.allow_repetitions),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
@@ -143,7 +145,7 @@ fun GeneratorConfigDialog(
                                 val totalCount = availableRange.count()
                                 val usedCount = usedNumbers.count { it in availableRange }
                                 Text(
-                                    "Использовано: $usedCount из $totalCount",
+                                    "${stringResource(R.string.used_count)}: $usedCount из $totalCount",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                     modifier = Modifier.padding(top = 4.dp)
@@ -162,7 +164,7 @@ fun GeneratorConfigDialog(
                         onClick = onResetUsedNumbers,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Сбросить историю использованных чисел")
+                        Text(stringResource(R.string.reset_history))
                     }
                 }
 

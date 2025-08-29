@@ -36,14 +36,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 
 @Composable
 fun MenuCard(
-    icon: ImageVector,
+    icon: Painter,
     title: String,
     onClick: () -> Unit,
     onAddClick: (() -> Unit)? = null,
@@ -99,7 +102,7 @@ fun MenuCard(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Icon(
-                        imageVector = icon,
+                        painter = icon,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         modifier = Modifier
@@ -138,7 +141,7 @@ fun MenuCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Добавить",
+                            contentDescription = stringResource(R.string.add),
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -161,8 +164,8 @@ fun MenuCard(
 fun MenuCardPreview() {
     MaterialTheme {
         MenuCard(
-            icon = Icons.Outlined.Add,
-            title = "Заголовок",
+            icon = painterResource(id = R.drawable.add_24px),
+            title = stringResource(R.string.title),
             onClick = {},
             onAddClick = {},
             modifier = Modifier.padding(16.dp)

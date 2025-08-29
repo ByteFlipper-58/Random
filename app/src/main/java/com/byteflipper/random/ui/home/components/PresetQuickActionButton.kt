@@ -10,7 +10,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 
 @Composable
@@ -27,7 +29,7 @@ fun PresetQuickActionButton(
         ) {
             Icon(
                 imageVector = Icons.Outlined.PlayArrow,
-                contentDescription = "Использовать пресет",
+                contentDescription = stringResource(R.string.use_preset),
                 modifier = Modifier.size(18.dp)
             )
         }
@@ -38,7 +40,7 @@ fun PresetQuickActionButton(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Share,
-                contentDescription = "Поделиться пресетом",
+                contentDescription = stringResource(R.string.share_preset),
                 modifier = Modifier.size(18.dp)
             )
         }

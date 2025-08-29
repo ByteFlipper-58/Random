@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -61,6 +62,8 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.random.Random
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.byteflipper.random.R
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.ui.components.SizedFab
@@ -137,9 +140,9 @@ fun DiceScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Игральные кости") },
+                title = { Text(stringResource(R.string.dice)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = "Назад") }
+                    IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back)) }
                 }
             )
         },
@@ -153,7 +156,7 @@ fun DiceScreen(onBack: () -> Unit) {
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
-                Icon(Icons.Outlined.Autorenew, contentDescription = "Бросить")
+                Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.roll_dice))
             }
         }
     ) { inner ->
@@ -167,7 +170,7 @@ fun DiceScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Количество кубиков",
+                text = stringResource(R.string.dice_count),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.fillMaxWidth(),
@@ -291,7 +294,7 @@ fun DiceScreen(onBack: () -> Unit) {
                         Spacer(Modifier.height(24.dp))
                         val total = diceValues.take(diceCount).sum()
                         Text(
-                            text = "Сумма: $total",
+                            text = "${stringResource(R.string.sum)}: $total",
                             style = MaterialTheme.typography.titleMedium,
                             color = Color.White
                         )

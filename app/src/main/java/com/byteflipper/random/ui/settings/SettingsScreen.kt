@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
@@ -34,6 +35,7 @@ import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.data.settings.FabSizeSetting
 import kotlinx.coroutines.launch
 import android.os.Build
+import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.PreferenceCategory
 import com.byteflipper.random.ui.components.RadioButtonGroup
 import com.byteflipper.random.ui.components.RadioOption
@@ -50,10 +52,10 @@ fun SettingsScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Настройки") },
+                title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -67,7 +69,7 @@ fun SettingsScreen(onBack: () -> Unit) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            PreferenceCategory(title = "Тема", description = "Выбор оформления приложения")
+            PreferenceCategory(title = stringResource(R.string.theme), description = stringResource(R.string.theme_description))
             val themeKey = when (settings.themeMode) {
                 ThemeMode.System -> "system"
                 ThemeMode.Light -> "light"
@@ -75,9 +77,9 @@ fun SettingsScreen(onBack: () -> Unit) {
             }
             SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
                 val items = listOf(
-                    "system" to "Системная",
-                    "light" to "Светлая",
-                    "dark" to "Тёмная"
+                    "system" to stringResource(R.string.system_theme),
+                    "light" to stringResource(R.string.light_theme),
+                    "dark" to stringResource(R.string.dark_theme)
                 )
                 items.forEachIndexed { index, (key, label) ->
                     SegmentedButton(
@@ -107,20 +109,20 @@ fun SettingsScreen(onBack: () -> Unit) {
 
             val dynamicSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             PreferenceCategory(
-                title = "Динамические цвета",
-                description = if (dynamicSupported) "Адаптация палитры к обоям (Material You)" else "Требуется Android 12+"
+                title = stringResource(R.string.dynamic_colors),
+                description = if (dynamicSupported) stringResource(R.string.dynamic_colors_description) else stringResource(R.string.android_12_required)
             )
             SwitchPreference(
-                title = "Динамические цвета",
-                descriptionOn = "Использовать цвета обоев (Android 12+)",
-                descriptionOff = "Отключено",
+                title = stringResource(R.string.dynamic_colors),
+                descriptionOn = stringResource(R.string.use_wallpaper_colors),
+                descriptionOff = stringResource(R.string.disabled),
                 checked = settings.dynamicColors && dynamicSupported,
                 onCheckedChange = { enabled -> if (dynamicSupported) scope.launch { repo.setDynamicColors(enabled) } }
             )
 
             HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
 
-            PreferenceCategory(title = "Размер FAB", description = "Размер основной кнопки действия на экранах")
+            PreferenceCategory(title = stringResource(R.string.fab_size), description = stringResource(R.string.fab_size_description))
             val fabKey = when (settings.fabSize) {
                 FabSizeSetting.Small -> "s"
                 FabSizeSetting.Medium -> "m"
@@ -128,9 +130,9 @@ fun SettingsScreen(onBack: () -> Unit) {
             }
             RadioButtonGroup(
                 options = listOf(
-                    RadioOption(key = "s", title = "S (Small)", description = "Компактный размер"),
-                    RadioOption(key = "m", title = "M (Medium)", description = "Стандартный размер"),
-                    RadioOption(key = "l", title = "L (Large)", description = "Крупный размер")
+                    RadioOption(key = "s", title = stringResource(R.string.fab_size_small), description = stringResource(R.string.fab_size_small_desc)),
+                    RadioOption(key = "m", title = stringResource(R.string.fab_size_medium), description = stringResource(R.string.fab_size_medium_desc)),
+                    RadioOption(key = "l", title = stringResource(R.string.fab_size_large), description = stringResource(R.string.fab_size_large_desc))
                 ),
                 selectedKey = fabKey,
                 onOptionSelected = { key ->

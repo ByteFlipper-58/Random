@@ -1,3 +1,97 @@
 <resources>
     <string name="app_name">Random</string>
+
+    <!-- Общие строки -->
+    <string name="back">Назад</string>
+    <string name="settings">Настройки</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отмена</string>
+    <string name="reset">Сбросить</string>
+    <string name="edit">Редактировать</string>
+    <string name="delete">Удалить</string>
+    <string name="rename">Переименовать</string>
+    <string name="add">Добавить</string>
+    <string name="generate">Сгенерировать</string>
+    <string name="results">Результаты:</string>
+    <string name="disabled">Отключено</string>
+
+    <!-- Главный экран -->
+    <string name="random">Рандом</string>
+    <string name="numbers">Числа</string>
+    <string name="list">Список</string>
+    <string name="dice">Игральные кости</string>
+    <string name="lot">Жребий</string>
+    <string name="coin">Монетка</string>
+
+    <!-- Экран жребия -->
+    <string name="lot_title">Жребий</string>
+    <string name="vibration_on">Вибрация: вкл</string>
+    <string name="vibration_off">Вибрация: выкл</string>
+    <string name="show_all">Показать все</string>
+    <string name="reshuffle">Перетасовать</string>
+    <string name="minimum_3_fields">Минимум 3 поля</string>
+    <string name="minimum_1_marked">Минимум 1 отмеченное</string>
+    <string name="marked_more_than_total">Отмеченных больше, чем всего</string>
+    <string name="total_fields_label">Общее количество полей</string>
+    <string name="marked_fields_label">Количество отмеченных</string>
+
+    <!-- Компоненты списков -->
+    <string name="new_list">Новый список</string>
+    <string name="list_name">Название списка</string>
+    <string name="my_list">Мой список</string>
+    <string name="item_1">Элемент 1</string>
+    <string name="item_2">Элемент 2</string>
+    <string name="item_3">Элемент 3</string>
+    <string name="title">Заголовок</string>
+    <string name="use_preset">Использовать пресет</string>
+    <string name="share_preset">Поделиться пресетом</string>
+    <string name="preset_actions">Действия с пресетом</string>
+    <string name="rename_list">Переименовать список</string>
+    <string name="new_name">Новое название</string>
+    <string name="save_settings">Сохранить параметры</string>
+    <string name="list_empty">Список пуст</string>
+    <string name="all_options_used">Все варианты закончились</string>
+
+    <!-- Экран чисел -->
+    <string name="number">Число</string>
+    <string name="from">ОТ</string>
+    <string name="to">ДО</string>
+    <string name="history_cleared">История использованных чисел очищена</string>
+    <string name="enter_valid_numbers">Введите корректные числа в поля \'ОТ\' и \'ДО\'</string>
+    <string name="count_must_be_positive">Количество должно быть больше 0</string>
+    <string name="all_numbers_used">Все числа использованы</string>
+    <string name="only_available_numbers">Доступно только %1$d неиспользованных чисел</string>
+
+    <!-- Экран настроек -->
+    <string name="theme">Тема</string>
+    <string name="theme_description">Выбор оформления приложения</string>
+    <string name="system_theme">Системная</string>
+    <string name="light_theme">Светлая</string>
+    <string name="dark_theme">Тёмная</string>
+    <string name="dynamic_colors">Динамические цвета</string>
+    <string name="dynamic_colors_description">Адаптация палитры к обоям (Material You)</string>
+    <string name="android_12_required">Требуется Android 12+</string>
+    <string name="use_wallpaper_colors">Использовать цвета обоев (Android 12+)</string>
+    <string name="fab_size">Размер FAB</string>
+    <string name="fab_size_description">Размер основной кнопки действия на экранах</string>
+    <string name="fab_size_small">S (Small)</string>
+    <string name="fab_size_small_desc">Компактный размер</string>
+    <string name="fab_size_medium">M (Medium)</string>
+    <string name="fab_size_medium_desc">Стандартный размер</string>
+    <string name="fab_size_large">L (Large)</string>
+    <string name="fab_size_large_desc">Крупный размер</string>
+    <string name="loading">Загрузка...</string>
+    <string name="open_after_save">Открыть после сохранения</string>
+    <string name="roll_dice">Бросить</string>
+    <string name="dice_count">Количество кубиков</string>
+    <string name="sum">Сумма</string>
+    <string name="heads">Орёл</string>
+    <string name="tails">Решка</string>
+    <string name="result">Результат</string>
+    <string name="swipe_hint">Свайп вверх — подбросить</string>
+    <string name="generator_settings">Настройки генерации</string>
+    <string name="result_count">Количество результатов</string>
+    <string name="allow_repetitions">Разрешить повторения</string>
+    <string name="used_count">Использовано</string>
+    <string name="reset_history">Сбросить историю использованных чисел</string>
 </resources>

@@ -37,13 +37,8 @@ import kotlin.time.DurationUnit
 
 private val blueCatalina: Color = Color(0xFF063773)
 
-// Базовый скейл фигуры: общий + лёгкое вытягивание по Y
 private const val BASE_SCALE = 1.04f
 private const val BASE_SCALE_Y_MULT = 1.03f
-
-//
-// 🔷 Формы для анимации
-//
 
 // Скруглённый квадрат (кубик)
 val CubeShape: Shape = RoundedCornerShape(16.dp)
@@ -51,8 +46,8 @@ val CubeShape: Shape = RoundedCornerShape(16.dp)
 // Хексагон (шестиугольник) со скруглёнными углами
 fun RoundedHexagonShape(
     cornerRadius: Float = 24f,
-    overallScale: Float = 1f,   // общий масштаб
-    verticalScale: Float = 1f   // доп. растяжение по вертикали (умножается на общий)
+    overallScale: Float = 1f,
+    verticalScale: Float = 1f
 ): Shape = GenericShape { size, _ ->
     val w = size.width
     val h = size.height
@@ -296,5 +291,4 @@ fun RippleShapePreview() {
             baseSize = 144.dp
         )
     }
-}
 }

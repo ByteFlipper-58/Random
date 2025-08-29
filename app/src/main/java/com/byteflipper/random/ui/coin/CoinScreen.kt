@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -147,10 +148,10 @@ fun CoinScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Монетка") },
+                title = { Text(stringResource(R.string.coin)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -262,7 +263,7 @@ fun CoinScreen(onBack: () -> Unit) {
                         // FRONT: решка (coin_front)
                         Image(
                             painter = painterResource(R.drawable.coin_front),
-                            contentDescription = "Решка",
+                            contentDescription = stringResource(R.string.tails),
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier
                                 .matchParentSize()
@@ -277,7 +278,7 @@ fun CoinScreen(onBack: () -> Unit) {
                         // BACK: орёл (coin_back)
                         Image(
                             painter = painterResource(R.drawable.coin_back),
-                            contentDescription = "Орёл",
+                            contentDescription = stringResource(R.string.heads),
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier
                                 .matchParentSize()
@@ -303,8 +304,8 @@ fun CoinScreen(onBack: () -> Unit) {
             ) {
                 Text(
                     text = when (currentSide) {
-                        CoinSide.HEADS -> "Результат: Орёл"
-                        CoinSide.TAILS -> "Результат: Решка"
+                        CoinSide.HEADS -> "${stringResource(R.string.result)}: ${stringResource(R.string.heads)}"
+                        CoinSide.TAILS -> "${stringResource(R.string.result)}: ${stringResource(R.string.tails)}"
                     },
                     style = MaterialTheme.typography.titleMedium,
                     color = Color.White,
@@ -312,7 +313,7 @@ fun CoinScreen(onBack: () -> Unit) {
                 )
                 Spacer(Modifier.padding(4.dp))
                 Text(
-                    text = "Свайп вверх — подбросить",
+                    text = stringResource(R.string.swipe_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White.copy(alpha = 0.8f),
                     textAlign = TextAlign.Center

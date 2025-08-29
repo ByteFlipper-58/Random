@@ -62,12 +62,15 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.ui.components.FlipCardControls
@@ -94,6 +97,12 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     val context = androidx.compose.ui.platform.LocalContext.current
     val repo = remember { ListPresetRepository.fromContext(context) }
 
+    // Получение строк из ресурсов
+    val listString = stringResource(R.string.list)
+    val item1String = stringResource(R.string.item_1)
+    val item2String = stringResource(R.string.item_2)
+    val item3String = stringResource(R.string.item_3)
+
     // UI state
     var selectedPreset by remember { mutableStateOf<ListPreset?>(null) }
     var presets by remember { mutableStateOf<List<ListPreset>>(emptyList()) }
@@ -108,7 +117,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     var newItem by rememberSaveable { mutableStateOf("") }
     var showRenameDialog by rememberSaveable { mutableStateOf(false) }
     var renameName by rememberSaveable { mutableStateOf("") }
-    var defaultName by rememberSaveable { mutableStateOf("Список") }
+    var defaultName by rememberSaveable { mutableStateOf(listString) }
     var showSaveDialog by rememberSaveable { mutableStateOf(false) }
     var saveName by rememberSaveable { mutableStateOf("") }
     var openAfterSave by rememberSaveable { mutableStateOf(true) }
@@ -134,9 +143,9 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         if (presetId == null) {
             // Load from SharedPreferences and keep changes local (not repository)
             val sp = context.getSharedPreferences("random_prefs", android.content.Context.MODE_PRIVATE)
-            defaultName = sp.getString("default_list_name", null) ?: "Список"
+            defaultName = sp.getString("default_list_name", null) ?: listString
             val raw = sp.getString("default_list_items", null)
-            val items = if (raw == null) listOf("Элемент 1", "Элемент 2", "Элемент 3") else raw.split('\u0001')
+            val items = if (raw == null) listOf(item1String, item2String, item3String) else raw.split('\u0001')
             editorItems.clear(); editorItems.addAll(items)
             if (editorItems.isEmpty()) editorItems.add("")
         } else {
@@ -184,23 +193,23 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (presetId == null) defaultName else (selectedPreset?.name ?: "Список")) },
+                title = { Text(if (presetId == null) defaultName else (selectedPreset?.name ?: listString)) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = null) } },
                 actions = {
                     if (presetId == null) {
                         TextButton(onClick = {
                             saveName = defaultName
                             showSaveDialog = true
-                        }) { Text("Сохранить параметры") }
+                        }) { Text(stringResource(R.string.save_settings)) }
                         IconButton(onClick = {
                             renameName = defaultName
                             showRenameDialog = true
-                        }) { Icon(Icons.Outlined.Edit, contentDescription = "Переименовать") }
+                        }) { Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename)) }
                     } else {
                         IconButton(onClick = {
                             renameName = selectedPreset?.name ?: ""
                             showRenameDialog = true
-                        }) { Icon(Icons.Outlined.Edit, contentDescription = "Переименовать") }
+                        }) { Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename)) }
                     }
                 }
             )
@@ -214,7 +223,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     onClick = { showConfigDialog = true },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                ) { Icon(Icons.Outlined.Settings, contentDescription = null) }
+                ) { Icon(painterResource(R.drawable.settings_24px), contentDescription = null) }
 
                 Box(modifier = Modifier.onGloballyPositioned { c ->
                     fabSize = c.size
@@ -232,7 +241,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                             selectedPreset?.items?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
                         }
                         if (base.isEmpty()) {
-                            scope.launch { snackbarHostState.showSnackbar("Список пуст") }
+                            scope.launch { snackbarHostState.showSnackbar(context.getString(R.string.list_empty)) }
                             return@SizedFab
                         }
                         if (!allowRepetitions) {
@@ -240,8 +249,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                             if (pool.isEmpty()) {
                                 scope.launch {
                                     val res = snackbarHostState.showSnackbar(
-                                        message = "Все варианты закончились",
-                                        actionLabel = "Сбросить"
+                                        message = context.getString(R.string.all_options_used),
+                                        actionLabel = context.getString(R.string.reset)
                                     )
                                     if (res == SnackbarResult.ActionPerformed) {
                                         usedItems = emptySet()
@@ -266,7 +275,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     },
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ) { Icon(Icons.Outlined.Autorenew, contentDescription = null) }
+                    ) { Icon(painterResource(R.drawable.autorenew_24px), contentDescription = null) }
                 }
             }
         },
@@ -343,7 +352,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                         }
                     }
                 } else {
-                    Text("Загрузка...", style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.loading), style = MaterialTheme.typography.bodyMedium)
                 }
             }
 
@@ -355,7 +364,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 frontContent = {
                     if (results.isNotEmpty()) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp)) {
-                            Text("Результаты:", style = MaterialTheme.typography.labelMedium)
+                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium)
                             Spacer(Modifier.height(6.dp))
                             results.forEach { s ->
                                 Text(s, style = MaterialTheme.typography.titleMedium)
@@ -366,7 +375,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 backContent = {
                     if (results.isNotEmpty()) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp)) {
-                            Text("Результаты:", style = MaterialTheme.typography.labelMedium)
+                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium)
                             Spacer(Modifier.height(6.dp))
                             results.forEach { s ->
                                 Text(s, style = MaterialTheme.typography.titleMedium)
@@ -397,13 +406,13 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             if (showRenameDialog) {
                 AlertDialog(
                     onDismissRequest = { showRenameDialog = false },
-                    title = { Text("Переименовать список") },
+                    title = { Text(stringResource(R.string.rename_list)) },
                     text = {
                         OutlinedTextField(
                             value = renameName,
                             onValueChange = { renameName = it },
                             singleLine = true,
-                            label = { Text("Новое название") },
+                            label = { Text(stringResource(R.string.new_name)) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     },
@@ -426,10 +435,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                                     }
                                 }
                             }
-                        }) { Text("Сохранить") }
+                        }) { Text(stringResource(R.string.save)) }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showRenameDialog = false }) { Text("Отмена") }
+                        TextButton(onClick = { showRenameDialog = false }) { Text(stringResource(R.string.cancel)) }
                     }
                 )
             }
@@ -438,20 +447,20 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             if (showSaveDialog) {
                 AlertDialog(
                     onDismissRequest = { showSaveDialog = false },
-                    title = { Text("Сохранить параметры") },
+                    title = { Text(stringResource(R.string.save_settings)) },
                     text = {
                         Column {
                             OutlinedTextField(
                                 value = saveName,
                                 onValueChange = { saveName = it },
                                 singleLine = true,
-                                label = { Text("Название списка") },
+                                label = { Text(stringResource(R.string.list_name)) },
                                 modifier = Modifier.fillMaxWidth()
                             )
                             Spacer(Modifier.height(8.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Checkbox(checked = openAfterSave, onCheckedChange = { openAfterSave = it })
-                                Text("Открыть после сохранения", modifier = Modifier.padding(start = 8.dp))
+                                Text(stringResource(R.string.open_after_save), modifier = Modifier.padding(start = 8.dp))
                             }
                         }
                     },
@@ -466,10 +475,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                                 }
                                 showSaveDialog = false
                             }
-                        }) { Text("Сохранить") }
+                        }) { Text(stringResource(R.string.save)) }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showSaveDialog = false }) { Text("Отмена") }
+                        TextButton(onClick = { showSaveDialog = false }) { Text(stringResource(R.string.cancel)) }
                     }
                 )
             }

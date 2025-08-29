@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -29,13 +31,13 @@ fun RenameListDialog(
     if (preset != null) {
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("Переименовать список") },
+            title = { Text(stringResource(R.string.rename_list)) },
             text = {
                 OutlinedTextField(
                     value = renameName,
                     onValueChange = { renameName = it },
                     singleLine = true,
-                    label = { Text("Новое название") },
+                    label = { Text(stringResource(R.string.new_name)) },
                     modifier = Modifier.fillMaxWidth()
                 )
             },
@@ -48,10 +50,10 @@ fun RenameListDialog(
                             onPresetRenamed()
                         }
                     }
-                }) { Text("Сохранить") }
+                }) { Text(stringResource(R.string.save)) }
             },
             dismissButton = {
-                TextButton(onClick = onDismiss) { Text("Отмена") }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }
         )
     }

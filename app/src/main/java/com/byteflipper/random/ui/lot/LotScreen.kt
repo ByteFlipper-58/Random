@@ -71,6 +71,9 @@ import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.ui.components.SizedFab
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import com.byteflipper.random.R
 import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.math.roundToInt
@@ -148,6 +151,11 @@ fun LotScreen(onBack: () -> Unit) {
     val settingsRepo = remember { SettingsRepository.fromContext(context) }
     val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
 
+    // Получение строк из ресурсов
+    val minimum3Fields = stringResource(R.string.minimum_3_fields)
+    val minimum1Marked = stringResource(R.string.minimum_1_marked)
+    val markedMoreThanTotal = stringResource(R.string.marked_more_than_total)
+
     // Поля ввода
     var totalText by rememberSaveable { mutableStateOf("10") }
     var markedText by rememberSaveable { mutableStateOf("3") }
@@ -170,15 +178,15 @@ fun LotScreen(onBack: () -> Unit) {
         val total = parseIntSafe(totalText, 1, 500) ?: 0
         val marked = parseIntSafe(markedText, 0, total) ?: 0
         if (total < 3) {
-            scope.launch { snackbarHostState.showSnackbar("Минимум 3 поля") }
+            scope.launch { snackbarHostState.showSnackbar(minimum3Fields) }
             return
         }
         if (marked < 1) {
-            scope.launch { snackbarHostState.showSnackbar("Минимум 1 отмеченное") }
+            scope.launch { snackbarHostState.showSnackbar(minimum1Marked) }
             return
         }
         if (marked > total) {
-            scope.launch { snackbarHostState.showSnackbar("Отмеченных больше, чем всего") }
+            scope.launch { snackbarHostState.showSnackbar(markedMoreThanTotal) }
             return
         }
         // Сформировать список отмеченных индексов
@@ -226,12 +234,12 @@ fun LotScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Жребий") },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = "Назад") } },
+                title = { Text(stringResource(R.string.lot_title)) },
+                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back)) } },
                 actions = {
                     IconButton(onClick = { hapticsEnabled = !hapticsEnabled }) {
                         val icon = if (hapticsEnabled) Icons.Outlined.Vibration else Icons.Outlined.Close //TODO Vibration off icon
-                        Icon(icon, contentDescription = if (hapticsEnabled) "Вибрация: вкл" else "Вибрация: выкл")
+                        Icon(icon, contentDescription = if (hapticsEnabled) stringResource(R.string.vibration_on) else stringResource(R.string.vibration_off))
                     }
                 }
             )
@@ -253,8 +261,8 @@ fun LotScreen(onBack: () -> Unit) {
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
                 when (fabMode) {
-                    FabMode.RevealAll -> Icon(Icons.Outlined.Check, contentDescription = "Показать все")
-                    FabMode.Randomize -> Icon(Icons.Outlined.Autorenew, contentDescription = "Перетасовать")
+                    FabMode.RevealAll -> Icon(painterResource(R.drawable.check_24px), contentDescription = stringResource(R.string.show_all))
+                    FabMode.Randomize -> Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.reshuffle))
                 }
             }
         },
@@ -275,7 +283,7 @@ fun LotScreen(onBack: () -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Общее количество полей", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.total_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.height(8.dp))
                         BasicTextField(
                             value = totalText,
@@ -292,7 +300,7 @@ fun LotScreen(onBack: () -> Unit) {
                         )
                     }
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Количество отмеченных", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.marked_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(Modifier.height(8.dp))
                         BasicTextField(
                             value = markedText,

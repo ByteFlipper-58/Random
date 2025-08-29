@@ -35,11 +35,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.ui.home.components.CreateListDialog
@@ -123,7 +127,7 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Рандом",
+                        stringResource(R.string.random),
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold
                         )
@@ -132,8 +136,8 @@ fun HomeScreen(
                 actions = {
                     IconButton(onClick = onOpenSettings) {
                         Icon(
-                            Icons.Outlined.Settings,
-                            contentDescription = "Настройки",
+                            painterResource(id = R.drawable.settings_24px),
+                            contentDescription = stringResource(R.string.settings),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -193,18 +197,18 @@ fun HomeScreen(
 
                                 MenuCard(
                                     icon = when (item.type) {
-                                        MenuItemType.NUMBERS -> Icons.Outlined.FormatListNumbered
-                                        MenuItemType.LIST -> Icons.Outlined.FormatListBulleted
-                                        MenuItemType.DICE -> Icons.Outlined.Casino
-                                        MenuItemType.LOT -> Icons.Outlined.Gavel
-                                        MenuItemType.COIN -> Icons.Outlined.MonetizationOn
+                                        MenuItemType.NUMBERS -> painterResource(id = R.drawable.looks_one_24px)
+                                        MenuItemType.LIST -> painterResource(id = R.drawable.list_alt_24px)
+                                        MenuItemType.DICE -> painterResource(id = R.drawable.ifl_24px)
+                                        MenuItemType.LOT -> painterResource(id = R.drawable.gavel_24px)
+                                        MenuItemType.COIN -> painterResource(id = R.drawable.paid_24px)
                                     },
                                     title = when (item.type) {
-                                        MenuItemType.NUMBERS -> "Числа"
-                                        MenuItemType.LIST -> "Список"
-                                        MenuItemType.DICE -> "Игральные кости"
-                                        MenuItemType.LOT -> "Жребий"
-                                        MenuItemType.COIN -> "Монетка"
+                                        MenuItemType.NUMBERS -> stringResource(R.string.numbers)
+                                        MenuItemType.LIST -> stringResource(R.string.list)
+                                        MenuItemType.DICE -> stringResource(R.string.dice)
+                                        MenuItemType.LOT -> stringResource(R.string.lot)
+                                        MenuItemType.COIN -> stringResource(R.string.coin)
                                     },
                                     onClick = when (item.type) {
                                         MenuItemType.NUMBERS -> onOpenNumbers

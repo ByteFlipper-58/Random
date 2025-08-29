@@ -36,9 +36,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 
 @Composable
@@ -124,7 +126,7 @@ fun PresetCard(
                 // Можно добавить дополнительную информацию о пресете
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Список",
+                    text = stringResource(R.string.list),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -146,7 +148,7 @@ fun PresetCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Edit,
-                        contentDescription = "Редактировать",
+                        contentDescription = stringResource(R.string.edit),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -162,7 +164,7 @@ fun PresetCard(
                 ) {
                     Icon(
                         imageVector = Icons.Rounded.Delete,
-                        contentDescription = "Удалить",
+                        contentDescription = stringResource(R.string.delete),
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -185,8 +187,8 @@ fun PresetCardPreview() {
     MaterialTheme {
         val samplePreset = ListPreset(
             id = 1L,
-            name = "Мой список",
-            items = listOf("Элемент 1", "Элемент 2", "Элемент 3")
+            name = stringResource(R.string.my_list),
+            items = listOf(stringResource(R.string.item_1), stringResource(R.string.item_2), stringResource(R.string.item_3))
         )
 
         PresetCard(

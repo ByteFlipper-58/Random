@@ -17,7 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 
 @Composable
@@ -34,7 +36,7 @@ fun PresetActionButton(
         onDismissRequest = { expanded = false }
     ) {
         DropdownMenuItem(
-            text = { Text("Переименовать") },
+            text = { Text(stringResource(R.string.rename)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
@@ -48,7 +50,7 @@ fun PresetActionButton(
             }
         )
         DropdownMenuItem(
-            text = { Text("Удалить") },
+            text = { Text(stringResource(R.string.delete)) },
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
@@ -69,7 +71,7 @@ fun PresetActionButton(
     ) {
         Icon(
             imageVector = Icons.Outlined.MoreVert,
-            contentDescription = "Действия с пресетом",
+            contentDescription = stringResource(R.string.preset_actions),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(20.dp)
         )

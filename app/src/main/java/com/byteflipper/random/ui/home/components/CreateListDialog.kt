@@ -14,7 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -29,22 +32,23 @@ fun CreateListDialog(
     coroutineScope: CoroutineScope,
     onPresetCreated: () -> Unit
 ) {
+    val context = LocalContext.current
     var createName by rememberSaveable { mutableStateOf("") }
 
     if (showDialog) {
         val nextNumber = presetCount + 1
-        if (createName.isBlank()) createName = "Новый список $nextNumber"
+        if (createName.isBlank()) createName = "${context.getString(R.string.new_list)} $nextNumber"
 
         AlertDialog(
             onDismissRequest = onDismiss,
-            title = { Text("Новый список") },
+            title = { Text(stringResource(R.string.new_list)) },
             text = {
                 Column {
                     OutlinedTextField(
                         value = createName,
                         onValueChange = { createName = it },
                         singleLine = true,
-                        label = { Text("Название списка") },
+                        label = { Text(stringResource(R.string.list_name)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(Modifier.height(8.dp))
@@ -52,20 +56,20 @@ fun CreateListDialog(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    val name = createName.trim().ifEmpty { "Новый список $nextNumber" }
+                    val name = createName.trim().ifEmpty { "${context.getString(R.string.new_list)} $nextNumber" }
                     coroutineScope.launch {
                         repository.upsert(
                             ListPreset(
                                 name = name,
-                                items = listOf("Элемент 1", "Элемент 2", "Элемент 3")
+                                items = listOf(context.getString(R.string.item_1), context.getString(R.string.item_2), context.getString(R.string.item_3))
                             )
                         )
                         onPresetCreated()
                     }
-                }) { Text("Сохранить") }
+                }) { Text(stringResource(R.string.save)) }
             },
             dismissButton = {
-                TextButton(onClick = onDismiss) { Text("Отмена") }
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }
         )
     }

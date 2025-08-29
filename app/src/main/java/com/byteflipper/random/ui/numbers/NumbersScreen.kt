@@ -68,12 +68,15 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.byteflipper.random.R
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
@@ -100,6 +103,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     val haptics = LocalHapticFeedback.current
     val view = LocalView.current
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
 
     var fromText by rememberSaveable { mutableStateOf("1") }
     var toText by rememberSaveable { mutableStateOf("10") }
@@ -132,9 +136,8 @@ fun NumbersScreen(onBack: () -> Unit) {
     // Цвета
     val primaryColor = MaterialTheme.colorScheme.primary
     // Настройки приложения (для размера FAB)
-    val context = LocalContext.current
     val settingsRepo = remember { SettingsRepository.fromContext(context) }
-    val settings: com.byteflipper.random.data.settings.Settings by settingsRepo.settingsFlow.collectAsState(initial = com.byteflipper.random.data.settings.Settings())
+    val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
 
     // Состояние и контроллер для переиспользуемой карточки
     val flipCardState = rememberFlipCardState()
@@ -146,7 +149,7 @@ fun NumbersScreen(onBack: () -> Unit) {
         usedNumbers = emptySet()
         showResetDialog = false
         scope.launch {
-            snackbarHostState.showSnackbar("История использованных чисел очищена")
+            snackbarHostState.showSnackbar(context.getString(R.string.history_cleared))
         }
     }
 
@@ -157,14 +160,14 @@ fun NumbersScreen(onBack: () -> Unit) {
 
         if (from == null || to == null) {
             scope.launch {
-                snackbarHostState.showSnackbar("Введите корректные числа в поля 'ОТ' и 'ДО'")
+                snackbarHostState.showSnackbar(context.getString(R.string.enter_valid_numbers))
             }
             return null
         }
 
         if (count < 1) {
             scope.launch {
-                snackbarHostState.showSnackbar("Количество должно быть больше 0")
+                snackbarHostState.showSnackbar(context.getString(R.string.count_must_be_positive))
             }
             return null
         }
@@ -178,8 +181,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                 if (availableNumbers.isEmpty()) {
                     scope.launch {
                         val res = snackbarHostState.showSnackbar(
-                            message = "Все числа использованы",
-                            actionLabel = "Сбросить"
+                            message = context.getString(R.string.all_numbers_used),
+                            actionLabel = context.getString(R.string.reset)
                         )
                         if (res == androidx.compose.material3.SnackbarResult.ActionPerformed) {
                             resetUsedNumbers()
@@ -188,7 +191,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     return null
                 } else {
                     scope.launch {
-                        snackbarHostState.showSnackbar("Доступно только ${availableNumbers.size} неиспользованных чисел")
+                        snackbarHostState.showSnackbar(context.getString(R.string.only_available_numbers, availableNumbers.size))
                     }
                     return null
                 }
@@ -282,10 +285,10 @@ fun NumbersScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Число") },
+                title = { Text(stringResource(R.string.number)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -301,7 +304,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 ) {
-                    Icon(Icons.Outlined.Settings, contentDescription = "Настройки")
+                    Icon(painter = painterResource(R.drawable.settings_24px), contentDescription = stringResource(R.string.settings))
                 }
 
                 // Основная FAB для генерации
@@ -377,7 +380,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                             scaleY = fabScale.value
                         }
                     ) {
-                        Icon(Icons.Outlined.Autorenew, contentDescription = "Сгенерировать")
+                        Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.generate))
                     }
                 }
             }
@@ -401,7 +404,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    "ОТ",
+                    stringResource(R.string.from),
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
@@ -427,7 +430,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                 Spacer(Modifier.height(48.dp))
 
                 Text(
-                    "ДО",
+                    stringResource(R.string.to),
                     style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
@@ -514,7 +517,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                                 val cols = columnsFor(frontValues.size)
                                 val numberSize = numberFontSizeFor(frontValues.size)
                                 Text(
-                                    text = "Результаты:",
+                                    text = stringResource(R.string.results),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                                 )
@@ -557,7 +560,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                                 val cols = columnsFor(backValues.size)
                                 val numberSize = numberFontSizeFor(backValues.size)
                                 Text(
-                                    text = "Результаты:",
+                                    text = stringResource(R.string.results),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                                 )
