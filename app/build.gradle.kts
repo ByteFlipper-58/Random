@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.inappmessaging.display)
     implementation(libs.play.billing)
+    implementation(libs.material3)
+    implementation(libs.reorderable)
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)

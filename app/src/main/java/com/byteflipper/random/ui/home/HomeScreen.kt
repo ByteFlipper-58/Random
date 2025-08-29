@@ -1,25 +1,20 @@
 package com.byteflipper.random.ui.home
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Casino
-import androidx.compose.material.icons.outlined.MonetizationOn
 import androidx.compose.material.icons.outlined.FormatListBulleted
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.Gavel
-import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material.icons.outlined.MonetizationOn
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,11 +34,36 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
+import com.byteflipper.random.ui.home.components.CreateListDialog
+import com.byteflipper.random.ui.home.components.MenuCard
+import com.byteflipper.random.ui.home.components.PresetCard
+import com.byteflipper.random.ui.home.components.RenameListDialog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
+
+// Типы элементов для drag & drop
+sealed class HomeItem {
+    data class MenuItem(val type: MenuItemType) : HomeItem()
+    data class PresetItem(val preset: ListPreset) : HomeItem()
+}
+
+enum class MenuItemType {
+    NUMBERS, LIST, DICE, LOT, COIN
+}
+
+private fun keyFor(item: HomeItem): String = when (item) {
+    is HomeItem.MenuItem -> "menu_${item.type}"
+    is HomeItem.PresetItem -> "preset_${item.preset.id}"
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,203 +76,185 @@ fun HomeScreen(
     onOpenCoin: () -> Unit,
     onOpenSettings: () -> Unit,
     onAddNumbersPreset: () -> Unit,
-    onAddListPreset: () -> Unit,
+    onAddListPreset: () -> Unit, // оставлен для совместимости
 ) {
     val scope = rememberCoroutineScope()
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
     val repo = remember { ListPresetRepository.fromContext(context) }
+
     var presets by remember { mutableStateOf<List<ListPreset>>(emptyList()) }
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
     var createName by rememberSaveable { mutableStateOf("") }
     var renameTarget by remember { mutableStateOf<ListPreset?>(null) }
-    var renameName by rememberSaveable { mutableStateOf("") }
 
+    // Состояние для элементов
+    var items by remember { mutableStateOf<List<HomeItem>>(emptyList()) }
+
+    // Формируем список (меню + пресеты) при изменении пресетов
+    LaunchedEffect(presets) {
+        val menuItems = listOf(
+            HomeItem.MenuItem(MenuItemType.NUMBERS),
+            HomeItem.MenuItem(MenuItemType.LIST),
+            HomeItem.MenuItem(MenuItemType.DICE),
+            HomeItem.MenuItem(MenuItemType.LOT),
+            HomeItem.MenuItem(MenuItemType.COIN)
+        )
+        val presetItems = presets.map { HomeItem.PresetItem(it) }
+        items = menuItems + presetItems
+    }
+
+    // Переупорядочивание
+    fun moveItem(fromIndex: Int, toIndex: Int) {
+        if (fromIndex == toIndex || fromIndex !in items.indices || toIndex !in items.indices) return
+        val newItems = items.toMutableList()
+        val moved = newItems.removeAt(fromIndex)
+        newItems.add(toIndex, moved)
+        items = newItems
+    }
+
+    // Подписка на БД
     LaunchedEffect(Unit) {
         repo.observeAll().collectLatest { list -> presets = list }
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Рандом") }, actions = {
-            IconButton(onClick = onOpenSettings) { Icon(Icons.Outlined.Settings, contentDescription = "Настройки") }
-            IconButton(onClick = { /* TODO: menu */ }) { Icon(Icons.Outlined.MoreVert, contentDescription = "Меню") }
-        }) }
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Рандом",
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
+                actions = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            Icons.Outlined.Settings,
+                            contentDescription = "Настройки",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
+        }
     ) { inner ->
-        Column(
+        val haptic = LocalHapticFeedback.current
+        val lazyListState = rememberLazyListState()
+
+        val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
+            moveItem(from.index, to.index)
+            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+        }
+
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(inner)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+            state = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-        MenuCard(
-            icon = Icons.Outlined.FormatListNumbered,
-            title = "Числа",
-            onClick = onOpenNumbers,
-            onAddClick = onAddNumbersPreset
-        )
-        Spacer(Modifier.height(12.dp))
-        MenuCard(
-            icon = Icons.Outlined.FormatListBulleted,
-            title = "Список",
-            onClick = onOpenList,
-            onAddClick = { showCreateDialog = true }
-        )
-        Spacer(Modifier.height(12.dp))
-        MenuCard(icon = Icons.Outlined.Casino, title = "Игральные кости", onClick = onOpenDice)
-        Spacer(Modifier.height(12.dp))
-        MenuCard(icon = Icons.Outlined.Gavel, title = "Жребий", onClick = onOpenLot)
-        Spacer(Modifier.height(12.dp))
-        MenuCard(icon = Icons.Outlined.MonetizationOn, title = "Монетка", onClick = onOpenCoin)
-
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(presets, key = { it.id }) { p ->
-                var expanded by remember { mutableStateOf(false) }
-                Card(
-                    onClick = { onOpenListById(p.id) },
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(imageVector = Icons.Outlined.FormatListBulleted, contentDescription = null)
-                        Text(
-                            text = p.name,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 16.dp),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        androidx.compose.material3.DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            androidx.compose.material3.DropdownMenuItem(text = { Text("Переименовать") }, onClick = {
-                                expanded = false
-                                renameTarget = p
-                                renameName = p.name
-                            })
-                            androidx.compose.material3.DropdownMenuItem(text = { Text("Удалить") }, onClick = {
-                                expanded = false
-                                scope.launch { repo.delete(p) }
-                            })
-                        }
-                        IconButton(onClick = { expanded = true }) {
-                            Icon(imageVector = Icons.Outlined.MoreVert, contentDescription = "Меню")
-                        }
-                    }
-                }
-            }
-        }
-        }
-    }
-
-    if (showCreateDialog) {
-        val nextNumber = (presets.size + 1)
-        if (createName.isBlank()) createName = "Новый список $nextNumber"
-        AlertDialog(
-            onDismissRequest = { showCreateDialog = false },
-            title = { Text("Новый список") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = createName,
-                        onValueChange = { createName = it },
-                        singleLine = true,
-                        label = { Text("Название списка") },
-                        modifier = Modifier.fillMaxWidth()
+            items(
+                items = items,
+                key = { item -> keyFor(item) }
+            ) { item ->
+                ReorderableItem(
+                    state = reorderState,
+                    key = keyFor(item)
+                ) { isDragging ->
+                    val elevation by animateDpAsState(
+                        targetValue = if (isDragging) 4.dp else 0.dp,
+                        label = "drag-elevation"
                     )
-                    Spacer(Modifier.height(8.dp))
-                    Text("Будут добавлены элементы: Элемент 1, Элемент 2, Элемент 3")
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val name = createName.trim().ifEmpty { "Новый список $nextNumber" }
-                    scope.launch {
-                        val id = repo.upsert(
-                            ListPreset(
-                                name = name,
-                                items = listOf("Элемент 1", "Элемент 2", "Элемент 3")
+
+                    Card(
+                        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
+                    ) {
+                        val dragModifier = Modifier
+                            .fillMaxWidth()
+                            .longPressDraggableHandle(
+                                onDragStarted = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                },
+                                onDragStopped = {
+                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                }
                             )
-                        )
-                        showCreateDialog = false
-                        createName = ""
-                    }
-                }) { Text("Сохранить") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showCreateDialog = false }) { Text("Отмена") }
-            }
-        )
-    }
 
-    if (renameTarget != null) {
-        AlertDialog(
-            onDismissRequest = { renameTarget = null },
-            title = { Text("Переименовать список") },
-            text = {
-                OutlinedTextField(
-                    value = renameName,
-                    onValueChange = { renameName = it },
-                    singleLine = true,
-                    label = { Text("Новое название") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    val t = renameTarget
-                    val newName = renameName.trim()
-                    if (t != null && newName.isNotEmpty()) {
-                        scope.launch { repo.upsert(t.copy(name = newName)) }
-                        renameTarget = null
-                    }
-                }) { Text("Сохранить") }
-            },
-            dismissButton = {
-                TextButton(onClick = { renameTarget = null }) { Text("Отмена") }
-            }
-        )
-    }
-}
+                        when (item) {
+                            is HomeItem.MenuItem -> {
+                                val onAdd: (() -> Unit)? = when (item.type) {
+                                    MenuItemType.NUMBERS -> onAddNumbersPreset
+                                    MenuItemType.LIST -> { { showCreateDialog = true } }
+                                    else -> null
+                                }
 
-@Composable
-private fun MenuCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    onClick: () -> Unit,
-    onAddClick: (() -> Unit)? = null,
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(imageVector = icon, contentDescription = null)
-            Text(
-                text = title,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 16.dp),
-                style = MaterialTheme.typography.titleMedium
-            )
-            if (onAddClick != null) {
-                IconButton(onClick = onAddClick) {
-                    Icon(imageVector = Icons.Outlined.Add, contentDescription = "Добавить пресет")
+                                MenuCard(
+                                    icon = when (item.type) {
+                                        MenuItemType.NUMBERS -> Icons.Outlined.FormatListNumbered
+                                        MenuItemType.LIST -> Icons.Outlined.FormatListBulleted
+                                        MenuItemType.DICE -> Icons.Outlined.Casino
+                                        MenuItemType.LOT -> Icons.Outlined.Gavel
+                                        MenuItemType.COIN -> Icons.Outlined.MonetizationOn
+                                    },
+                                    title = when (item.type) {
+                                        MenuItemType.NUMBERS -> "Числа"
+                                        MenuItemType.LIST -> "Список"
+                                        MenuItemType.DICE -> "Игральные кости"
+                                        MenuItemType.LOT -> "Жребий"
+                                        MenuItemType.COIN -> "Монетка"
+                                    },
+                                    onClick = when (item.type) {
+                                        MenuItemType.NUMBERS -> onOpenNumbers
+                                        MenuItemType.LIST -> onOpenList
+                                        MenuItemType.DICE -> onOpenDice
+                                        MenuItemType.LOT -> onOpenLot
+                                        MenuItemType.COIN -> onOpenCoin
+                                    },
+                                    onAddClick = onAdd,
+                                    modifier = dragModifier
+                                )
+                            }
+
+                            is HomeItem.PresetItem -> {
+                                PresetCard(
+                                    preset = item.preset,
+                                    onPresetClick = { preset -> onOpenListById(preset.id) },
+                                    onRenameClick = { preset -> renameTarget = preset },
+                                    onDeleteClick = { preset -> scope.launch { repo.delete(preset) } },
+                                    modifier = dragModifier
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+
+    CreateListDialog(
+        showDialog = showCreateDialog,
+        onDismiss = {
+            showCreateDialog = false
+            createName = ""
+        },
+        presetCount = presets.size,
+        repository = repo,
+        coroutineScope = scope,
+        onPresetCreated = {
+            showCreateDialog = false
+            createName = ""
+        }
+    )
+
+    RenameListDialog(
+        preset = renameTarget,
+        onDismiss = { renameTarget = null },
+        repository = repo,
+        coroutineScope = scope,
+        onPresetRenamed = { renameTarget = null }
+    )
 }
-
-

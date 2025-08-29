@@ -22,10 +22,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.byteflipper.random" />
+                  <option name="mobileSdkAppId" value="1:38255035757:android:6cdda94a14587238a68664" />
+                  <option name="projectId" value="random-c528e" />
+                  <option name="projectNumber" value="38255035757" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
