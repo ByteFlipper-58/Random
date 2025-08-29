@@ -2,6 +2,7 @@ package com.byteflipper.random.ui.home
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -154,7 +155,7 @@ fun HomeScreen(
                 .padding(inner)
                 .padding(16.dp),
             state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             items(
@@ -170,9 +171,7 @@ fun HomeScreen(
                         label = "drag-elevation"
                     )
 
-                    Card(
-                        elevation = CardDefaults.cardElevation(defaultElevation = elevation)
-                    ) {
+                    Box() {
                         val dragModifier = Modifier
                             .fillMaxWidth()
                             .longPressDraggableHandle(
