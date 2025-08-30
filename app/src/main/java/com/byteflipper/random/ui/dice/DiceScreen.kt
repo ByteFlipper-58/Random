@@ -23,9 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +65,9 @@ import com.byteflipper.random.R
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.ui.components.SizedFab
+import androidx.compose.animation.animateColorAsState
+import kotlinx.coroutines.Job
+import androidx.compose.ui.graphics.drawscope.DrawScope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,22 +77,44 @@ fun DiceScreen(onBack: () -> Unit) {
     val view = LocalView.current
 
     val maxDice = 10
-    var diceCount by rememberSaveable { mutableStateOf(2) } // 1..10
+    var diceCount by rememberSaveable { mutableStateOf(2) }
     var diceValues by rememberSaveable { mutableStateOf(listOf(1, 2)) }
 
-    // Анимации для 4 кубиков (используем первые diceCount)
     val rotations = remember { List(maxDice) { Animatable(0f) } }
     val scales = remember { List(maxDice) { Animatable(1f) } }
+    val isAnimating = remember { mutableStateOf(List(maxDice) { false }) }
 
-    // Оверлей
+    val diceColorPalette = remember {
+        listOf(
+            Color(0xFFE74C3C), Color(0xFF3498DB), Color(0xFF2ECC71), Color(0xFFF39C12),
+            Color(0xFF9B59B6), Color(0xFF1ABC9C), Color(0xFFE67E22), Color(0xFF34495E),
+            Color(0xFF16A085), Color(0xFF27AE60), Color(0xFF2980B9), Color(0xFF8E44AD),
+            Color(0xFFC0392B), Color(0xFFD35400), Color(0xFF7F8C8D), Color(0xFF2C3E50)
+        )
+    }
+
+    var diceColors by remember { mutableStateOf(List(maxDice) { diceColorPalette.random() }) }
+
+    val animatedColors = diceColors.mapIndexed { index, color ->
+        animateColorAsState(
+            targetValue = color,
+            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+            label = "dice_color_$index"
+        )
+    }
+
+    var isRolling by remember { mutableStateOf(false) }
     val scrimAlpha = remember { Animatable(0f) }
     var overlayVisible by rememberSaveable { mutableStateOf(false) }
+    var currentRollJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(diceCount) {
-        // Подгоняем список значений под новое количество кубиков
         if (diceValues.size != diceCount) {
             val base = if (diceValues.isEmpty()) emptyList() else diceValues.take(diceCount)
-            diceValues = buildList(diceCount) { addAll(base); repeat(diceCount - base.size) { add(Random.nextInt(1, 7)) } }
+            diceValues = buildList(diceCount) {
+                addAll(base)
+                repeat(diceCount - base.size) { add(Random.nextInt(1, 7)) }
+            }
         }
     }
 
@@ -111,29 +134,47 @@ fun DiceScreen(onBack: () -> Unit) {
     }
 
     fun rollAll() {
-        scope.launch {
+        currentRollJob?.cancel()
+        currentRollJob = scope.launch {
+            isRolling = true
             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
             view.playSoundEffect(SoundEffectConstants.CLICK)
-
             openOverlayIfNeeded()
 
             val newValues = List(diceCount) { Random.nextInt(1, 7) }
-            // Запускаем анимации параллельно
-            val jobs = mutableListOf<kotlinx.coroutines.Job>()
+
+            diceColors = List(maxDice) { index ->
+                val currentColor = diceColors[index]
+                var newColor = diceColorPalette.random()
+                while (newColor == currentColor && diceColorPalette.size > 1) {
+                    newColor = diceColorPalette.random()
+                }
+                newColor
+            }
+
+            val jobs = mutableListOf<Job>()
             repeat(diceCount) { i ->
-                diceValues = diceValues.toMutableList().also { list -> list[i] = newValues[i] }
+                diceValues = diceValues.toMutableList().also { it[i] = newValues[i] }
+
+                val currentRotation = rotations[i].value
+                val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
+                rotations[i].snapTo(normalizedRotation)
+
                 jobs += launch {
+                    val fullRotations = Random.nextInt(3, 6) * 360f
+                    val finalRotation = fullRotations + 90f * Random.nextInt(0, 4)
                     rotations[i].animateTo(
-                        targetValue = rotations[i].value + 360f * Random.nextInt(2, 4),
-                        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+                        targetValue = normalizedRotation + finalRotation,
+                        animationSpec = tween(durationMillis = 700, easing = FastOutSlowInEasing)
                     )
                 }
                 jobs += launch {
-                    scales[i].animateTo(1.12f, tween(150, easing = FastOutSlowInEasing))
+                    scales[i].animateTo(1.15f, tween(150, easing = FastOutSlowInEasing))
                     scales[i].animateTo(1f, tween(250, easing = FastOutSlowInEasing))
                 }
             }
             jobs.forEach { it.join() }
+            isRolling = false
         }
     }
 
@@ -142,7 +183,9 @@ fun DiceScreen(onBack: () -> Unit) {
             TopAppBar(
                 title = { Text(stringResource(R.string.dice)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back)) }
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
                 }
             )
         },
@@ -153,8 +196,14 @@ fun DiceScreen(onBack: () -> Unit) {
             SizedFab(
                 size = settings.fabSize,
                 onClick = { rollAll() },
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                containerColor = if (isRolling)
+                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                else
+                    MaterialTheme.colorScheme.primaryContainer,
+                contentColor = if (isRolling)
+                    MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                else
+                    MaterialTheme.colorScheme.onPrimaryContainer
             ) {
                 Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.roll_dice))
             }
@@ -188,8 +237,10 @@ fun DiceScreen(onBack: () -> Unit) {
                         val selected = n == diceCount
                         SmallFloatingActionButton(
                             onClick = { diceCount = n },
-                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
                             Text(text = n.toString(), fontWeight = FontWeight.Bold)
                         }
@@ -204,8 +255,10 @@ fun DiceScreen(onBack: () -> Unit) {
                             val selected = n == diceCount
                             SmallFloatingActionButton(
                                 onClick = { diceCount = n },
-                                containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer,
-                                contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
+                                containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
+                                else MaterialTheme.colorScheme.surfaceContainer,
+                                contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                                else MaterialTheme.colorScheme.onSurfaceVariant
                             ) {
                                 Text(text = n.toString(), fontWeight = FontWeight.Bold)
                             }
@@ -215,13 +268,12 @@ fun DiceScreen(onBack: () -> Unit) {
             }
         }
 
-        // Оверлей поверх экрана с кубиками
         if (overlayVisible) {
             BackHandler { closeOverlay() }
 
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.45f * scrimAlpha.value))
+                .background(Color.Black.copy(alpha = 0.5f * scrimAlpha.value))
                 .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
                     closeOverlay()
                 }
@@ -233,7 +285,8 @@ fun DiceScreen(onBack: () -> Unit) {
                 ) {
                     val columns = when {
                         diceCount <= 1 -> 1
-                        else -> kotlin.math.ceil(kotlin.math.sqrt(diceCount.toDouble())).toInt().coerceIn(2, 4)
+                        diceCount <= 3 -> diceCount
+                        else -> 3
                     }
                     val rows = kotlin.math.ceil(diceCount / columns.toFloat()).toInt()
                     val spacing = 16.dp
@@ -264,26 +317,41 @@ fun DiceScreen(onBack: () -> Unit) {
                                                     scaleY = scales[i].value
                                                 }
                                                 .clip(RoundedCornerShape(16.dp))
-                                                .background(MaterialTheme.colorScheme.surface)
                                                 .clickable(
                                                     interactionSource = remember { MutableInteractionSource() },
-                                                    indication = null
+                                                    indication = null,
+                                                    enabled = !isAnimating.value[i]
                                                 ) {
-                                                    scope.launch {
-                                                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                                        val newV = Random.nextInt(1, 7)
-                                                        diceValues = diceValues.toMutableList().also { it[i] = newV }
-                                                        rotations[i].animateTo(
-                                                            targetValue = rotations[i].value + 360f * Random.nextInt(1, 3),
-                                                            animationSpec = tween(420, easing = FastOutSlowInEasing)
-                                                        )
-                                                        scales[i].animateTo(1.1f, tween(120))
-                                                        scales[i].animateTo(1f, tween(180))
+                                                    if (!isAnimating.value[i]) {
+                                                        scope.launch {
+                                                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
+                                                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                            val newV = Random.nextInt(1, 7)
+                                                            diceValues = diceValues.toMutableList().also { it[i] = newV }
+                                                            val currentColor = diceColors[i]
+                                                            var newColor = diceColorPalette.random()
+                                                            while (newColor == currentColor && diceColorPalette.size > 1) {
+                                                                newColor = diceColorPalette.random()
+                                                            }
+                                                            diceColors = diceColors.toMutableList().also { it[i] = newColor }
+
+                                                            val currentRotation = rotations[i].value
+                                                            val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
+                                                            rotations[i].snapTo(normalizedRotation)
+
+                                                            rotations[i].animateTo(
+                                                                targetValue = normalizedRotation + 360f * Random.nextInt(2, 4),
+                                                                animationSpec = tween(500, easing = FastOutSlowInEasing)
+                                                            )
+                                                            scales[i].animateTo(1.12f, tween(120))
+                                                            scales[i].animateTo(1f, tween(180))
+                                                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = false }
+                                                        }
                                                     }
                                                 },
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            DieFace(value = diceValues[i])
+                                            DieFace(value = diceValues[i], color = animatedColors[i].value)
                                         }
                                         index++
                                     }
@@ -291,12 +359,13 @@ fun DiceScreen(onBack: () -> Unit) {
                             }
                             if (rowIdx < rows - 1) Spacer(Modifier.height(spacing))
                         }
-                        Spacer(Modifier.height(24.dp))
+                        Spacer(Modifier.height(32.dp))
                         val total = diceValues.take(diceCount).sum()
                         Text(
                             text = "${stringResource(R.string.sum)}: $total",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -306,104 +375,163 @@ fun DiceScreen(onBack: () -> Unit) {
 }
 
 @Composable
-private fun DieFace(value: Int) {
-    // Плоский корпус без градиента; объём за счёт фасок, внутренней тени и объёмных пипсов
-    val faceColor = Color.White
-    val edge = Color(0xFFBDBDBD)
-    val pipColor = Color(0xFF1C1C1C)
-
+private fun DieFace(value: Int, color: Color) {
     Canvas(modifier = Modifier.fillMaxSize()) {
         val w = size.width
         val h = size.height
         val s = min(w, h)
-        val corner = s * 0.14f
+        val corner = s * 0.15f
 
-        // Плоский корпус
+        // Создаем более темный и светлый оттенки
+        val darkColor = Color(
+            red = (color.red * 0.8f).coerceIn(0f, 1f),
+            green = (color.green * 0.8f).coerceIn(0f, 1f),
+            blue = (color.blue * 0.8f).coerceIn(0f, 1f)
+        )
+
+        val lightColor = Color(
+            red = (color.red * 1.2f).coerceIn(0f, 1f),
+            green = (color.green * 1.2f).coerceIn(0f, 1f),
+            blue = (color.blue * 1.2f).coerceIn(0f, 1f)
+        )
+
+        // Внешняя тень
         drawRoundRect(
-            color = faceColor,
+            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                colors = listOf(
+                    Color.Black.copy(alpha = 0.3f),
+                    Color.Black.copy(alpha = 0.2f),
+                    Color.Transparent
+                ),
+                center = androidx.compose.ui.geometry.Offset(w/2 + 6f, h/2 + 6f),
+                radius = s * 0.7f
+            ),
+            topLeft = androidx.compose.ui.geometry.Offset(2f, 2f),
+            size = androidx.compose.ui.geometry.Size(w + 4f, h + 4f),
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner + 2f, corner + 2f),
+            style = Fill
+        )
+
+        // Основа кубика с градиентом
+        drawRoundRect(
+            brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                colors = listOf(lightColor, color, darkColor),
+                start = androidx.compose.ui.geometry.Offset(0f, 0f),
+                end = androidx.compose.ui.geometry.Offset(w, h)
+            ),
             size = size,
             cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
             style = Fill
         )
-        // Внешняя обводка
+
+        // Внутренняя рамка для глубины
         drawRoundRect(
-            color = edge.copy(alpha = 0.7f),
-            size = size,
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
-            style = Stroke(width = 3f, cap = StrokeCap.Round)
+            color = darkColor.copy(alpha = 0.3f),
+            topLeft = androidx.compose.ui.geometry.Offset(2f, 2f),
+            size = androidx.compose.ui.geometry.Size(w - 4f, h - 4f),
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner - 2f, corner - 2f),
+            style = Stroke(width = 1.5f)
         )
 
-        // Внутренний микро-скос (две полуплоские линии вместо градиента)
-        val inset = s * 0.045f
-        val strokeW = s * 0.018f
-        val leftX = inset
-        val rightX = w - inset
-        val topY = inset
-        val bottomY = h - inset
-        // Блики сверху и слева
-        drawLine(color = Color.White.copy(alpha = 0.35f), start = androidx.compose.ui.geometry.Offset(leftX + corner * 0.4f, topY), end = androidx.compose.ui.geometry.Offset(rightX - corner * 0.4f, topY), strokeWidth = strokeW, cap = StrokeCap.Round)
-        drawLine(color = Color.White.copy(alpha = 0.28f), start = androidx.compose.ui.geometry.Offset(leftX, topY + corner * 0.4f), end = androidx.compose.ui.geometry.Offset(leftX, bottomY - corner * 0.4f), strokeWidth = strokeW, cap = StrokeCap.Round)
-        // Тени снизу и справа
-        drawLine(color = Color.Black.copy(alpha = 0.12f), start = androidx.compose.ui.geometry.Offset(leftX + corner * 0.4f, bottomY), end = androidx.compose.ui.geometry.Offset(rightX - corner * 0.4f, bottomY), strokeWidth = strokeW, cap = StrokeCap.Round)
-        drawLine(color = Color.Black.copy(alpha = 0.10f), start = androidx.compose.ui.geometry.Offset(rightX, topY + corner * 0.4f), end = androidx.compose.ui.geometry.Offset(rightX, bottomY - corner * 0.4f), strokeWidth = strokeW, cap = StrokeCap.Round)
-
-        // Мягкая внутренняя тень (винигрет) без градиента корпуса
-        drawRoundRect(
-            brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                colors = listOf(Color.Black.copy(alpha = 0.06f), Color.Transparent),
-                center = androidx.compose.ui.geometry.Offset(w * 0.46f, h * 0.36f),
-                radius = s
-            ),
-            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-            size = androidx.compose.ui.geometry.Size(w - inset * 2, h - inset * 2),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner * 0.9f, corner * 0.9f)
-        )
-
-        // Раскладка точек
-        val margin = s * 0.18f
-        val cx = w / 2f
-        val cy = h / 2f
-        val left = margin
-        val right = w - margin
-        val top = margin
-        val bottom = h - margin
-        val midX = cx
-        val midY = cy
-        val pipR = s * 0.065f
-        val shadowOffset = pipR * 0.14f
-
-        fun dot(x: Float, y: Float) {
-            // Мягкая падающая тень пипсы
-            drawCircle(
-                color = Color.Black.copy(alpha = 0.12f),
-                radius = pipR,
-                center = androidx.compose.ui.geometry.Offset(x + shadowOffset, y + shadowOffset)
-            )
-            // Объёмная пипса с лёгким смещённым центром освещения
-            drawCircle(
-                brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                    colors = listOf(
-                        pipColor,
-                        pipColor.copy(alpha = 0.92f),
-                        Color(0xFF2B2B2B)
-                    ),
-                    center = androidx.compose.ui.geometry.Offset(x - pipR * 0.28f, y - pipR * 0.28f),
-                    radius = pipR * 1.2f
-                ),
-                radius = pipR,
-                center = androidx.compose.ui.geometry.Offset(x, y)
-            )
-        }
-
-        when (value.coerceIn(1, 6)) {
-            1 -> dot(midX, midY)
-            2 -> { dot(left, top); dot(right, bottom) }
-            3 -> { dot(left, top); dot(midX, midY); dot(right, bottom) }
-            4 -> { dot(left, top); dot(right, top); dot(left, bottom); dot(right, bottom) }
-            5 -> { dot(left, top); dot(right, top); dot(midX, midY); dot(left, bottom); dot(right, bottom) }
-            6 -> { dot(left, top); dot(left, midY); dot(left, bottom); dot(right, top); dot(right, midY); dot(right, bottom) }
-        }
+        // Точки на кубике
+        drawDots(value, s, w, h, lightColor)
     }
 }
 
+private fun DrawScope.drawDots(value: Int, s: Float, w: Float, h: Float, baseColor: Color) {
+    val margin = s * 0.24f
+    val cx = w / 2f
+    val cy = h / 2f
+    val left = margin
+    val right = w - margin
+    val top = margin
+    val bottom = h - margin
+    val pipR = s * 0.08f
 
+    fun drawDot(x: Float, y: Float) {
+        // Внешняя тень точки
+        drawCircle(
+            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                colors = listOf(
+                    Color.Black.copy(alpha = 0.4f),
+                    Color.Transparent
+                ),
+                center = androidx.compose.ui.geometry.Offset(x + 2f, y + 2f),
+                radius = pipR * 1.2f
+            ),
+            radius = pipR * 1.2f,
+            center = androidx.compose.ui.geometry.Offset(x + 2f, y + 2f)
+        )
+
+        // Впадина вокруг точки
+        drawCircle(
+            color = Color.Black.copy(alpha = 0.15f),
+            radius = pipR * 1.1f,
+            center = androidx.compose.ui.geometry.Offset(x, y)
+        )
+
+        // Основная точка
+        drawCircle(
+            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                colors = listOf(
+                    Color(0xFFFAFAFA),
+                    Color(0xFFE0E0E0),
+                    Color(0xFFBDBDBD)
+                ),
+                center = androidx.compose.ui.geometry.Offset(x, y),
+                radius = pipR
+            ),
+            radius = pipR,
+            center = androidx.compose.ui.geometry.Offset(x, y)
+        )
+
+        // Блик на точке
+        drawCircle(
+            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                colors = listOf(
+                    Color.White,
+                    Color.White.copy(alpha = 0.3f),
+                    Color.Transparent
+                ),
+                center = androidx.compose.ui.geometry.Offset(x - pipR * 0.3f, y - pipR * 0.3f),
+                radius = pipR * 0.5f
+            ),
+            radius = pipR * 0.4f,
+            center = androidx.compose.ui.geometry.Offset(x - pipR * 0.3f, y - pipR * 0.3f)
+        )
+    }
+
+    when (value.coerceIn(1, 6)) {
+        1 -> drawDot(cx, cy)
+        2 -> {
+            drawDot(left, top)
+            drawDot(right, bottom)
+        }
+        3 -> {
+            drawDot(left, top)
+            drawDot(cx, cy)
+            drawDot(right, bottom)
+        }
+        4 -> {
+            drawDot(left, top)
+            drawDot(right, top)
+            drawDot(left, bottom)
+            drawDot(right, bottom)
+        }
+        5 -> {
+            drawDot(left, top)
+            drawDot(right, top)
+            drawDot(cx, cy)
+            drawDot(left, bottom)
+            drawDot(right, bottom)
+        }
+        6 -> {
+            drawDot(left, top)
+            drawDot(left, cy)
+            drawDot(left, bottom)
+            drawDot(right, top)
+            drawDot(right, cy)
+            drawDot(right, bottom)
+        }
+    }
+}
