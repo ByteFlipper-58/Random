@@ -41,10 +41,25 @@ enum class FabSizeSetting(val value: Int) {
     }
 }
 
+enum class AppLanguage(val value: Int, val localeTag: String) {
+    System(0, "system"),
+    English(1, "en"),
+    Russian(2, "ru");
+
+    companion object {
+        fun fromValue(value: Int?): AppLanguage = when (value) {
+            1 -> English
+            2 -> Russian
+            else -> System
+        }
+    }
+}
+
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.System,
     val dynamicColors: Boolean = true,
-    val fabSize: FabSizeSetting = FabSizeSetting.Medium
+    val fabSize: FabSizeSetting = FabSizeSetting.Medium,
+    val appLanguage: AppLanguage = AppLanguage.System
 )
 
 class SettingsRepository private constructor(private val appContext: Context) {
@@ -53,13 +68,15 @@ class SettingsRepository private constructor(private val appContext: Context) {
         val themeMode: Preferences.Key<Int> = intPreferencesKey("theme_mode")
         val dynamicColors: Preferences.Key<Boolean> = booleanPreferencesKey("dynamic_colors")
         val fabSize: Preferences.Key<Int> = intPreferencesKey("fab_size")
+        val appLanguage: Preferences.Key<Int> = intPreferencesKey("app_language")
     }
 
     val settingsFlow: Flow<Settings> = appContext.dataStore.data.map { prefs ->
         Settings(
             themeMode = ThemeMode.fromValue(prefs[Keys.themeMode]),
             dynamicColors = prefs[Keys.dynamicColors] ?: true,
-            fabSize = FabSizeSetting.fromValue(prefs[Keys.fabSize])
+            fabSize = FabSizeSetting.fromValue(prefs[Keys.fabSize]),
+            appLanguage = AppLanguage.fromValue(prefs[Keys.appLanguage])
         )
     }
 
@@ -78,6 +95,12 @@ class SettingsRepository private constructor(private val appContext: Context) {
     suspend fun setFabSize(size: FabSizeSetting) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.fabSize] = size.value
+        }
+    }
+
+    suspend fun setAppLanguage(language: AppLanguage) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.appLanguage] = language.value
         }
     }
 

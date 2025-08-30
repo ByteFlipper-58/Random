@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
@@ -228,6 +230,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 }
             )
         },
+        contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
             Column(
                 horizontalAlignment = Alignment.End,

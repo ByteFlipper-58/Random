@@ -69,6 +69,11 @@
     <string name="system_theme">Системная</string>
     <string name="light_theme">Светлая</string>
     <string name="dark_theme">Тёмная</string>
+    <string name="language">Язык</string>
+    <string name="language_description">Выбор языка приложения</string>
+    <string name="language_system">Системный</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Русский</string>
     <string name="dynamic_colors">Динамические цвета</string>
     <string name="dynamic_colors_description">Адаптация палитры к обоям (Material You)</string>
     <string name="android_12_required">Требуется Android 12+</string>

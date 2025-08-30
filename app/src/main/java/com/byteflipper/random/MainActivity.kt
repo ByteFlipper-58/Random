@@ -4,13 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.core.view.WindowCompat
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.ThemeMode
+import com.byteflipper.random.data.settings.AppLanguage
 import com.byteflipper.random.navigation.AppNavGraph
 import com.byteflipper.random.ui.components.HeartBeatAnimation
 import com.byteflipper.random.ui.theme.RandomTheme
@@ -38,6 +44,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Настраиваем статус-бар по умолчанию для светлой темы (до загрузки настроек)
+        window.statusBarColor = android.graphics.Color.argb(128, 255, 255, 255)
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = true
+        }
+
+        // Применяем сохраненный язык
+        applySavedLanguage()
+
         setContent {
             val context = LocalContext.current
             val settingsRepo = remember { SettingsRepository.fromContext(context) }
@@ -46,6 +61,19 @@ class MainActivity : ComponentActivity() {
                 ThemeMode.System -> isSystemInDarkTheme()
                 ThemeMode.Light -> false
                 ThemeMode.Dark -> true
+            }
+
+            // Настраиваем цвет статус-бара при изменении темы
+            LaunchedEffect(darkTheme) {
+                window.statusBarColor = if (darkTheme) {
+                    android.graphics.Color.TRANSPARENT
+                } else {
+                    // Для светлой темы делаем статус-бар полупрозрачным с темным текстом
+                    android.graphics.Color.argb(128, 255, 255, 255)
+                }
+                WindowCompat.getInsetsController(window, window.decorView).apply {
+                    isAppearanceLightStatusBars = !darkTheme
+                }
             }
 
             RandomTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColors) {
@@ -87,6 +115,20 @@ class MainActivity : ComponentActivity() {
                         onStartExitAnimation = { startExitAnimation() }
                     )
                 }
+            }
+        }
+    }
+
+    private fun applySavedLanguage() {
+        val settingsRepo = SettingsRepository.fromContext(this)
+        lifecycleScope.launch {
+            settingsRepo.settingsFlow.collect { settings ->
+                val localeList = when (settings.appLanguage) {
+                    AppLanguage.System -> LocaleListCompat.getEmptyLocaleList()
+                    AppLanguage.English -> LocaleListCompat.forLanguageTags("en")
+                    AppLanguage.Russian -> LocaleListCompat.forLanguageTags("ru")
+                }
+                AppCompatDelegate.setApplicationLocales(localeList)
             }
         }
     }

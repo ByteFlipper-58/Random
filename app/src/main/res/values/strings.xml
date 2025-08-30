@@ -69,6 +69,11 @@
     <string name="system_theme">System</string>
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
+    <string name="language">Language</string>
+    <string name="language_description">Choose app language</string>
+    <string name="language_system">System</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Russian</string>
     <string name="dynamic_colors">Dynamic colors</string>
     <string name="dynamic_colors_description">Adapt palette to wallpaper (Material You)</string>
     <string name="android_12_required">Android 12+ required</string>

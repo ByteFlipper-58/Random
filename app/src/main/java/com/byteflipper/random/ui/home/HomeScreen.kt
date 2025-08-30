@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -151,7 +153,8 @@ fun HomeScreen(
                     }
                 }
             )
-        }
+        },
+        contentWindowInsets = WindowInsets.systemBars
     ) { inner ->
         val haptic = LocalHapticFeedback.current
         val lazyListState = rememberLazyListState()
@@ -165,9 +168,9 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(inner)
-                .padding(16.dp),
+                .padding(16.dp, 0.dp),
             state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             items(
@@ -186,6 +189,7 @@ fun HomeScreen(
                     Box() {
                         val dragModifier = Modifier
                             .fillMaxWidth()
+                            .padding(top = 6.dp)
                             .longPressDraggableHandle(
                                 onDragStarted = {
                                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
