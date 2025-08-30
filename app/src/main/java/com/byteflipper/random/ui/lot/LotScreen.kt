@@ -430,40 +430,44 @@ private fun LotGridCard(modifier: Modifier = Modifier, isRevealed: Boolean, isMa
                 }
             )
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onClick() }
-            .padding(vertical = 18.dp),
+            .padding(vertical = (cardSize.value * 0.08f).coerceIn(12f, 32f).dp),
         contentAlignment = Alignment.Center
     ) {
         if (!isRevealed) {
             // Адаптируем цвет текста под цвет фона для лучшей читаемости
             val textColor = getContrastColor(cardColor)
-            // Размер шрифта адаптируется под размер карточки (минимум 16.sp, максимум 48.sp)
-            val fontSize = (cardSize.value * 0.3f).coerceIn(16f, 48f).sp
+            // Размер шрифта адаптируется под размер карточки (увеличен для лучшей видимости)
+            val fontSize = (cardSize.value * 0.4f).coerceIn(28f, 72f).sp
             Text("?", style = MaterialTheme.typography.titleLarge.copy(fontSize = fontSize, fontWeight = FontWeight.Bold), color = textColor)
         } else {
             if (isMarked) {
                 // Галочка
-                Checkmark()
+                Checkmark(cardSize)
             } else {
-                // Пусто
-                Box(modifier = Modifier.size(24.dp))
+                // Пусто - адаптивный размер, увеличен для лучшей видимости
+                val emptySize = (cardSize.value * 0.08f).coerceIn(20f, 40f).dp
+                Box(modifier = Modifier.size(emptySize))
             }
         }
     }
 }
 
 @Composable
-private fun Checkmark() {
+private fun Checkmark(cardSize: Dp) {
     // Простой нарисованный чек (правильной ориентации: \_/⟋)
     val color = MaterialTheme.colorScheme.primary
-    Canvas(modifier = Modifier.size(28.dp).alpha(0.96f)) {
+    // Адаптивный размер галочки - увеличен для лучшей видимости
+    val checkmarkSize = (cardSize.value * 0.12f).coerceIn(28f, 48f).dp
+    val strokeWidth = (cardSize.value * 0.025f).coerceIn(5f, 10f)
+    Canvas(modifier = Modifier.size(checkmarkSize).alpha(0.96f)) {
         val w = size.width
         val h = size.height
         // Зеркально по горизонтали: нижняя правая -> нижняя середина -> верхняя левая
         val p1 = androidx.compose.ui.geometry.Offset(w * 0.82f, h * 0.64f)
         val p2 = androidx.compose.ui.geometry.Offset(w * 0.58f, h * 0.84f)
         val p3 = androidx.compose.ui.geometry.Offset(w * 0.14f, h * 0.22f)
-        drawLine(color = color, start = p1, end = p2, strokeWidth = 6f, cap = StrokeCap.Round)
-        drawLine(color = color, start = p2, end = p3, strokeWidth = 6f, cap = StrokeCap.Round)
+        drawLine(color = color, start = p1, end = p2, strokeWidth = strokeWidth, cap = StrokeCap.Round)
+        drawLine(color = color, start = p2, end = p3, strokeWidth = strokeWidth, cap = StrokeCap.Round)
     }
 }
 

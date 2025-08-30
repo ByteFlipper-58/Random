@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.RoundedCornerShape
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.joinAll
@@ -212,7 +213,8 @@ fun FlipCardOverlay(
                     colors = CardDefaults.cardColors(
                         containerColor = backContainerColor
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
                     Box(
                         modifier = Modifier
@@ -232,7 +234,8 @@ fun FlipCardOverlay(
                     colors = CardDefaults.cardColors(
                         containerColor = frontContainerColor
                     ),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
                     Box(
                         modifier = Modifier

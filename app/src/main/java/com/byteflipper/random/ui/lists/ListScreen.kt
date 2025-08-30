@@ -80,9 +80,27 @@ import com.byteflipper.random.ui.components.rememberFlipCardState
 import com.byteflipper.random.ui.components.SizedFab
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.Settings
+import com.byteflipper.random.ui.theme.getRainbowColors
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.min
+
+// Функция для получения контрастного цвета текста на основе цвета фона
+private fun getContrastColor(backgroundColor: Color): Color {
+    // Вычисляем яркость цвета фона (формула luminance)
+    val luminance = backgroundColor.luminance()
+
+    // Если фон светлый (luminance > 0.5), используем черный текст
+    // Если фон темный (luminance <= 0.5), используем белый текст
+    return if (luminance > 0.5f) {
+        Color.Black
+    } else {
+        Color.White
+    }
+}
+
 private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
     // Just a bounded placeholder set for the dialog. We don't need exact numbers UI for lists.
     return if (this.isEmpty()) emptySet() else (0 until min(this.size, baseSize)).toSet()
@@ -356,29 +374,58 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 }
             }
 
+            // Получить цвета радуги и выбрать случайный для карточки
+            val rainbowColors = getRainbowColors()
+            val cardColor = remember(results) { rainbowColors.random() }
+
+            // Адаптивный размер карточки для списков
+            val listCardSize = 320.dp
+
             // Flip overlay
             FlipCardOverlay(
                 state = flipState,
                 anchorInRoot = fabCenterInRoot,
                 onClosed = { results = emptyList() },
+                // Используем один и тот же цвет для обеих сторон карточки
+                frontContainerColor = cardColor,
+                backContainerColor = cardColor,
+                cardSize = listCardSize,
                 frontContent = {
                     if (results.isNotEmpty()) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp)) {
-                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium)
-                            Spacer(Modifier.height(6.dp))
+                        // Адаптивные отступы и размеры - увеличены для лучшей видимости
+                        val adaptivePadding = (listCardSize.value * 0.04f).coerceIn(12f, 28f).dp
+                        val adaptiveSpacing = (listCardSize.value * 0.03f).coerceIn(6f, 16f).dp
+                        val titleFontSize = (listCardSize.value * 0.045f).coerceIn(18f, 32f).sp
+                        val itemFontSize = (listCardSize.value * 0.035f).coerceIn(20f, 36f).sp
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(adaptivePadding)) {
+                            // Адаптируем цвет текста под цвет фона карточки
+                            val titleTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
+                            val itemTextColor = getContrastColor(cardColor)
+                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium.copy(fontSize = titleFontSize), color = titleTextColor)
+                            Spacer(Modifier.height(adaptiveSpacing))
                             results.forEach { s ->
-                                Text(s, style = MaterialTheme.typography.titleMedium)
+                                Text(s, style = MaterialTheme.typography.titleMedium.copy(fontSize = itemFontSize), color = itemTextColor)
                             }
                         }
                     }
                 },
                 backContent = {
                     if (results.isNotEmpty()) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(12.dp)) {
-                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium)
-                            Spacer(Modifier.height(6.dp))
+                        // Адаптивные отступы и размеры - увеличены для лучшей видимости
+                        val adaptivePadding = (listCardSize.value * 0.04f).coerceIn(12f, 28f).dp
+                        val adaptiveSpacing = (listCardSize.value * 0.03f).coerceIn(6f, 16f).dp
+                        val titleFontSize = (listCardSize.value * 0.045f).coerceIn(18f, 32f).sp
+                        val itemFontSize = (listCardSize.value * 0.035f).coerceIn(20f, 36f).sp
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(adaptivePadding)) {
+                            // Адаптируем цвет текста под цвет фона карточки
+                            val titleTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
+                            val itemTextColor = getContrastColor(cardColor)
+                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium.copy(fontSize = titleFontSize), color = titleTextColor)
+                            Spacer(Modifier.height(adaptiveSpacing))
                             results.forEach { s ->
-                                Text(s, style = MaterialTheme.typography.titleMedium)
+                                Text(s, style = MaterialTheme.typography.titleMedium.copy(fontSize = itemFontSize), color = itemTextColor)
                             }
                         }
                     }

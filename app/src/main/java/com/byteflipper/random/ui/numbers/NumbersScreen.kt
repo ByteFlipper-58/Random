@@ -88,11 +88,30 @@ import com.byteflipper.random.ui.components.rememberFlipCardState
 import com.byteflipper.random.ui.components.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
 import com.byteflipper.random.ui.components.SizedFab
+import com.byteflipper.random.ui.theme.getRainbowColors
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
 
 private const val MIN_DELAY_MS = 1_000
 private const val MAX_DELAY_MS = 60_000
+
+// Функция для получения контрастного цвета текста на основе цвета фона
+private fun getContrastColor(backgroundColor: Color): Color {
+    // Вычисляем яркость цвета фона (формула luminance)
+    val luminance = backgroundColor.luminance()
+
+    // Если фон светлый (luminance > 0.5), используем черный текст
+    // Если фон темный (luminance <= 0.5), используем белый текст
+    return if (luminance > 0.5f) {
+        Color.Black
+    } else {
+        Color.White
+    }
+}
 private const val DEFAULT_DELAY_MS = 3_000
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -459,7 +478,7 @@ fun NumbersScreen(onBack: () -> Unit) {
             val configuration = LocalConfiguration.current
             val maxCardSideDp = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(200).dp
 
-            fun computeCardSize(count: Int): androidx.compose.ui.unit.Dp {
+            fun computeCardSize(count: Int): Dp {
                 val base = 280
                 val scale = when {
                     count <= 10 -> 1.0
@@ -478,16 +497,23 @@ fun NumbersScreen(onBack: () -> Unit) {
                 return approx.coerceIn(3, 10)
             }
 
-            fun numberFontSizeFor(count: Int): androidx.compose.ui.unit.TextUnit {
-                return when {
-                    count <= 10 -> 22.sp
-                    count <= 25 -> 18.sp
-                    count <= 50 -> 16.sp
-                    else -> 14.sp
+            val dynamicCardSize = computeCardSize(resultsCountForSizing)
+
+            fun numberFontSizeFor(count: Int, cardSize: Dp): TextUnit {
+                // Адаптивный размер текста в зависимости от размера карточки и количества чисел
+                val baseSize = when {
+                    count <= 5 -> cardSize.value * 0.08f  // Для малого количества - крупный текст
+                    count <= 10 -> cardSize.value * 0.06f
+                    count <= 25 -> cardSize.value * 0.05f
+                    count <= 50 -> cardSize.value * 0.04f
+                    else -> cardSize.value * 0.035f
                 }
+                return baseSize.coerceIn(18f, 36f).sp
             }
 
-            val dynamicCardSize = computeCardSize(resultsCountForSizing)
+            // Получить цвета радуги и выбрать случайный для карточки
+            val rainbowColors = getRainbowColors()
+            val cardColor = remember(frontValues) { rainbowColors.random() }
 
             FlipCardOverlay(
                 state = flipCardState,
@@ -499,27 +525,38 @@ fun NumbersScreen(onBack: () -> Unit) {
                     backValues = emptyList()
                 },
                 cardSize = dynamicCardSize,
+                // Используем один и тот же цвет для обеих сторон карточки
+                frontContainerColor = cardColor,
+                backContainerColor = cardColor,
                 frontContent = {
                     if (frontValues.isNotEmpty()) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier.padding((dynamicCardSize.value * 0.03f).coerceIn(8f, 24f).dp)
                         ) {
                             if (frontValues.size == 1) {
+                                // Адаптивный размер шрифта для одиночного числа - увеличен для лучшей видимости
+                                val singleNumberFontSize = (dynamicCardSize.value * 0.4f).coerceIn(56f, 140f).sp
+                                // Адаптируем цвет текста под цвет фона карточки
+                                val textColor = getContrastColor(cardColor)
                                 Text(
                                     text = frontValues[0].toString(),
-                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 56.sp),
+                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = singleNumberFontSize),
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    color = textColor
                                 )
                             } else {
                                 val cols = columnsFor(frontValues.size)
-                                val numberSize = numberFontSizeFor(frontValues.size)
+                                val numberSize = numberFontSizeFor(frontValues.size, dynamicCardSize)
+                                // Адаптивный размер заголовка
+                                val headerFontSize = (dynamicCardSize.value * 0.04f).coerceIn(16f, 28f).sp
+                                // Адаптируем цвет текста под цвет фона карточки
+                                val headerTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
                                 Text(
                                     text = stringResource(R.string.results),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                                    style = MaterialTheme.typography.labelMedium.copy(fontSize = headerFontSize),
+                                    color = headerTextColor
                                 )
                                 Spacer(Modifier.height(6.dp))
                                 frontValues.chunked(cols).forEach { rowNumbers ->
@@ -528,11 +565,13 @@ fun NumbersScreen(onBack: () -> Unit) {
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         rowNumbers.forEach { number ->
+                                            // Адаптируем цвет текста под цвет фона карточки
+                                            val numberTextColor = getContrastColor(cardColor)
                                             Text(
                                                 text = number.toString(),
                                                 fontSize = numberSize,
                                                 fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                                color = numberTextColor,
                                                 modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp)
                                             )
                                         }
@@ -547,22 +586,30 @@ fun NumbersScreen(onBack: () -> Unit) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(12.dp)
+                            modifier = Modifier.padding((dynamicCardSize.value * 0.03f).coerceIn(8f, 24f).dp)
                         ) {
                             if (backValues.size == 1) {
+                                // Адаптивный размер шрифта для одиночного числа - увеличен для лучшей видимости
+                                val singleNumberFontSize = (dynamicCardSize.value * 0.4f).coerceIn(56f, 140f).sp
+                                // Адаптируем цвет текста под цвет фона карточки
+                                val textColor = getContrastColor(cardColor)
                                 Text(
                                     text = backValues[0].toString(),
-                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 56.sp),
+                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = singleNumberFontSize),
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    color = textColor
                                 )
                             } else {
                                 val cols = columnsFor(backValues.size)
-                                val numberSize = numberFontSizeFor(backValues.size)
+                                val numberSize = numberFontSizeFor(backValues.size, dynamicCardSize)
+                                // Адаптивный размер заголовка
+                                val headerFontSize = (dynamicCardSize.value * 0.04f).coerceIn(16f, 28f).sp
+                                // Адаптируем цвет текста под цвет фона карточки
+                                val headerTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
                                 Text(
                                     text = stringResource(R.string.results),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                                    style = MaterialTheme.typography.labelMedium.copy(fontSize = headerFontSize),
+                                    color = headerTextColor
                                 )
                                 Spacer(Modifier.height(6.dp))
                                 backValues.chunked(cols).forEach { rowNumbers ->
@@ -571,11 +618,13 @@ fun NumbersScreen(onBack: () -> Unit) {
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         rowNumbers.forEach { number ->
+                                            // Адаптируем цвет текста под цвет фона карточки
+                                            val numberTextColor = getContrastColor(cardColor)
                                             Text(
                                                 text = number.toString(),
                                                 fontSize = numberSize,
                                                 fontWeight = FontWeight.Bold,
-                                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                                color = numberTextColor,
                                                 modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp)
                                             )
                                         }
