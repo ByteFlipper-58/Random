@@ -11,7 +11,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.numbers.NumbersScreen
-import com.byteflipper.random.ui.presets.AddListPresetScreen
 import com.byteflipper.random.ui.lists.ListScreen
 import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.lot.LotScreen
@@ -130,23 +129,6 @@ fun AppNavGraph(navController: NavHostController) {
             }
         ) {
             SettingsScreen(onBack = { navController.popBackStack() })
-        }
-        composable(
-            route = Route.AddListPreset.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
-        ) {
-            AddListPresetScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.List.route,

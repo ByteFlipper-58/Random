@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,7 +102,7 @@ fun PresetCard(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.FormatListBulleted,
+                        painter = painterResource(id = R.drawable.list_alt_24px),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSecondaryContainer,
                         modifier = Modifier
@@ -147,7 +148,7 @@ fun PresetCard(
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Edit,
+                        painter = painterResource(id = R.drawable.edit_24px),
                         contentDescription = stringResource(R.string.edit),
                         modifier = Modifier.size(18.dp)
                     )
@@ -163,7 +164,7 @@ fun PresetCard(
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Delete,
+                        painter = painterResource(id = R.drawable.delete_24px),
                         contentDescription = stringResource(R.string.delete),
                         modifier = Modifier.size(18.dp)
                     )

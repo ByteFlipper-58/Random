@@ -215,14 +215,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = null) } },
                 actions = {
                     if (presetId == null) {
-                        TextButton(onClick = {
+                        IconButton(onClick = {
                             saveName = defaultName
                             showSaveDialog = true
-                        }) { Text(stringResource(R.string.save_settings)) }
-                        IconButton(onClick = {
-                            renameName = defaultName
-                            showRenameDialog = true
-                        }) { Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename)) }
+                        }) { Icon(painterResource(R.drawable.save_24px), contentDescription = stringResource(R.string.save_settings)) }
                     } else {
                         IconButton(onClick = {
                             renameName = selectedPreset?.name ?: ""
@@ -449,8 +445,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 onDelayChange = { delayText = it }
             )
 
-            // Rename dialog
-            if (showRenameDialog) {
+            // Rename dialog (only for saved presets)
+            if (showRenameDialog && presetId != null) {
                 AlertDialog(
                     onDismissRequest = { showRenameDialog = false },
                     title = { Text(stringResource(R.string.rename_list)) },
@@ -467,19 +463,12 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                         TextButton(onClick = {
                             val newName = renameName.trim()
                             if (newName.isNotEmpty()) {
-                                if (presetId == null) {
-                                    defaultName = newName
-                                    val sp = context.getSharedPreferences("random_prefs", android.content.Context.MODE_PRIVATE)
-                                    sp.edit().putString("default_list_name", newName).apply()
+                                val current = selectedPreset
+                                if (current != null) {
+                                    val updated = current.copy(name = newName)
+                                    selectedPreset = updated
+                                    scope.launch { repo.upsert(updated) }
                                     showRenameDialog = false
-                                } else {
-                                    val current = selectedPreset
-                                    if (current != null) {
-                                        val updated = current.copy(name = newName)
-                                        selectedPreset = updated
-                                        scope.launch { repo.upsert(updated) }
-                                        showRenameDialog = false
-                                    }
                                 }
                             }
                         }) { Text(stringResource(R.string.save)) }

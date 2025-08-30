@@ -37,8 +37,6 @@ import kotlinx.coroutines.launch
 import android.os.Build
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.PreferenceCategory
-import com.byteflipper.random.ui.components.RadioButtonGroup
-import com.byteflipper.random.ui.components.RadioOption
 import com.byteflipper.random.ui.components.SwitchPreference
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,22 +126,35 @@ fun SettingsScreen(onBack: () -> Unit) {
                 FabSizeSetting.Medium -> "m"
                 FabSizeSetting.Large -> "l"
             }
-            RadioButtonGroup(
-                options = listOf(
-                    RadioOption(key = "s", title = stringResource(R.string.fab_size_small), description = stringResource(R.string.fab_size_small_desc)),
-                    RadioOption(key = "m", title = stringResource(R.string.fab_size_medium), description = stringResource(R.string.fab_size_medium_desc)),
-                    RadioOption(key = "l", title = stringResource(R.string.fab_size_large), description = stringResource(R.string.fab_size_large_desc))
-                ),
-                selectedKey = fabKey,
-                onOptionSelected = { key ->
-                    val size = when (key) {
-                        "s" -> FabSizeSetting.Small
-                        "l" -> FabSizeSetting.Large
-                        else -> FabSizeSetting.Medium
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
+                val fabItems = listOf(
+                    "s" to stringResource(R.string.fab_size_small),
+                    "m" to stringResource(R.string.fab_size_medium),
+                    "l" to stringResource(R.string.fab_size_large)
+                )
+                fabItems.forEachIndexed { index, (key, label) ->
+                    SegmentedButton(
+                        selected = fabKey == key,
+                        onClick = {
+                            val size = when (key) {
+                                "s" -> FabSizeSetting.Small
+                                "l" -> FabSizeSetting.Large
+                                else -> FabSizeSetting.Medium
+                            }
+                            scope.launch { repo.setFabSize(size) }
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(index, fabItems.size),
+                        colors = SegmentedButtonDefaults.colors(
+                            activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            inactiveContainerColor = MaterialTheme.colorScheme.surface,
+                            inactiveContentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(label)
                     }
-                    scope.launch { repo.setFabSize(size) }
                 }
-            )
+            }
         }
     }
 }

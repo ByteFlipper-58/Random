@@ -9,7 +9,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -66,8 +65,10 @@ import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.ui.components.SizedFab
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.layout.Arrangement
 import kotlinx.coroutines.Job
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.material3.FloatingActionButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -216,7 +217,7 @@ fun DiceScreen(onBack: () -> Unit) {
                 .padding(16.dp)
                 .blur((8f * scrimAlpha.value).dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = stringResource(R.string.dice_count),
@@ -225,43 +226,83 @@ fun DiceScreen(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            Spacer(Modifier.height(8.dp))
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                val firstRow = 1..min(5, maxDice)
-                val secondRow: IntRange? = if (maxDice > 5) 6..maxDice else null
+            Spacer(Modifier.height(12.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                // Первый ряд: 1, 2
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
                 ) {
-                    firstRow.forEach { n ->
+                    listOf(1, 2).forEach { n ->
                         val selected = n == diceCount
-                        SmallFloatingActionButton(
+                        FloatingActionButton(
                             onClick = { diceCount = n },
+                            modifier = Modifier.size(56.dp),
                             containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
                             else MaterialTheme.colorScheme.surfaceContainer,
                             contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
                             else MaterialTheme.colorScheme.onSurfaceVariant
                         ) {
-                            Text(text = n.toString(), fontWeight = FontWeight.Bold)
+                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                         }
                     }
                 }
-                if (secondRow != null) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-                    ) {
-                        secondRow.forEach { n ->
-                            val selected = n == diceCount
-                            SmallFloatingActionButton(
-                                onClick = { diceCount = n },
-                                containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                                else MaterialTheme.colorScheme.surfaceContainer,
-                                contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                                else MaterialTheme.colorScheme.onSurfaceVariant
-                            ) {
-                                Text(text = n.toString(), fontWeight = FontWeight.Bold)
-                            }
+                // Второй ряд: 3, 4, 5
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+                ) {
+                    listOf(3, 4, 5).forEach { n ->
+                        val selected = n == diceCount
+                        FloatingActionButton(
+                            onClick = { diceCount = n },
+                            modifier = Modifier.size(56.dp),
+                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        ) {
+                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                        }
+                    }
+                }
+                // Третий ряд: 6, 7, 8
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+                ) {
+                    listOf(6, 7, 8).forEach { n ->
+                        val selected = n == diceCount
+                        FloatingActionButton(
+                            onClick = { diceCount = n },
+                            modifier = Modifier.size(56.dp),
+                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        ) {
+                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                        }
+                    }
+                }
+                // Четвертый ряд: 9, 10
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+                ) {
+                    listOf(9, 10).forEach { n ->
+                        val selected = n == diceCount
+                        FloatingActionButton(
+                            onClick = { diceCount = n },
+                            modifier = Modifier.size(56.dp),
+                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
+                            else MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        ) {
+                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                         }
                     }
                 }

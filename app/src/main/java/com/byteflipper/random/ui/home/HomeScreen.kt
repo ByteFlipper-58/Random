@@ -190,7 +190,7 @@ fun HomeScreen(
                         when (item) {
                             is HomeItem.MenuItem -> {
                                 val onAdd: (() -> Unit)? = when (item.type) {
-                                    MenuItemType.NUMBERS -> onAddNumbersPreset
+                                    MenuItemType.NUMBERS -> null
                                     MenuItemType.LIST -> { { showCreateDialog = true } }
                                     else -> null
                                 }
