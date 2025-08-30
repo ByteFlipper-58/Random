@@ -103,4 +103,5 @@
     <string name="seconds_short">с</string>
     <string name="fixed_delay_1_second">Фиксированная задержка: 1 секунда</string>
     <string name="close">Закрыть</string>
+    <string name="error_no_browser_found">Браузер не найден для открытия URL</string>
 </resources>

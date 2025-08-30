@@ -249,7 +249,7 @@ fun LotScreen(onBack: () -> Unit) {
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back)) } },
                 actions = {
                     IconButton(onClick = { hapticsEnabled = !hapticsEnabled }) {
-                        val icon = if (hapticsEnabled) Icons.Outlined.Vibration else Icons.Outlined.Close //TODO Vibration off icon
+                        val icon = if (hapticsEnabled) painterResource(id = R.drawable.mobile_vibrate_24px) else painterResource(id = R.drawable.mobile_vibrate_off_24px)
                         Icon(icon, contentDescription = if (hapticsEnabled) stringResource(R.string.vibration_on) else stringResource(R.string.vibration_off))
                     }
                 }

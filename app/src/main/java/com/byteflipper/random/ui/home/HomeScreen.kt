@@ -80,6 +80,7 @@ fun HomeScreen(
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenAbout: () -> Unit,
     onAddNumbersPreset: () -> Unit,
     onAddListPreset: () -> Unit, // оставлен для совместимости
 ) {
@@ -134,6 +135,13 @@ fun HomeScreen(
                     )
                 },
                 actions = {
+                    IconButton(onClick = onOpenAbout) {
+                        Icon(
+                            painterResource(id = R.drawable.info_24px),
+                            contentDescription = stringResource(R.string.about_app),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     IconButton(onClick = onOpenSettings) {
                         Icon(
                             painterResource(id = R.drawable.settings_24px),

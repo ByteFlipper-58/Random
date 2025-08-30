@@ -103,4 +103,48 @@
     <string name="seconds_short">s</string>
     <string name="fixed_delay_1_second">Fixed delay: 1 second</string>
     <string name="close">Close</string>
+
+    <string name="expandable_section_collapse">Collapse</string>
+    <string name="expandable_section_expand">Expand</string>
+
+    <!-- About Screen -->
+    <string name="about_app">About App</string>
+    <string name="version">Version</string>
+    <string name="app_icon">App icon</string>
+    <string name="made_with_love">Made with ❤️ by ByteFlipper</string>
+    <string name="contact_us">Contact Us</string>
+    <!-- Categories -->
+    <string name="support_feedback_category_title">Support &amp; Feedback</string>
+    <string name="connect_with_us_category_title">Connect With Us</string>
+    <string name="development_category_title">Development</string>
+    <!-- Actions/Links -->
+    <string name="bug_report_title">Bug Report</string>
+    <string name="bug_report_subtitle">Please describe the problem and send it to us</string>
+    <string name="rate_the_app_title">Rate the app</string>
+    <string name="rate_the_app_subtitle">Rate the app on Google Play</string>
+    <string name="other_apps_title">Other Apps</string>
+    <string name="other_apps_subtitle">Our Other Apps</string>
+    <string name="other_apps_url" translatable="false">https://www.google.com/</string>
+    <string name="website_title">ByteFlipper Website</string>
+    <string name="website_subtitle">Our Website</string>
+    <string name="website_url" translatable="false">https://byteflipper.web.app/</string>
+    <string name="vk_title">VK</string>
+    <string name="vk_subtitle">Our community on VK</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_subtitle">Our Telegram Channel</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_subtitle">Our YouTube Channel</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_subtitle">Our Discord Server</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="github_title">Github</string>
+    <string name="github_subtitle">Our Github Repository</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="source_code_title">Source Code</string>
+    <string name="source_code_subtitle">Source code of the application on GitHub</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/FFSensitivities</string>
+    <string name="error_no_browser_found">No browser found to open URL</string>
 </resources>
