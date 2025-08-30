@@ -1,97 +1,106 @@
 <resources>
     <string name="app_name">Random</string>
 
-    <!-- Общие строки -->
-    <string name="back">Назад</string>
-    <string name="settings">Настройки</string>
-    <string name="save">Сохранить</string>
-    <string name="cancel">Отмена</string>
-    <string name="reset">Сбросить</string>
-    <string name="edit">Редактировать</string>
-    <string name="delete">Удалить</string>
-    <string name="rename">Переименовать</string>
-    <string name="add">Добавить</string>
-    <string name="generate">Сгенерировать</string>
-    <string name="results">Результаты:</string>
-    <string name="disabled">Отключено</string>
+    <!-- Common strings -->
+    <string name="back">Back</string>
+    <string name="settings">Settings</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">Reset</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="add">Add</string>
+    <string name="generate">Generate</string>
+    <string name="results">Results:</string>
+    <string name="disabled">Disabled</string>
+    <string name="enabled">Enabled</string>
 
-    <!-- Главный экран -->
-    <string name="random">Рандом</string>
-    <string name="numbers">Числа</string>
-    <string name="list">Список</string>
-    <string name="dice">Игральные кости</string>
-    <string name="lot">Жребий</string>
-    <string name="coin">Монетка</string>
+    <!-- Main screen -->
+    <string name="random">Random</string>
+    <string name="numbers">Numbers</string>
+    <string name="list">List</string>
+    <string name="dice">Dice</string>
+    <string name="lot">Lot</string>
+    <string name="coin">Coin</string>
 
-    <!-- Экран жребия -->
-    <string name="lot_title">Жребий</string>
-    <string name="vibration_on">Вибрация: вкл</string>
-    <string name="vibration_off">Вибрация: выкл</string>
-    <string name="show_all">Показать все</string>
-    <string name="reshuffle">Перетасовать</string>
-    <string name="minimum_3_fields">Минимум 3 поля</string>
-    <string name="minimum_1_marked">Минимум 1 отмеченное</string>
-    <string name="marked_more_than_total">Отмеченных больше, чем всего</string>
-    <string name="total_fields_label">Общее количество полей</string>
-    <string name="marked_fields_label">Количество отмеченных</string>
+    <!-- Lot screen -->
+    <string name="lot_title">Lot</string>
+    <string name="vibration_on">Vibration: on</string>
+    <string name="vibration_off">Vibration: off</string>
+    <string name="show_all">Show all</string>
+    <string name="reshuffle">Reshuffle</string>
+    <string name="minimum_3_fields">At least 3 fields</string>
+    <string name="minimum_1_marked">At least 1 marked</string>
+    <string name="marked_more_than_total">Marked more than total</string>
+    <string name="total_fields_label">Total fields</string>
+    <string name="marked_fields_label">Marked fields</string>
 
-    <!-- Компоненты списков -->
-    <string name="new_list">Новый список</string>
-    <string name="list_name">Название списка</string>
-    <string name="my_list">Мой список</string>
-    <string name="item_1">Элемент 1</string>
-    <string name="item_2">Элемент 2</string>
-    <string name="item_3">Элемент 3</string>
-    <string name="title">Заголовок</string>
-    <string name="use_preset">Использовать пресет</string>
-    <string name="share_preset">Поделиться пресетом</string>
-    <string name="preset_actions">Действия с пресетом</string>
-    <string name="rename_list">Переименовать список</string>
-    <string name="new_name">Новое название</string>
-    <string name="save_settings">Сохранить параметры</string>
-    <string name="list_empty">Список пуст</string>
-    <string name="all_options_used">Все варианты закончились</string>
+    <!-- List components -->
+    <string name="new_list">New list</string>
+    <string name="list_name">List name</string>
+    <string name="my_list">My list</string>
+    <string name="item_1">Item 1</string>
+    <string name="item_2">Item 2</string>
+    <string name="item_3">Item 3</string>
+    <string name="title">Title</string>
+    <string name="use_preset">Use preset</string>
+    <string name="share_preset">Share preset</string>
+    <string name="preset_actions">Preset actions</string>
+    <string name="rename_list">Rename list</string>
+    <string name="new_name">New name</string>
+    <string name="save_settings">Save settings</string>
+    <string name="list_empty">List is empty</string>
+    <string name="all_options_used">All options used up</string>
 
-    <!-- Экран чисел -->
-    <string name="number">Число</string>
-    <string name="from">ОТ</string>
-    <string name="to">ДО</string>
-    <string name="history_cleared">История использованных чисел очищена</string>
-    <string name="enter_valid_numbers">Введите корректные числа в поля \'ОТ\' и \'ДО\'</string>
-    <string name="count_must_be_positive">Количество должно быть больше 0</string>
-    <string name="all_numbers_used">Все числа использованы</string>
-    <string name="only_available_numbers">Доступно только %1$d неиспользованных чисел</string>
+    <!-- Numbers screen -->
+    <string name="number">Number</string>
+    <string name="from">FROM</string>
+    <string name="to">TO</string>
+    <string name="history_cleared">Used numbers history cleared</string>
+    <string name="enter_valid_numbers">Enter valid numbers in \'FROM\' and \'TO\'</string>
+    <string name="count_must_be_positive">Count must be greater than 0</string>
+    <string name="all_numbers_used">All numbers used</string>
+    <string name="only_available_numbers">Only %1$d unused numbers available</string>
 
-    <!-- Экран настроек -->
-    <string name="theme">Тема</string>
-    <string name="theme_description">Выбор оформления приложения</string>
-    <string name="system_theme">Системная</string>
-    <string name="light_theme">Светлая</string>
-    <string name="dark_theme">Тёмная</string>
-    <string name="dynamic_colors">Динамические цвета</string>
-    <string name="dynamic_colors_description">Адаптация палитры к обоям (Material You)</string>
-    <string name="android_12_required">Требуется Android 12+</string>
-    <string name="use_wallpaper_colors">Использовать цвета обоев (Android 12+)</string>
-    <string name="fab_size">Размер FAB</string>
-    <string name="fab_size_description">Размер основной кнопки действия на экранах</string>
+    <!-- Settings screen -->
+    <string name="theme">Theme</string>
+    <string name="theme_description">Choose app theme</string>
+    <string name="system_theme">System</string>
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="dynamic_colors">Dynamic colors</string>
+    <string name="dynamic_colors_description">Adapt palette to wallpaper (Material You)</string>
+    <string name="android_12_required">Android 12+ required</string>
+    <string name="use_wallpaper_colors">Use wallpaper colors (Android 12+)</string>
+    <string name="fab_size">FAB size</string>
+    <string name="fab_size_description">Size of main action button on screens</string>
     <string name="fab_size_small">S (Small)</string>
-    <string name="fab_size_small_desc">Компактный размер</string>
+    <string name="fab_size_small_desc">Compact size</string>
     <string name="fab_size_medium">M (Medium)</string>
-    <string name="fab_size_medium_desc">Стандартный размер</string>
+    <string name="fab_size_medium_desc">Standard size</string>
     <string name="fab_size_large">L (Large)</string>
-    <string name="fab_size_large_desc">Крупный размер</string>
-    <string name="loading">Загрузка...</string>
-    <string name="open_after_save">Открыть после сохранения</string>
-    <string name="roll_dice">Бросить</string>
-    <string name="dice_count">Количество кубиков</string>
-    <string name="sum">Сумма</string>
-    <string name="heads">Орёл</string>
-    <string name="tails">Решка</string>
-    <string name="result">Результат</string>
-    <string name="swipe_hint">Свайп вверх — подбросить</string>
-    <string name="generator_settings">Настройки генерации</string>
-    <string name="result_count">Количество результатов</string>
-    <string name="allow_repetitions">Разрешить повторения</string>
-    <string name="used_count">Использовано</string>
-    <string name="reset_history">Сбросить историю использованных чисел</string>
+    <string name="fab_size_large_desc">Large size</string>
+    <string name="loading">Loading...</string>
+    <string name="open_after_save">Open after saving</string>
+    <string name="roll_dice">Roll</string>
+    <string name="dice_count">Dice count</string>
+    <string name="sum">Sum</string>
+    <string name="heads">Heads</string>
+    <string name="tails">Tails</string>
+    <string name="result">Result</string>
+    <string name="swipe_hint">Swipe up to flip</string>
+    <string name="generator_settings">Generator settings</string>
+    <string name="result_count">Number of results</string>
+    <string name="allow_repetitions">Allow repetitions</string>
+    <string name="used_count">Used</string>
+    <string name="reset_history">Reset used numbers history</string>
+
+    <!-- Dialogs -->
+    <string name="use_delay">Use delay</string>
+    <string name="delay">Delay</string>
+    <string name="seconds">sec</string>
+    <string name="seconds_short">s</string>
+    <string name="fixed_delay_1_second">Fixed delay: 1 second</string>
+    <string name="close">Close</string>
 </resources>

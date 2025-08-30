@@ -184,7 +184,7 @@ fun GeneratorConfigDialog(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Использовать задержку",
+                            text = stringResource(R.string.use_delay),
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.weight(1f)
                         )
@@ -208,12 +208,12 @@ fun GeneratorConfigDialog(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Задержка",
+                                text = stringResource(R.string.delay),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "$currentSec сек",
+                                text = "$currentSec ${stringResource(R.string.seconds_short)}",
                                 style = MaterialTheme.typography.titleMedium,
                             )
                         }
@@ -234,12 +234,12 @@ fun GeneratorConfigDialog(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                "${minSec}с",
+                                "${minSec}${stringResource(R.string.seconds_short)}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                "${maxSec}с",
+                                "${maxSec}${stringResource(R.string.seconds_short)}",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -247,7 +247,7 @@ fun GeneratorConfigDialog(
                     } else {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Фиксированная задержка: 1 секунда",
+                            text = stringResource(R.string.fixed_delay_1_second),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -259,7 +259,7 @@ fun GeneratorConfigDialog(
             TextButton(
                 onClick = onDismissRequest
             ) {
-                Text("Закрыть")
+                Text(stringResource(R.string.close))
             }
         }
     )

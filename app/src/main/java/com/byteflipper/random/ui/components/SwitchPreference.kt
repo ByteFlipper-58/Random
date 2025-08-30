@@ -19,6 +19,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,12 +27,13 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.byteflipper.random.R
 
 @Composable
 fun SwitchPreference(
     title: String,
-    descriptionOn: String = "Enabled",
-    descriptionOff: String = "Disabled",
+    descriptionOn: String = stringResource(R.string.enabled),
+    descriptionOff: String = stringResource(R.string.disabled),
     checked: Boolean,
     icon: Painter? = null,
     activeIndicatorColor: Color = MaterialTheme.colorScheme.primary,
