@@ -56,10 +56,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -78,10 +78,13 @@ import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.math.roundToInt
 import kotlin.random.Random
+import com.byteflipper.random.ui.theme.getRainbowColors
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 
 private enum class FabMode { Randomize, RevealAll }
 
-data class LotCard(val id: Int, val isMarked: Boolean, val isRevealed: Boolean)
+data class LotCard(val id: Int, val isMarked: Boolean, val isRevealed: Boolean, val color: Color)
 
 private fun computeRowSizes(total: Int): List<Int> {
     if (total <= 0) return emptyList()
@@ -169,12 +172,15 @@ fun LotScreen(onBack: () -> Unit) {
     // Анимация скрима поверх контента
     val scrimAlpha = remember { Animatable(0f) }
 
+    // Получить цвета радуги для текущей темы
+    val rainbowColors = getRainbowColors()
+
     fun parseIntSafe(text: String, minValue: Int, maxValue: Int): Int? {
         val v = text.trim().toIntOrNull() ?: return null
         return v.coerceIn(minValue, maxValue)
     }
 
-    fun generateCards() {
+    fun generateCards(availableColors: List<androidx.compose.ui.graphics.Color>) {
         val total = parseIntSafe(totalText, 1, 500) ?: 0
         val marked = parseIntSafe(markedText, 0, total) ?: 0
         if (total < 3) {
@@ -193,7 +199,12 @@ fun LotScreen(onBack: () -> Unit) {
         val indices = (0 until total).toMutableList()
         indices.shuffle()
         val markedSet = indices.take(marked).toSet()
-        cards = List(total) { i -> LotCard(id = i, isMarked = i in markedSet, isRevealed = false) }
+
+        // Создать список цветов с умным распределением, избегая повторений рядом
+        val rows = computeRowSizes(total)
+        val colors = distributeColorsSmartly(total, availableColors, rows)
+
+        cards = List(total) { i -> LotCard(id = i, isMarked = i in markedSet, isRevealed = false, color = colors[i]) }
         fabMode = FabMode.RevealAll
         scope.launch { scrimAlpha.animateTo(1f, tween(250)) }
     }
@@ -224,7 +235,7 @@ fun LotScreen(onBack: () -> Unit) {
     }
 
     fun reshuffleAndHide() {
-        // Перетасовать порядок карточек и закрыть их
+        // Перетасовать порядок карточек и закрыть их, сохраняя цвета
         val shuffled = cards.shuffled(Random)
         val hasMarked = shuffled.any { it.isMarked }
         cards = shuffled.map { it.copy(isRevealed = false) }
@@ -249,7 +260,7 @@ fun LotScreen(onBack: () -> Unit) {
                 size = settings.fabSize,
                 onClick = {
                     if (cards.isEmpty()) {
-                        generateCards()
+                        generateCards(rainbowColors)
                     } else {
                         when (fabMode) {
                             FabMode.RevealAll -> revealAll()
@@ -381,6 +392,8 @@ fun LotScreen(onBack: () -> Unit) {
                                         modifier = Modifier.size(cardSize),
                                         isRevealed = card.isRevealed,
                                         isMarked = card.isMarked,
+                                        cardColor = card.color,
+                                        cardSize = cardSize,
                                         onClick = { revealCard(card.id) }
                                     )
                                     idx++
@@ -396,7 +409,7 @@ fun LotScreen(onBack: () -> Unit) {
 }
 
 @Composable
-private fun LotGridCard(modifier: Modifier = Modifier, isRevealed: Boolean, isMarked: Boolean, onClick: () -> Unit) {
+private fun LotGridCard(modifier: Modifier = Modifier, isRevealed: Boolean, isMarked: Boolean, cardColor: Color, cardSize: Dp, onClick: () -> Unit) {
     val rotation = remember { Animatable(0f) }
     val target = if (isRevealed) 180f else 0f
     LaunchedEffect(target) { rotation.animateTo(target, tween(250)) }
@@ -411,7 +424,7 @@ private fun LotGridCard(modifier: Modifier = Modifier, isRevealed: Boolean, isMa
             .clip(RoundedCornerShape(10.dp))
             .background(
                 when {
-                    !isRevealed -> MaterialTheme.colorScheme.primaryContainer
+                    !isRevealed -> cardColor
                     isMarked -> MaterialTheme.colorScheme.secondaryContainer
                     else -> Color.White
                 }
@@ -421,7 +434,11 @@ private fun LotGridCard(modifier: Modifier = Modifier, isRevealed: Boolean, isMa
         contentAlignment = Alignment.Center
     ) {
         if (!isRevealed) {
-            Text("?", style = MaterialTheme.typography.titleLarge.copy(fontSize = 22.sp), color = MaterialTheme.colorScheme.onPrimaryContainer)
+            // Адаптируем цвет текста под цвет фона для лучшей читаемости
+            val textColor = getContrastColor(cardColor)
+            // Размер шрифта адаптируется под размер карточки (минимум 16.sp, максимум 48.sp)
+            val fontSize = (cardSize.value * 0.3f).coerceIn(16f, 48f).sp
+            Text("?", style = MaterialTheme.typography.titleLarge.copy(fontSize = fontSize, fontWeight = FontWeight.Bold), color = textColor)
         } else {
             if (isMarked) {
                 // Галочка
@@ -450,4 +467,63 @@ private fun Checkmark() {
     }
 }
 
+// Функция для получения контрастного цвета текста на основе цвета фона
+private fun getContrastColor(backgroundColor: Color): Color {
+    // Вычисляем яркость цвета фона (формула luminance)
+    val luminance = backgroundColor.luminance()
 
+    // Если фон светлый (luminance > 0.5), используем черный текст
+    // Если фон темный (luminance <= 0.5), используем белый текст
+    return if (luminance > 0.5f) {
+        Color.Black
+    } else {
+        Color.White
+    }
+}
+
+// Функция для умного распределения цветов, избегающая повторений рядом
+private fun distributeColorsSmartly(
+    totalCards: Int,
+    availableColors: List<Color>,
+    rows: List<Int>
+): List<Color> {
+    if (availableColors.isEmpty()) return emptyList()
+
+    val colors = mutableListOf<Color>()
+    val usedColorsInCurrentRow = mutableSetOf<Color>()
+    val usedColorsInPreviousRow = mutableSetOf<Color>()
+
+    var cardIndex = 0
+    var rowIndex = 0
+
+    for (row in rows) {
+        usedColorsInCurrentRow.clear()
+
+        for (i in 0 until row) {
+            if (cardIndex >= totalCards) break
+
+            // Получаем доступные цвета, исключая уже использованные в этом и предыдущем ряду
+            val forbiddenColors = usedColorsInCurrentRow + usedColorsInPreviousRow
+            val availableForThisCard = availableColors.filter { it !in forbiddenColors }
+
+            val selectedColor = if (availableForThisCard.isNotEmpty()) {
+                // Выбираем случайный из доступных цветов
+                availableForThisCard.random()
+            } else {
+                // Если доступных цветов нет, выбираем случайный из всех
+                availableColors.random()
+            }
+
+            colors.add(selectedColor)
+            usedColorsInCurrentRow.add(selectedColor)
+            cardIndex++
+        }
+
+        // Обновляем цвета предыдущего ряда для следующей итерации
+        usedColorsInPreviousRow.clear()
+        usedColorsInPreviousRow.addAll(usedColorsInCurrentRow)
+        rowIndex++
+    }
+
+    return colors
+}
