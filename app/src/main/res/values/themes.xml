@@ -3,8 +3,5 @@
 
     <style name="Theme.Random" parent="android:Theme.Material.Light.NoActionBar" />
 
-    <style name="App.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
-        <item name="postSplashScreenTheme">@style/Theme.Random</item>
-    </style>
+    <style name="App.Starting" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>

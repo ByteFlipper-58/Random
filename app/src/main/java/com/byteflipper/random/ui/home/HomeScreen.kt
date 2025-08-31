@@ -45,6 +45,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
@@ -88,9 +90,10 @@ fun HomeScreen(
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val repo = remember { ListPresetRepository.fromContext(context) }
+    val viewModel: HomeViewModel = hiltViewModel()
+    val presets by viewModel.presets.collectAsStateWithLifecycle()
 
-    var presets by remember { mutableStateOf<List<ListPreset>>(emptyList()) }
+
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
     var createName by rememberSaveable { mutableStateOf("") }
     var renameTarget by remember { mutableStateOf<ListPreset?>(null) }
@@ -120,10 +123,7 @@ fun HomeScreen(
         items = newItems
     }
 
-    // Подписка на БД
-    LaunchedEffect(Unit) {
-        repo.observeAll().collectLatest { list -> presets = list }
-    }
+
 
     Scaffold(
         topBar = {
@@ -239,7 +239,7 @@ fun HomeScreen(
                                     preset = item.preset,
                                     onPresetClick = { preset -> onOpenListById(preset.id) },
                                     onRenameClick = { preset -> renameTarget = preset },
-                                    onDeleteClick = { preset -> scope.launch { repo.delete(preset) } },
+                                    onDeleteClick = { preset -> viewModel.deletePreset(preset) },
                                     modifier = dragModifier
                                 )
                             }
@@ -257,7 +257,7 @@ fun HomeScreen(
             createName = ""
         },
         presetCount = presets.size,
-        repository = repo,
+        repository = viewModel.listPresetRepository,
         coroutineScope = scope,
         onPresetCreated = {
             showCreateDialog = false
@@ -265,11 +265,13 @@ fun HomeScreen(
         }
     )
 
-    RenameListDialog(
-        preset = renameTarget,
-        onDismiss = { renameTarget = null },
-        repository = repo,
-        coroutineScope = scope,
-        onPresetRenamed = { renameTarget = null }
-    )
+    if (renameTarget != null) {
+        RenameListDialog(
+            preset = renameTarget,
+            onDismiss = { renameTarget = null },
+            repository = viewModel.listPresetRepository,
+            coroutineScope = scope,
+            onPresetRenamed = { renameTarget = null }
+        )
+    }
 }

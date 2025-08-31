@@ -3,272 +3,165 @@ package com.byteflipper.random.ui.lists
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
-import com.byteflipper.random.data.preset.ListPreset
-import com.byteflipper.random.data.preset.ListPresetRepository
-import com.byteflipper.random.data.settings.Settings
-import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.ui.components.EditorList
 import com.byteflipper.random.ui.components.FlipCardControls
 import com.byteflipper.random.ui.components.FlipCardOverlay
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
-import com.byteflipper.random.ui.components.SizedFab
 import com.byteflipper.random.ui.components.rememberFlipCardState
+import com.byteflipper.random.ui.lists.components.ListRenameDialog
+import com.byteflipper.random.ui.lists.components.ListSaveDialog
+import com.byteflipper.random.ui.lists.components.ListResultsDisplay
+import com.byteflipper.random.ui.lists.components.ListFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
-import kotlinx.coroutines.launch
 import kotlin.math.min
+import kotlinx.coroutines.launch
 
-// Функция для получения контрастного цвета текста на основе цвета фона
-private fun getContrastColor(backgroundColor: Color): Color {
-    // Вычисляем яркость цвета фона (формула luminance)
-    val luminance = backgroundColor.luminance()
 
-    // Если фон светлый (luminance > 0.5), используем черный текст
-    // Если фон темный (luminance <= 0.5), используем белый текст
-    return if (luminance > 0.5f) {
-        Color.Black
-    } else {
-        Color.White
-    }
-}
 
 private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
     // Just a bounded placeholder set for the dialog. We don't need exact numbers UI for lists.
-    return if (this.isEmpty()) emptySet() else (0 until min(this.size, baseSize)).toSet()
+    return if (this.isEmpty()) emptySet() else (0 until kotlin.math.min(this.size, baseSize)).toSet()
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long) -> Unit = {}) {
+    val viewModel: ListViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val presets by viewModel.presets.collectAsStateWithLifecycle()
+
+    // Получить строковые ресурсы заранее
+    val listString = stringResource(R.string.list)
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val repo = remember { ListPresetRepository.fromContext(context) }
-
-    // Получение строк из ресурсов
-    val listString = stringResource(R.string.list)
-    val item1String = stringResource(R.string.item_1)
-    val item2String = stringResource(R.string.item_2)
-    val item3String = stringResource(R.string.item_3)
-
-    // UI state
-    var selectedPreset by remember { mutableStateOf<ListPreset?>(null) }
-    var presets by remember { mutableStateOf<List<ListPreset>>(emptyList()) }
-    var showConfigDialog by rememberSaveable { mutableStateOf(false) }
-    var useDelay by rememberSaveable { mutableStateOf(true) }
-    var delayText by rememberSaveable { mutableStateOf("3000") }
-    var countText by rememberSaveable { mutableStateOf("1") }
-    var allowRepetitions by rememberSaveable { mutableStateOf(true) }
-
-    // Editor state
-    val editorItems = remember { mutableStateListOf<String>() }
-    var newItem by rememberSaveable { mutableStateOf("") }
-    var showRenameDialog by rememberSaveable { mutableStateOf(false) }
-    var renameName by rememberSaveable { mutableStateOf("") }
-    var defaultName by rememberSaveable { mutableStateOf(listString) }
-    var showSaveDialog by rememberSaveable { mutableStateOf(false) }
-    var saveName by rememberSaveable { mutableStateOf("") }
-    var openAfterSave by rememberSaveable { mutableStateOf(true) }
-    var usedItems by remember { mutableStateOf<Set<String>>(emptySet()) }
-
-
-
-    var results by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
 
     // FAB geometry
-    var fabCenterInRoot by remember { mutableStateOf(Offset.Zero) }
-    var fabSize by remember { mutableStateOf(IntSize.Zero) }
+    var fabCenterInRoot by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
+    var fabSize by remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
 
     // Flip card
     val flipState = rememberFlipCardState()
     val flipCtrl = FlipCardControls(flipState)
 
-    // Load default or specific preset by id, and prepare editor state
-    LaunchedEffect(presetId) {
-        if (presetId == null) {
-            // Load from SharedPreferences and keep changes local (not repository)
-            val sp = context.getSharedPreferences("random_prefs", android.content.Context.MODE_PRIVATE)
-            defaultName = sp.getString("default_list_name", null) ?: listString
-            val raw = sp.getString("default_list_items", null)
-            val items = if (raw == null) listOf(item1String, item2String, item3String) else raw.split('\u0001')
-            editorItems.clear(); editorItems.addAll(items)
-            if (editorItems.isEmpty()) editorItems.add("")
-        } else {
-            repo.getById(presetId)?.let { p ->
-                selectedPreset = p
-                presets = listOf(p)
-                editorItems.clear(); editorItems.addAll(p.items)
-                if (editorItems.isEmpty()) editorItems.add("")
+    // Обработка генерации
+    fun handleGenerate() {
+        val base = viewModel.getBaseItems()
+        if (base.isEmpty()) {
+            scope.launch { snackbarHostState.showSnackbar("List is empty") }
+            return
+        }
+
+        if (!uiState.allowRepetitions) {
+            val pool = base.filter { it !in uiState.usedItems }.distinct()
+            if (pool.isEmpty()) {
+                scope.launch {
+                    val result = snackbarHostState.showSnackbar(
+                        message = "All options used",
+                        actionLabel = "Reset"
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.resetUsedItems()
+                    }
+                }
+                return
             }
         }
-    }
 
-    fun saveCurrent() {
-        if (presetId == null) {
-            // Persist to SharedPreferences only
-            val sp = context.getSharedPreferences("random_prefs", android.content.Context.MODE_PRIVATE)
-            val joined = editorItems.map { it.trim() }.filter { it.isNotEmpty() }.joinToString("\u0001")
-            sp.edit().putString("default_list_items", joined).apply()
-        } else {
-            val current = selectedPreset ?: return
-            val updated = current.copy(
-                items = editorItems.map { it.trim() }.filter { it.isNotEmpty() }
-            )
-            selectedPreset = updated
-            scope.launch { repo.upsert(updated) }
-        }
-    }
+        val delayMs = viewModel.getEffectiveDelayMs().toInt()
+        if (!flipCtrl.isVisible()) flipCtrl.open()
 
-    fun generate(): List<String> {
-        val base: List<String> = if (presetId == null) {
-            editorItems.map { it.trim() }.filter { it.isNotEmpty() }
-        } else {
-            val p = selectedPreset ?: return emptyList()
-            p.items.map { it.trim() }.filter { it.isNotEmpty() }
-        }
-        val n = countText.toIntOrNull()?.coerceAtLeast(1) ?: 1
-        return if (allowRepetitions) {
-            if (base.isEmpty()) emptyList() else List(n) { base.random() }
-        } else {
-            val pool = base.map { it.trim() }.filter { it.isNotEmpty() && it !in usedItems }.distinct()
-            if (pool.isEmpty()) emptyList() else pool.shuffled().take(min(n, pool.size))
-        }
+        flipCtrl.spinAndReveal(
+            effectiveDelayMs = delayMs,
+            onReveal = { _ ->
+                val results = viewModel.generateAndUpdateResults()
+                // results уже обновлены в ViewModel
+            }
+        )
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (presetId == null) defaultName else (selectedPreset?.name ?: listString)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = null) } },
+                title = {
+                    Text(
+                        if (presetId == null) stringResource(R.string.list)
+                        else (uiState.preset?.name ?: stringResource(R.string.list))
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.Outlined.ArrowBack, contentDescription = null)
+                    }
+                },
                 actions = {
                     if (presetId == null) {
                         IconButton(onClick = {
-                            saveName = defaultName
-                            showSaveDialog = true
-                        }) { Icon(painterResource(R.drawable.save_24px), contentDescription = stringResource(R.string.save_settings)) }
+                            viewModel.updateSaveName(listString)
+                            viewModel.toggleSaveDialog()
+                        }) {
+                            Icon(painterResource(R.drawable.save_24px), contentDescription = stringResource(R.string.save))
+                        }
                     } else {
                         IconButton(onClick = {
-                            renameName = selectedPreset?.name ?: ""
-                            showRenameDialog = true
-                        }) { Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename)) }
+                            viewModel.updateRenameName(uiState.preset?.name ?: "")
+                            viewModel.toggleRenameDialog()
+                        }) {
+                            Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename))
+                        }
                     }
                 }
             )
         },
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                SmallFloatingActionButton(
-                    onClick = { showConfigDialog = true },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                ) { Icon(painterResource(R.drawable.settings_24px), contentDescription = null) }
-
-                Box(modifier = Modifier.onGloballyPositioned { c ->
-                    fabSize = c.size
-                    val pos = c.positionInRoot()
-                    fabCenterInRoot = Offset(pos.x + fabSize.width / 2f, pos.y + fabSize.height / 2f)
-                }) {
-                    val settingsRepo = remember { SettingsRepository.fromContext(context) }
-                    val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
-                    SizedFab(
-                        size = settings.fabSize,
-                        onClick = {
-                        val base = if (presetId == null) {
-                            editorItems.map { it.trim() }.filter { it.isNotEmpty() }
-                        } else {
-                            selectedPreset?.items?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
-                        }
-                        if (base.isEmpty()) {
-                            scope.launch { snackbarHostState.showSnackbar(context.getString(R.string.list_empty)) }
-                            return@SizedFab
-                        }
-                        if (!allowRepetitions) {
-                            val pool = base.map { it.trim() }.filter { it.isNotEmpty() && it !in usedItems }.distinct()
-                            if (pool.isEmpty()) {
-                                scope.launch {
-                                    val res = snackbarHostState.showSnackbar(
-                                        message = context.getString(R.string.all_options_used),
-                                        actionLabel = context.getString(R.string.reset)
-                                    )
-                                    if (res == SnackbarResult.ActionPerformed) {
-                                        usedItems = emptySet()
-                                    }
-                                }
-                                return@SizedFab
-                            }
-                        }
-                        val ms = if (useDelay) delayText.toIntOrNull() ?: 3000 else 1000
-                        if (!flipCtrl.isVisible()) flipCtrl.open()
-                        flipCtrl.spinAndReveal(
-                            effectiveDelayMs = ms,
-                            onReveal = { isFront ->
-                                val out = generate()
-                                results = out
-                                if (!allowRepetitions) {
-                                    val toAdd = out.map { it.trim() }.filter { it.isNotEmpty() }
-                                    if (toAdd.isNotEmpty()) usedItems = usedItems + toAdd
-                                }
-                            }
-                        )
-                    },
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ) { Icon(painterResource(R.drawable.autorenew_24px), contentDescription = null) }
+            ListFabControls(
+                onConfigClick = { viewModel.toggleConfigDialog() },
+                onGenerateClick = { handleGenerate() },
+                onFabPositioned = { center, size ->
+                    fabCenterInRoot = center
+                    fabSize = size
                 }
-            }
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { inner ->
@@ -281,10 +174,13 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     .blur(blur),
                 verticalArrangement = Arrangement.Top
             ) {
-                if (presetId == null || selectedPreset != null) {
+                if (presetId == null || uiState.preset != null) {
                     EditorList(
-                        items = editorItems,
-                        onItemsChange = { saveCurrent() },
+                        items = androidx.compose.runtime.snapshots.SnapshotStateList<String>().apply {
+                            clear()
+                            addAll(uiState.editorItems)
+                        },
+                        onItemsChange = { viewModel.updateEditorItems(it) },
                         modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
                         minItems = 1
                     )
@@ -295,7 +191,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
             // Получить цвета радуги и выбрать случайный для карточки
             val rainbowColors = getRainbowColors()
-            val cardColor = remember(results) { rainbowColors.random() }
+            val cardColor = remember(uiState.results) { rainbowColors.random() }
 
             // Адаптивный размер карточки для списков
             val listCardSize = 320.dp
@@ -304,140 +200,70 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             FlipCardOverlay(
                 state = flipState,
                 anchorInRoot = fabCenterInRoot,
-                onClosed = { results = emptyList() },
+                onClosed = { viewModel.clearResults() },
                 // Используем один и тот же цвет для обеих сторон карточки
                 frontContainerColor = cardColor,
                 backContainerColor = cardColor,
                 cardSize = listCardSize,
                 frontContent = {
-                    if (results.isNotEmpty()) {
-                        // Адаптивные отступы и размеры - увеличены для лучшей видимости
-                        val adaptivePadding = (listCardSize.value * 0.04f).coerceIn(12f, 28f).dp
-                        val adaptiveSpacing = (listCardSize.value * 0.03f).coerceIn(6f, 16f).dp
-                        val titleFontSize = (listCardSize.value * 0.045f).coerceIn(18f, 32f).sp
-                        val itemFontSize = (listCardSize.value * 0.035f).coerceIn(20f, 36f).sp
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(adaptivePadding)) {
-                            // Адаптируем цвет текста под цвет фона карточки
-                            val titleTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
-                            val itemTextColor = getContrastColor(cardColor)
-                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium.copy(fontSize = titleFontSize), color = titleTextColor)
-                            Spacer(Modifier.height(adaptiveSpacing))
-                            results.forEach { s ->
-                                Text(s, style = MaterialTheme.typography.titleMedium.copy(fontSize = itemFontSize), color = itemTextColor)
-                            }
-                        }
-                    }
+                    ListResultsDisplay(
+                        results = uiState.results,
+                        cardColor = cardColor
+                    )
                 },
                 backContent = {
-                    if (results.isNotEmpty()) {
-                        // Адаптивные отступы и размеры - увеличены для лучшей видимости
-                        val adaptivePadding = (listCardSize.value * 0.04f).coerceIn(12f, 28f).dp
-                        val adaptiveSpacing = (listCardSize.value * 0.03f).coerceIn(6f, 16f).dp
-                        val titleFontSize = (listCardSize.value * 0.045f).coerceIn(18f, 32f).sp
-                        val itemFontSize = (listCardSize.value * 0.035f).coerceIn(20f, 36f).sp
-
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(adaptivePadding)) {
-                            // Адаптируем цвет текста под цвет фона карточки
-                            val titleTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
-                            val itemTextColor = getContrastColor(cardColor)
-                            Text(stringResource(R.string.results), style = MaterialTheme.typography.labelMedium.copy(fontSize = titleFontSize), color = titleTextColor)
-                            Spacer(Modifier.height(adaptiveSpacing))
-                            results.forEach { s ->
-                                Text(s, style = MaterialTheme.typography.titleMedium.copy(fontSize = itemFontSize), color = itemTextColor)
-                            }
-                        }
-                    }
+                    ListResultsDisplay(
+                        results = uiState.results,
+                        cardColor = cardColor
+                    )
                 }
             )
 
-            // Config dialog (reuse)
+            // Config dialog
+            if (uiState.showConfigDialog) {
             GeneratorConfigDialog(
-                visible = showConfigDialog,
-                onDismissRequest = { showConfigDialog = false },
-                countText = countText,
-                onCountChange = { countText = it },
-                allowRepetitions = allowRepetitions,
-                onAllowRepetitionsChange = { allowRepetitions = it },
-                usedNumbers = usedItems.indicesOf(baseSize = 1_000_000),
+                    visible = uiState.showConfigDialog,
+                    onDismissRequest = { viewModel.toggleConfigDialog() },
+                    countText = uiState.countText,
+                    onCountChange = { viewModel.updateCountText(it) },
+                    allowRepetitions = uiState.allowRepetitions,
+                    onAllowRepetitionsChange = { viewModel.updateAllowRepetitions(it) },
+                    usedNumbers = uiState.usedItems.indicesOf(baseSize = 1_000_000),
                 availableRange = null,
-                onResetUsedNumbers = { usedItems = emptySet() },
-                useDelay = useDelay,
-                onUseDelayChange = { useDelay = it },
-                delayText = delayText,
-                onDelayChange = { delayText = it }
-            )
+                    onResetUsedNumbers = { viewModel.resetUsedItems() },
+                    useDelay = uiState.useDelay,
+                    onUseDelayChange = { viewModel.updateUseDelay(it) },
+                    delayText = uiState.delayText,
+                    onDelayChange = { viewModel.updateDelayText(it) }
+                )
+            }
 
             // Rename dialog (only for saved presets)
-            if (showRenameDialog && presetId != null) {
-                AlertDialog(
-                    onDismissRequest = { showRenameDialog = false },
-                    title = { Text(stringResource(R.string.rename_list)) },
-                    text = {
-                        OutlinedTextField(
-                            value = renameName,
-                            onValueChange = { renameName = it },
-                            singleLine = true,
-                            label = { Text(stringResource(R.string.new_name)) },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            val newName = renameName.trim()
-                            if (newName.isNotEmpty()) {
-                                val current = selectedPreset
-                                if (current != null) {
-                                    val updated = current.copy(name = newName)
-                                    selectedPreset = updated
-                                    scope.launch { repo.upsert(updated) }
-                                    showRenameDialog = false
-                                }
-                            }
-                        }) { Text(stringResource(R.string.save)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showRenameDialog = false }) { Text(stringResource(R.string.cancel)) }
+            if (uiState.showRenameDialog && presetId != null) {
+                ListRenameDialog(
+                    currentName = uiState.renameName,
+                    onDismiss = { viewModel.toggleRenameDialog() },
+                    onConfirm = { newName ->
+                        viewModel.updateRenameName(newName)
+                        viewModel.renamePreset()
                     }
                 )
             }
 
             // Save as new preset dialog (for default screen)
-            if (showSaveDialog) {
-                AlertDialog(
-                    onDismissRequest = { showSaveDialog = false },
-                    title = { Text(stringResource(R.string.save_settings)) },
-                    text = {
-                        Column {
-                            OutlinedTextField(
-                                value = saveName,
-                                onValueChange = { saveName = it },
-                                singleLine = true,
-                                label = { Text(stringResource(R.string.list_name)) },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Checkbox(checked = openAfterSave, onCheckedChange = { openAfterSave = it })
-                                Text(stringResource(R.string.open_after_save), modifier = Modifier.padding(start = 8.dp))
+            if (uiState.showSaveDialog) {
+                ListSaveDialog(
+                    currentName = uiState.saveName,
+                    presetCount = presets.size,
+                    onDismiss = { viewModel.toggleSaveDialog() },
+                    onConfirm = { name, shouldOpenAfterSave ->
+                        viewModel.updateSaveName(name)
+                        viewModel.updateOpenAfterSave(shouldOpenAfterSave)
+                        viewModel.saveAsNewPreset { newId ->
+                            if (shouldOpenAfterSave) {
+                                onOpenListById(newId)
                             }
                         }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            val name = saveName.trim()
-                            val items = editorItems.map { it.trim() }.filter { it.isNotEmpty() }
-                            if (name.isNotEmpty() && items.isNotEmpty()) {
-                                scope.launch {
-                                    val newId = repo.upsert(ListPreset(name = name, items = items))
-                                    if (openAfterSave) onOpenListById(newId)
-                                }
-                                showSaveDialog = false
-                            }
-                        }) { Text(stringResource(R.string.save)) }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showSaveDialog = false }) { Text(stringResource(R.string.cancel)) }
                     }
                 )
             }

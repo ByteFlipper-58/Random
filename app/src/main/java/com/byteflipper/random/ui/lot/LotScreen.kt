@@ -83,6 +83,8 @@ import kotlin.random.Random
 import com.byteflipper.random.ui.theme.getRainbowColors
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 private enum class FabMode { Randomize, RevealAll }
 
@@ -153,8 +155,8 @@ fun LotScreen(onBack: () -> Unit) {
     val haptics = LocalHapticFeedback.current
     var hapticsEnabled by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
-    val settingsRepo = remember { SettingsRepository.fromContext(context) }
-    val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
+    val viewModel: LotViewModel = hiltViewModel()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     // Получение строк из ресурсов
     val minimum3Fields = stringResource(R.string.minimum_3_fields)
@@ -182,7 +184,7 @@ fun LotScreen(onBack: () -> Unit) {
         return v.coerceIn(minValue, maxValue)
     }
 
-    fun generateCards(availableColors: List<androidx.compose.ui.graphics.Color>) {
+    fun generateCards(availableColors: List<Color>) {
         val total = parseIntSafe(totalText, 1, 500) ?: 0
         val marked = parseIntSafe(markedText, 0, total) ?: 0
         if (total < 3) {

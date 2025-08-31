@@ -27,14 +27,20 @@ import com.byteflipper.random.data.settings.AppLanguage
 import com.byteflipper.random.navigation.AppNavGraph
 import com.byteflipper.random.ui.components.HeartBeatAnimation
 import com.byteflipper.random.ui.theme.RandomTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kibotu.splashscreen.SplashScreenDecorator
 import net.kibotu.splashscreen.splash
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
     private var splashScreen: SplashScreenDecorator? = null
 
@@ -55,8 +61,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val context = LocalContext.current
-            val settingsRepo = remember { SettingsRepository.fromContext(context) }
-            val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
+            val settings: Settings by settingsRepository.settingsFlow.collectAsState(initial = Settings())
             val darkTheme = when (settings.themeMode) {
                 ThemeMode.System -> isSystemInDarkTheme()
                 ThemeMode.Light -> false
@@ -100,6 +105,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun applySavedLanguage() {
+        lifecycleScope.launch {
+            settingsRepository.settingsFlow.collect { settings ->
+                val localeList = when (settings.appLanguage) {
+                    AppLanguage.System -> LocaleListCompat.getEmptyLocaleList()
+                    AppLanguage.English -> LocaleListCompat.forLanguageTags("en")
+                    AppLanguage.Russian -> LocaleListCompat.forLanguageTags("ru")
+                }
+                AppCompatDelegate.setApplicationLocales(localeList)
+            }
+        }
+    }
+
     private fun showSplash() {
         val exitDuration = 800L
         val fadeDurationOffset = 200L
@@ -115,20 +133,6 @@ class MainActivity : ComponentActivity() {
                         onStartExitAnimation = { startExitAnimation() }
                     )
                 }
-            }
-        }
-    }
-
-    private fun applySavedLanguage() {
-        val settingsRepo = SettingsRepository.fromContext(this)
-        lifecycleScope.launch {
-            settingsRepo.settingsFlow.collect { settings ->
-                val localeList = when (settings.appLanguage) {
-                    AppLanguage.System -> LocaleListCompat.getEmptyLocaleList()
-                    AppLanguage.English -> LocaleListCompat.forLanguageTags("en")
-                    AppLanguage.Russian -> LocaleListCompat.forLanguageTags("ru")
-                }
-                AppCompatDelegate.setApplicationLocales(localeList)
             }
         }
     }

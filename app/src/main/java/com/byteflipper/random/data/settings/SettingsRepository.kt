@@ -5,9 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val DATASTORE_NAME = "user_settings"
 
@@ -62,13 +67,20 @@ data class Settings(
     val appLanguage: AppLanguage = AppLanguage.System
 )
 
-class SettingsRepository private constructor(private val appContext: Context) {
+@Singleton
+class SettingsRepository @Inject constructor(
+    @ApplicationContext private val appContext: Context
+) {
 
     private object Keys {
         val themeMode: Preferences.Key<Int> = intPreferencesKey("theme_mode")
         val dynamicColors: Preferences.Key<Boolean> = booleanPreferencesKey("dynamic_colors")
         val fabSize: Preferences.Key<Int> = intPreferencesKey("fab_size")
         val appLanguage: Preferences.Key<Int> = intPreferencesKey("app_language")
+
+        // Default list storage
+        val defaultListName: Preferences.Key<String> = stringPreferencesKey("default_list_name")
+        val defaultListItems: Preferences.Key<String> = stringPreferencesKey("default_list_items")
     }
 
     val settingsFlow: Flow<Settings> = appContext.dataStore.data.map { prefs ->
@@ -104,9 +116,39 @@ class SettingsRepository private constructor(private val appContext: Context) {
         }
     }
 
-    companion object {
-        fun fromContext(context: Context): SettingsRepository = SettingsRepository(context.applicationContext)
+    // Default list methods
+    val defaultListNameFlow: Flow<String?> = appContext.dataStore.data.map { prefs ->
+        prefs[Keys.defaultListName]
     }
+
+    val defaultListItemsFlow: Flow<List<String>> = appContext.dataStore.data.map { prefs ->
+        prefs[Keys.defaultListItems]?.split(com.byteflipper.random.utils.Constants.ITEMS_SEPARATOR) ?: emptyList()
+    }
+
+    suspend fun getDefaultListName(): String? {
+        return appContext.dataStore.data.first()[Keys.defaultListName]
+    }
+
+    suspend fun getDefaultListItems(): List<String> {
+        val joinedString: String? = appContext.dataStore.data.first()[Keys.defaultListItems]
+        return joinedString?.split(com.byteflipper.random.utils.Constants.ITEMS_SEPARATOR)
+            ?: emptyList()
+    }
+
+    suspend fun setDefaultListName(name: String) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.defaultListName] = name
+        }
+    }
+
+    suspend fun setDefaultListItems(items: List<String>) {
+        val joined = items.joinToString(com.byteflipper.random.utils.Constants.ITEMS_SEPARATOR)
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.defaultListItems] = joined
+        }
+    }
+
+
 }
 
 

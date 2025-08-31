@@ -22,7 +22,6 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +37,8 @@ import com.byteflipper.random.data.settings.FabSizeSetting
 import com.byteflipper.random.data.settings.AppLanguage
 import kotlinx.coroutines.launch
 import android.os.Build
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.PreferenceCategory
 import com.byteflipper.random.ui.components.SwitchPreference
@@ -47,8 +48,8 @@ import com.byteflipper.random.ui.components.SwitchPreference
 fun SettingsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val repo = remember { SettingsRepository.fromContext(context) }
-    val settings: Settings by repo.settingsFlow.collectAsState(initial = Settings())
+    val viewModel: SettingsViewModel = hiltViewModel()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -76,6 +77,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 ThemeMode.System -> "system"
                 ThemeMode.Light -> "light"
                 ThemeMode.Dark -> "dark"
+                else -> "system"
             }
             SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
                 val items = listOf(
@@ -92,7 +94,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                                 "dark" -> ThemeMode.Dark
                                 else -> ThemeMode.System
                             }
-                            scope.launch { repo.setThemeMode(mode) }
+                            viewModel.setThemeMode(mode)
                         },
                         shape = SegmentedButtonDefaults.itemShape(index, items.size),
                         colors = SegmentedButtonDefaults.colors(
@@ -119,7 +121,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 descriptionOn = stringResource(R.string.use_wallpaper_colors),
                 descriptionOff = stringResource(R.string.disabled),
                 checked = settings.dynamicColors && dynamicSupported,
-                onCheckedChange = { enabled -> if (dynamicSupported) scope.launch { repo.setDynamicColors(enabled) } }
+                onCheckedChange = { enabled -> if (dynamicSupported) viewModel.setDynamicColors(enabled) }
             )
 
             HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
@@ -129,6 +131,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 FabSizeSetting.Small -> "s"
                 FabSizeSetting.Medium -> "m"
                 FabSizeSetting.Large -> "l"
+                else -> "m"
             }
             SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
                 val fabItems = listOf(
@@ -145,7 +148,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                                 "l" -> FabSizeSetting.Large
                                 else -> FabSizeSetting.Medium
                             }
-                            scope.launch { repo.setFabSize(size) }
+                            viewModel.setFabSize(size)
                         },
                         shape = SegmentedButtonDefaults.itemShape(index, fabItems.size),
                         colors = SegmentedButtonDefaults.colors(

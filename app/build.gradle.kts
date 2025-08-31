@@ -7,13 +7,15 @@ plugins {
     alias(libs.plugins.google.firebase.crashlytics)
 }
 
+apply(plugin = "com.google.dagger.hilt.android")
+
 android {
     namespace = "com.byteflipper.random"
     compileSdk = 36
 
     defaultConfig {
         applicationId = "com.byteflipper.random"
-        minSdk = 28
+        minSdk = 26
         targetSdk = 36
         versionCode = 2
         versionName = "0.0.2 ALPHA"
@@ -47,7 +49,7 @@ android {
 }
 
 dependencies {
-
+    // AndroidX и Compose
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -63,16 +65,27 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.browser)
+    implementation("net.kibotu:androidx-splashscreen-compose:1.0.0")
+
+    // Firebase
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.inappmessaging.display)
+
+    // Play Billing и прочее
     implementation(libs.play.billing)
-    implementation(libs.material3)
     implementation(libs.reorderable)
-    implementation("net.kibotu:androidx-splashscreen-compose:1.0.0")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.56")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    ksp("com.google.dagger:hilt-compiler:2.56")
+
+    // Room annotation processor
     ksp(libs.androidx.room.compiler)
 
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -29,27 +29,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Autorenew
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,30 +80,24 @@ import com.byteflipper.random.ui.components.rememberFlipCardState
 import com.byteflipper.random.ui.components.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
 import com.byteflipper.random.ui.components.SizedFab
+import com.byteflipper.random.ui.numbers.components.NumbersInputFields
+import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
+import com.byteflipper.random.ui.numbers.components.NumbersFabControls
+import com.byteflipper.random.ui.numbers.components.NumbersResetDialog
 import com.byteflipper.random.ui.theme.getRainbowColors
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
 
 private const val MIN_DELAY_MS = 1_000
 private const val MAX_DELAY_MS = 60_000
 
-// Функция для получения контрастного цвета текста на основе цвета фона
-private fun getContrastColor(backgroundColor: Color): Color {
-    // Вычисляем яркость цвета фона (формула luminance)
-    val luminance = backgroundColor.luminance()
 
-    // Если фон светлый (luminance > 0.5), используем черный текст
-    // Если фон темный (luminance <= 0.5), используем белый текст
-    return if (luminance > 0.5f) {
-        Color.Black
-    } else {
-        Color.White
-    }
-}
 private const val DEFAULT_DELAY_MS = 3_000
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,8 +141,9 @@ fun NumbersScreen(onBack: () -> Unit) {
     // Цвета
     val primaryColor = MaterialTheme.colorScheme.primary
     // Настройки приложения (для размера FAB)
-    val settingsRepo = remember { SettingsRepository.fromContext(context) }
-    val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
+    val viewModel: NumbersViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     // Состояние и контроллер для переиспользуемой карточки
     val flipCardState = rememberFlipCardState()
@@ -315,97 +300,42 @@ fun NumbersScreen(onBack: () -> Unit) {
             )
         },
         contentWindowInsets = WindowInsets.systemBars,
-        floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                // FAB для настроек
-                SmallFloatingActionButton(
-                    onClick = { showConfigDialog = true },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                ) {
-                    Icon(painter = painterResource(R.drawable.settings_24px), contentDescription = stringResource(R.string.settings))
-                }
-
-                // Основная FAB для генерации
-                Box(
-                    modifier = Modifier.onGloballyPositioned { coords ->
-                        fabSize = coords.size
-                        val pos = coords.positionInRoot()
-                        fabCenterInRoot = Offset(pos.x + fabSize.width / 2f, pos.y + fabSize.height / 2f)
+                floatingActionButton = {
+            NumbersFabControls(
+                onConfigClick = { showConfigDialog = true },
+                onGenerateClick = {
+                    val result = validateInputs() ?: return@NumbersFabControls
+                    val (range, count) = result
+                    val delayParsed = if (useDelay) {
+                        parseIntOrNull(delayText) ?: DEFAULT_DELAY_MS
+                    } else {
+                        1000
                     }
-                ) {
-                    // Пульс-эффект
-                    if (fabPulseProgress.value > 0f && fabSize.width > 0) {
-                        Canvas(
-                            modifier = Modifier
-                                .matchParentSize()
-                                .alpha(fabPulseProgress.value)
-                        ) {
-                            val c = Offset(size.width / 2f, size.height / 2f)
-                            val baseR = min(size.width, size.height) / 2f
-                            val t = fabPulseProgress.value
-                            val r = baseR + baseR * 1.5f * t
+                    val delayMs = delayParsed.coerceIn(MIN_DELAY_MS, MAX_DELAY_MS)
 
-                            drawCircle(
-                                brush = Brush.radialGradient(
-                                    colors = listOf(
-                                        primaryColor.copy(alpha = 0.4f * (1f - t)),
-                                        primaryColor.copy(alpha = 0.2f * (1f - t)),
-                                        primaryColor.copy(alpha = 0f)
-                                    ),
-                                    center = c,
-                                    radius = max(1f, r)
-                                ),
-                                center = c,
-                                radius = r
-                            )
-                        }
+                    if (!flipCardController.isVisible()) {
+                        flipCardController.open()
                     }
-
-                    SizedFab(
-                        size = settings.fabSize,
-                        onClick = {
-                            val result = validateInputs() ?: return@SizedFab
-                            val (range, count) = result
-                            val delayParsed = if (useDelay) {
-                                parseIntOrNull(delayText) ?: DEFAULT_DELAY_MS
+                    flipCardController.spinAndReveal(
+                        effectiveDelayMs = delayMs,
+                        onReveal = { targetIsFront ->
+                            val newNumbers = generateNumbers(range, count)
+                            if (targetIsFront) {
+                                frontValues = newNumbers
                             } else {
-                                1000
+                                backValues = newNumbers
                             }
-                            val delayMs = delayParsed.coerceIn(MIN_DELAY_MS, MAX_DELAY_MS)
-
-                            if (!flipCardController.isVisible()) {
-                                flipCardController.open()
-                            }
-                            flipCardController.spinAndReveal(
-                                effectiveDelayMs = delayMs,
-                                onReveal = { targetIsFront ->
-                                    val newNumbers = generateNumbers(range, count)
-                                    if (targetIsFront) {
-                                        frontValues = newNumbers
-                                    } else {
-                                        backValues = newNumbers
-                                    }
-                                },
-                                onSpinCompleted = {
-                                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                }
-                            )
                         },
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.graphicsLayer {
-                            scaleX = fabScale.value
-                            scaleY = fabScale.value
+                        onSpinCompleted = {
+                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         }
-                    ) {
-                        Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.generate))
-                    }
+                    )
+                },
+                onFabPositioned = { center, size ->
+                    fabCenterInRoot = center
+                    fabSize = size
                 }
-            }
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
@@ -532,110 +462,16 @@ fun NumbersScreen(onBack: () -> Unit) {
                 frontContainerColor = cardColor,
                 backContainerColor = cardColor,
                 frontContent = {
-                    if (frontValues.isNotEmpty()) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding((dynamicCardSize.value * 0.03f).coerceIn(8f, 24f).dp)
-                        ) {
-                            if (frontValues.size == 1) {
-                                // Адаптивный размер шрифта для одиночного числа - увеличен для лучшей видимости
-                                val singleNumberFontSize = (dynamicCardSize.value * 0.4f).coerceIn(56f, 140f).sp
-                                // Адаптируем цвет текста под цвет фона карточки
-                                val textColor = getContrastColor(cardColor)
-                                Text(
-                                    text = frontValues[0].toString(),
-                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = singleNumberFontSize),
-                                    fontWeight = FontWeight.Bold,
-                                    color = textColor
-                                )
-                            } else {
-                                val cols = columnsFor(frontValues.size)
-                                val numberSize = numberFontSizeFor(frontValues.size, dynamicCardSize)
-                                // Адаптивный размер заголовка
-                                val headerFontSize = (dynamicCardSize.value * 0.04f).coerceIn(16f, 28f).sp
-                                // Адаптируем цвет текста под цвет фона карточки
-                                val headerTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
-                                Text(
-                                    text = stringResource(R.string.results),
-                                    style = MaterialTheme.typography.labelMedium.copy(fontSize = headerFontSize),
-                                    color = headerTextColor
-                                )
-                                Spacer(Modifier.height(6.dp))
-                                frontValues.chunked(cols).forEach { rowNumbers ->
-                                    Row(
-                                        horizontalArrangement = Arrangement.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        rowNumbers.forEach { number ->
-                                            // Адаптируем цвет текста под цвет фона карточки
-                                            val numberTextColor = getContrastColor(cardColor)
-                                            Text(
-                                                text = number.toString(),
-                                                fontSize = numberSize,
-                                                fontWeight = FontWeight.Bold,
-                                                color = numberTextColor,
-                                                modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    NumbersResultsDisplay(
+                        results = frontValues,
+                        cardColor = cardColor
+                    )
                 },
                 backContent = {
-                    if (backValues.isNotEmpty()) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding((dynamicCardSize.value * 0.03f).coerceIn(8f, 24f).dp)
-                        ) {
-                            if (backValues.size == 1) {
-                                // Адаптивный размер шрифта для одиночного числа - увеличен для лучшей видимости
-                                val singleNumberFontSize = (dynamicCardSize.value * 0.4f).coerceIn(56f, 140f).sp
-                                // Адаптируем цвет текста под цвет фона карточки
-                                val textColor = getContrastColor(cardColor)
-                                Text(
-                                    text = backValues[0].toString(),
-                                    style = MaterialTheme.typography.displayLarge.copy(fontSize = singleNumberFontSize),
-                                    fontWeight = FontWeight.Bold,
-                                    color = textColor
-                                )
-                            } else {
-                                val cols = columnsFor(backValues.size)
-                                val numberSize = numberFontSizeFor(backValues.size, dynamicCardSize)
-                                // Адаптивный размер заголовка
-                                val headerFontSize = (dynamicCardSize.value * 0.04f).coerceIn(16f, 28f).sp
-                                // Адаптируем цвет текста под цвет фона карточки
-                                val headerTextColor = getContrastColor(cardColor).copy(alpha = 0.8f)
-                                Text(
-                                    text = stringResource(R.string.results),
-                                    style = MaterialTheme.typography.labelMedium.copy(fontSize = headerFontSize),
-                                    color = headerTextColor
-                                )
-                                Spacer(Modifier.height(6.dp))
-                                backValues.chunked(cols).forEach { rowNumbers ->
-                                    Row(
-                                        horizontalArrangement = Arrangement.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        rowNumbers.forEach { number ->
-                                            // Адаптируем цвет текста под цвет фона карточки
-                                            val numberTextColor = getContrastColor(cardColor)
-                                            Text(
-                                                text = number.toString(),
-                                                fontSize = numberSize,
-                                                fontWeight = FontWeight.Bold,
-                                                color = numberTextColor,
-                                                modifier = Modifier.padding(horizontal = 2.dp, vertical = 1.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    NumbersResultsDisplay(
+                        results = backValues,
+                        cardColor = cardColor
+                    )
                 }
             )
         }

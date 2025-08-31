@@ -1,11 +1,15 @@
 package com.byteflipper.random.data.preset
 
-import com.byteflipper.random.data.di.DatabaseModule
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ListPresetRepository(private val dao: ListPresetDao) {
+@Singleton
+class ListPresetRepository @Inject constructor(
+    private val dao: ListPresetDao
+) {
     fun observeAll(): Flow<List<ListPreset>> = dao.observeAll()
 
     suspend fun upsert(preset: ListPreset): Long = withContext(Dispatchers.IO) {
@@ -18,13 +22,6 @@ class ListPresetRepository(private val dao: ListPresetDao) {
 
     suspend fun getById(id: Long): ListPreset? = withContext(Dispatchers.IO) {
         dao.getById(id)
-    }
-
-    companion object {
-        fun fromContext(context: android.content.Context): ListPresetRepository {
-            val db = DatabaseModule.provideDatabase(context)
-            return ListPresetRepository(db.listPresetDao())
-        }
     }
 }
 

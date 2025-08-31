@@ -71,6 +71,7 @@ import androidx.compose.foundation.layout.Arrangement
 import kotlinx.coroutines.Job
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.material3.FloatingActionButton
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -195,8 +196,8 @@ fun DiceScreen(onBack: () -> Unit) {
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
             val context = LocalContext.current
-            val settingsRepo = remember { SettingsRepository.fromContext(context) }
-            val settings: Settings by settingsRepo.settingsFlow.collectAsState(initial = Settings())
+            val viewModel: DiceViewModel = hiltViewModel()
+            val settings by viewModel.settings.collectAsState()
             SizedFab(
                 size = settings.fabSize,
                 onClick = { rollAll() },

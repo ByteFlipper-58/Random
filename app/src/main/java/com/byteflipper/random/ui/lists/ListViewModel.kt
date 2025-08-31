@@ -1,0 +1,254 @@
+package com.byteflipper.random.ui.lists
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.byteflipper.random.data.preset.ListPreset
+import com.byteflipper.random.data.preset.ListPresetRepository
+import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
+import com.byteflipper.random.utils.Constants.DEFAULT_GENERATE_COUNT
+import com.byteflipper.random.utils.Constants.INSTANT_DELAY_MS
+import com.byteflipper.random.utils.Constants.MAX_GENERATE_COUNT
+import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
+import com.byteflipper.random.utils.Constants.MIN_GENERATE_COUNT
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.random.Random
+
+data class ListUiState(
+    val preset: ListPreset? = null,
+    val editorItems: List<String> = emptyList(),
+    val results: List<String> = emptyList(),
+    val isLoading: Boolean = false,
+    val countText: String = DEFAULT_GENERATE_COUNT.toString(),
+    val delayText: String = DEFAULT_DELAY_MS.toString(),
+    val useDelay: Boolean = true,
+    val allowRepetitions: Boolean = true,
+    val usedItems: Set<String> = emptySet(),
+    val showConfigDialog: Boolean = false,
+    val showRenameDialog: Boolean = false,
+    val showSaveDialog: Boolean = false,
+    val saveName: String = "",
+    val renameName: String = "",
+    val openAfterSave: Boolean = true
+)
+
+@HiltViewModel
+class ListViewModel @Inject constructor(
+    private val listPresetRepository: ListPresetRepository,
+    private val settingsRepository: SettingsRepository,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
+
+    private val presetId: Long? = savedStateHandle.get<String>("id")?.toLongOrNull()
+
+    private val _uiState = MutableStateFlow(ListUiState())
+    val uiState: StateFlow<ListUiState> = _uiState.asStateFlow()
+
+    val settings = settingsRepository.settingsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = com.byteflipper.random.data.settings.Settings()
+    )
+
+    val presets = listPresetRepository.observeAll().stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    init {
+        loadPreset()
+    }
+
+    private fun loadPreset() {
+        viewModelScope.launch {
+            if (presetId == null) {
+                // Load default list from DataStore
+                val defaultName = settingsRepository.getDefaultListName() ?: "List"
+                val defaultItems = settingsRepository.getDefaultListItems()
+
+                val items = if (defaultItems.isEmpty()) {
+                    listOf("Item 1", "Item 2", "Item 3") // Default items
+                } else {
+                    defaultItems
+                }
+
+                _uiState.update { state ->
+                    state.copy(
+                        editorItems = items.ifEmpty { listOf("") }
+                    )
+                }
+            } else {
+                val preset = listPresetRepository.getById(presetId)
+                preset?.let {
+                    _uiState.update { state ->
+                        state.copy(
+                            preset = it,
+                            editorItems = it.items.ifEmpty { listOf("") }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateEditorItems(items: List<String>) {
+        _uiState.update { it.copy(editorItems = items) }
+        saveCurrent()
+    }
+
+    fun updateCountText(text: String) {
+        _uiState.update { it.copy(countText = text) }
+    }
+
+    fun updateDelayText(text: String) {
+        _uiState.update { it.copy(delayText = text) }
+    }
+
+    fun updateUseDelay(useDelay: Boolean) {
+        _uiState.update { it.copy(useDelay = useDelay) }
+    }
+
+    fun updateAllowRepetitions(allowRepetitions: Boolean) {
+        _uiState.update { it.copy(allowRepetitions = allowRepetitions) }
+    }
+
+    fun toggleConfigDialog() {
+        _uiState.update { it.copy(showConfigDialog = !it.showConfigDialog) }
+    }
+
+    fun toggleRenameDialog() {
+        _uiState.update { it.copy(showRenameDialog = !it.showRenameDialog) }
+    }
+
+    fun updateRenameName(name: String) {
+        _uiState.update { it.copy(renameName = name) }
+    }
+
+    fun toggleSaveDialog() {
+        _uiState.update { it.copy(showSaveDialog = !it.showSaveDialog) }
+    }
+
+    fun updateSaveName(name: String) {
+        _uiState.update { it.copy(saveName = name) }
+    }
+
+    fun updateOpenAfterSave(openAfterSave: Boolean) {
+        _uiState.update { it.copy(openAfterSave = openAfterSave) }
+    }
+
+    fun resetUsedItems() {
+        _uiState.update { it.copy(usedItems = emptySet()) }
+    }
+
+    fun clearResults() {
+        _uiState.update { it.copy(results = emptyList()) }
+    }
+
+    fun generate(): List<String> {
+        val state = _uiState.value
+        val base = getBaseItems()
+        val count = state.countText.toIntOrNull()?.coerceIn(MIN_GENERATE_COUNT, MAX_GENERATE_COUNT) ?: DEFAULT_GENERATE_COUNT
+
+        return if (state.allowRepetitions) {
+            if (base.isEmpty()) emptyList() else List(count) { base.random() }
+        } else {
+            val pool = base.filter { it !in state.usedItems }.distinct()
+            if (pool.isEmpty()) emptyList() else pool.shuffled().take(count.coerceAtMost(pool.size))
+        }
+    }
+
+    fun generateAndUpdateResults(): List<String> {
+        val results = generate()
+        _uiState.update { state ->
+            state.copy(
+                results = results,
+                usedItems = if (!state.allowRepetitions && results.isNotEmpty()) {
+                    state.usedItems + results
+                } else {
+                    state.usedItems
+                }
+            )
+        }
+        return results
+    }
+
+    fun getEffectiveDelayMs(): Int {
+        val state = _uiState.value
+        return if (state.useDelay) {
+            state.delayText.toIntOrNull()?.coerceIn(MIN_DELAY_MS, DEFAULT_DELAY_MS * 2) ?: DEFAULT_DELAY_MS
+        } else {
+            INSTANT_DELAY_MS
+        }
+    }
+
+    fun getBaseItems(): List<String> {
+        return _uiState.value.editorItems.map { it.trim() }.filter { it.isNotEmpty() }
+    }
+
+    fun canGenerate(): Boolean {
+        return getBaseItems().isNotEmpty()
+    }
+
+    fun canResetUsedItems(): Boolean {
+        return _uiState.value.usedItems.isNotEmpty()
+    }
+
+    fun renamePreset() {
+        val state = _uiState.value
+        val newName = state.renameName.trim()
+        val preset = state.preset
+
+        if (newName.isNotEmpty() && preset != null) {
+            viewModelScope.launch {
+                val updatedPreset = preset.copy(name = newName)
+                listPresetRepository.upsert(updatedPreset)
+                _uiState.update { it.copy(preset = updatedPreset, showRenameDialog = false) }
+            }
+        }
+    }
+
+    fun saveAsNewPreset(onPresetCreated: (Long) -> Unit) {
+        val state = _uiState.value
+        val name = state.saveName.trim()
+        val items = getBaseItems()
+
+        if (name.isNotEmpty() && items.isNotEmpty()) {
+            viewModelScope.launch {
+                val newId = listPresetRepository.upsert(ListPreset(name = name, items = items))
+                _uiState.update { it.copy(showSaveDialog = false) }
+                if (state.openAfterSave) {
+                    onPresetCreated(newId)
+                }
+            }
+        }
+    }
+
+    private fun saveCurrent() {
+        val state = _uiState.value
+        if (presetId != null && state.preset != null) {
+            val items = getBaseItems()
+            val updatedPreset = state.preset.copy(items = items)
+            viewModelScope.launch {
+                listPresetRepository.upsert(updatedPreset)
+                _uiState.update { it.copy(preset = updatedPreset) }
+            }
+        } else {
+            // Save default list to DataStore
+            val items = getBaseItems()
+            viewModelScope.launch {
+                settingsRepository.setDefaultListItems(items)
+            }
+        }
+    }
+}
