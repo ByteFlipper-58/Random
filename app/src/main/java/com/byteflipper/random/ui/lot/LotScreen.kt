@@ -293,12 +293,12 @@ fun LotScreen(onBack: () -> Unit) {
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(24.dp),
+                    verticalArrangement = Arrangement.spacedBy(48.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(stringResource(R.string.total_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(48.dp))
                         BasicTextField(
                             value = totalText,
                             onValueChange = { new -> totalText = new.filter { ch -> ch.isDigit() } },
@@ -309,13 +309,13 @@ fun LotScreen(onBack: () -> Unit) {
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
-                                fontSize = 40.sp
+                                fontSize = 64.sp
                             )
                         )
                     }
                     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(stringResource(R.string.marked_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.height(8.dp))
+                        Spacer(Modifier.height(48.dp))
                         BasicTextField(
                             value = markedText,
                             onValueChange = { new ->
@@ -331,7 +331,7 @@ fun LotScreen(onBack: () -> Unit) {
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
-                                fontSize = 40.sp
+                                fontSize = 64.sp
                             )
                         )
                     }

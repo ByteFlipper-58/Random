@@ -192,7 +192,7 @@ fun AboutScreen(
                         onClick = {
                             ChromeCustomTabUtil.openUrl(
                                 context = context,
-                                url = "https://github.com/ByteFlipper-58/FFSensitivities2",
+                                url = "https://github.com/ByteFlipper-58/random",
                                 primaryColor = primaryColorArgb
                             )
                         },

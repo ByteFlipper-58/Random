@@ -432,7 +432,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(48.dp))
                 BasicTextField(
                     value = fromText,
                     onValueChange = { newValue ->
@@ -458,7 +458,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     textAlign = TextAlign.Center,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(48.dp))
                 BasicTextField(
                     value = toText,
                     onValueChange = { newValue ->

@@ -109,4 +109,48 @@
     <string name="fixed_delay_1_second">Фиксированная задержка: 1 секунда</string>
     <string name="close">Закрыть</string>
     <string name="error_no_browser_found">Браузер не найден для открытия URL</string>
+
+    <string name="expandable_section_collapse">Свернуть</string>
+    <string name="expandable_section_expand">Развернуть</string>
+
+    <!-- About Screen -->
+    <string name="about_app">О приложении</string>
+    <string name="version">Версия</string>
+    <string name="app_icon">Иконка приложения</string>
+    <string name="made_with_love">Сделано с ❤️ ByteFlipper</string>
+    <string name="contact_us">Связаться с нами</string>
+
+    <!-- Categories -->
+    <string name="support_feedback_category_title">Поддержка и отзывы</string>
+    <string name="connect_with_us_category_title">Мы в сети</string>
+    <string name="development_category_title">Разработка</string>
+
+    <!-- Actions/Links -->
+    <string name="bug_report_title">Сообщить об ошибке</string>
+    <string name="bug_report_subtitle">Опишите проблему и отправьте нам</string>
+    <string name="rate_the_app_title">Оценить приложение</string>
+    <string name="rate_the_app_subtitle">Поставьте оценку в Google Play</string>
+    <string name="other_apps_title">Другие приложения</string>
+    <string name="other_apps_subtitle">Наши другие приложения</string>
+
+    <string name="website_title">Сайт ByteFlipper</string>
+    <string name="website_subtitle">Наш сайт</string>
+
+    <string name="vk_title">ВКонтакте</string>
+    <string name="vk_subtitle">Наше сообщество</string>
+
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_subtitle">Наш канал в Telegram</string>
+
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_subtitle">Наш канал на YouTube</string>
+
+    <string name="discord_title">Discord</string>
+    <string name="discord_subtitle">Наш сервер Discord</string>
+
+    <string name="github_title">GitHub</string>
+    <string name="github_subtitle">Наш репозиторий на GitHub</string>
+
+    <string name="source_code_title">Исходный код</string>
+    <string name="source_code_subtitle">Исходный код приложения на GitHub</string>
 </resources>

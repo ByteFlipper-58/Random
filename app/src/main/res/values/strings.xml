@@ -150,6 +150,6 @@
     <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
     <string name="source_code_title">Source Code</string>
     <string name="source_code_subtitle">Source code of the application on GitHub</string>
-    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/FFSensitivities</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
     <string name="error_no_browser_found">No browser found to open URL</string>
 </resources>
