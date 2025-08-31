@@ -5,29 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Autorenew
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -40,11 +28,10 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,37 +42,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
+import com.byteflipper.random.data.settings.Settings
+import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.ui.components.EditorList
 import com.byteflipper.random.ui.components.FlipCardControls
 import com.byteflipper.random.ui.components.FlipCardOverlay
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
-import com.byteflipper.random.ui.components.rememberFlipCardState
 import com.byteflipper.random.ui.components.SizedFab
-import com.byteflipper.random.data.settings.SettingsRepository
-import com.byteflipper.random.data.settings.Settings
+import com.byteflipper.random.ui.components.rememberFlipCardState
 import com.byteflipper.random.ui.theme.getRainbowColors
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.min
 
@@ -143,10 +120,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     var openAfterSave by rememberSaveable { mutableStateOf(true) }
     var usedItems by remember { mutableStateOf<Set<String>>(emptySet()) }
 
-    // Focus state
-    val focusRequesters = remember { mutableStateListOf<FocusRequester>() }
-    var pendingFocusIndex by rememberSaveable { mutableStateOf<Int?>(null) }
-    val focusManager = LocalFocusManager.current
+
 
     var results by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
 
@@ -308,66 +282,12 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 verticalArrangement = Arrangement.Top
             ) {
                 if (presetId == null || selectedPreset != null) {
-                    // Keep focusRequesters in sync with item count
-                    if (focusRequesters.size < editorItems.size) {
-                        repeat(editorItems.size - focusRequesters.size) { focusRequesters.add(FocusRequester()) }
-                    } else if (focusRequesters.size > editorItems.size) {
-                        repeat(focusRequesters.size - editorItems.size) { focusRequesters.removeLast() }
-                    }
-
-                LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f, fill = false)) {
-                        items(editorItems.size) { index ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                    .padding(vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                                BasicTextField(
-                                    value = editorItems[index],
-                                    onValueChange = { newVal ->
-                                        editorItems[index] = newVal
-                                        saveCurrent()
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .focusRequester(focusRequesters[index])
-                                        .onPreviewKeyEvent { ev ->
-                                            if (ev.type == KeyEventType.KeyDown && ev.key == Key.Backspace && editorItems[index].isEmpty()) {
-                                                if (editorItems.size > 1) {
-                                                    editorItems.removeAt(index)
-                                                    val newIndex = (index - 1).coerceAtLeast(0)
-                                                    pendingFocusIndex = newIndex
-                                                    saveCurrent()
-                                                }
-                                                true
-                                            } else false
-                                        },
-                                    textStyle = MaterialTheme.typography.displayLarge.copy(
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontSize = 32.sp
-                                    ),
-                                    singleLine = true,
-                                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                                    keyboardActions = KeyboardActions(
-                                        onNext = {
-                                            if (index == editorItems.lastIndex) {
-                                                if (editorItems[index].isNotBlank()) {
-                                                    editorItems.add("")
-                                                    pendingFocusIndex = index + 1
-                                                    saveCurrent()
-                                                }
-                                            } else {
-                                                focusRequesters[index + 1].requestFocus()
-                                            }
-                                        }
-                                    )
-                                )
-                            }
-                        }
-                    }
+                    EditorList(
+                        items = editorItems,
+                        onItemsChange = { saveCurrent() },
+                        modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+                        minItems = 1
+                    )
                 } else {
                     Text(stringResource(R.string.loading), style = MaterialTheme.typography.bodyMedium)
                 }
@@ -524,14 +444,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         }
     }
 
-    // Focus new item if needed
-    LaunchedEffect(editorItems.size, pendingFocusIndex) {
-        val i = pendingFocusIndex
-        if (i != null && i in 0 until focusRequesters.size) {
-            focusRequesters[i].requestFocus()
-            pendingFocusIndex = null
-        }
-    }
+
 }
 
 
