@@ -1,0 +1,162 @@
+<resources>
+    <string name="app_name">Randify</string>
+
+    <!-- Common strings -->
+    <string name="back">Назад</string>
+    <string name="settings">Налаштування</string>
+    <string name="save">Зберегти</string>
+    <string name="cancel">Скасувати</string>
+    <string name="reset">Скинути</string>
+    <string name="edit">Редагувати</string>
+    <string name="delete">Видалити</string>
+    <string name="rename">Перейменувати</string>
+    <string name="add">Додати</string>
+    <string name="generate">Згенерувати</string>
+    <string name="results">Результати:</string>
+    <string name="disabled">Вимкнено</string>
+    <string name="enabled">Увімкнено</string>
+
+    <!-- Main screen -->
+    <string name="random">Випадкове</string>
+    <string name="numbers">Числа</string>
+    <string name="list">Список</string>
+    <string name="dice">Кубики</string>
+    <string name="lot">Жереб</string>
+    <string name="coin">Монета</string>
+
+    <!-- Lot screen -->
+    <string name="lot_title">Жереб</string>
+    <string name="vibration_on">Вібрація: увімкнено</string>
+    <string name="vibration_off">Вібрація: вимкнено</string>
+    <string name="show_all">Показати все</string>
+    <string name="reshuffle">Перетасувати</string>
+    <string name="minimum_3_fields">Щонайменше 3 поля</string>
+    <string name="minimum_1_marked">Щонайменше 1 позначене</string>
+    <string name="marked_more_than_total">Позначених більше, ніж загалом</string>
+    <string name="total_fields_label">Всього полів</string>
+    <string name="marked_fields_label">Позначених полів</string>
+
+    <!-- List components -->
+    <string name="new_list">Новий список</string>
+    <string name="list_name">Назва списку</string>
+    <string name="my_list">Мій список</string>
+    <string name="item_1">Елемент 1</string>
+    <string name="item_2">Елемент 2</string>
+    <string name="item_3">Елемент 3</string>
+    <string name="title">Заголовок</string>
+    <string name="use_preset">Використати пресет</string>
+    <string name="share_preset">Поділитися пресетом</string>
+    <string name="preset_actions">Дії з пресетом</string>
+    <string name="rename_list">Перейменувати список</string>
+    <string name="new_name">Нова назва</string>
+    <string name="save_settings">Зберегти налаштування</string>
+    <string name="list_empty">Список порожній</string>
+    <string name="all_options_used">Усі варіанти використано</string>
+
+    <!-- Numbers screen -->
+    <string name="number">Число</string>
+    <string name="from">ВІД</string>
+    <string name="to">ДО</string>
+    <string name="history_cleared">Історію використаних чисел очищено</string>
+    <string name="enter_valid_numbers">Введіть коректні числа у «ВІД» і «ДО»</string>
+    <string name="count_must_be_positive">Кількість має бути більшою за 0</string>
+    <string name="all_numbers_used">Усі числа використано</string>
+    <string name="only_available_numbers">Доступно лише %1$d невикористаних чисел</string>
+
+    <!-- Settings screen -->
+    <string name="theme">Тема</string>
+    <string name="theme_description">Виберіть тему застосунку</string>
+    <string name="system_theme">Системна</string>
+    <string name="light_theme">Світла</string>
+    <string name="dark_theme">Темна</string>
+    <string name="language">Мова</string>
+    <string name="language_description">Виберіть мову застосунку</string>
+    <string name="language_system">Системна</string>
+    <string name="language_english">Англійська</string>
+    <string name="language_russian">Російська</string>
+    <string name="dynamic_colors">Динамічні кольори</string>
+    <string name="dynamic_colors_description">Підлаштувати палітру під шпалери (Material You)</string>
+    <string name="android_12_required">Потрібен Android 12+</string>
+    <string name="use_wallpaper_colors">Використовувати кольори шпалер (Android 12+)</string>
+    <string name="fab_size">Розмір FAB</string>
+    <string name="fab_size_description">Розмір головної кнопки дії на екранах</string>
+    <string name="fab_size_small">S (Малий)</string>
+    <string name="fab_size_small_desc">Компактний розмір</string>
+    <string name="fab_size_medium">M (Середній)</string>
+    <string name="fab_size_medium_desc">Стандартний розмір</string>
+    <string name="fab_size_large">L (Великий)</string>
+    <string name="fab_size_large_desc">Великий розмір</string>
+    <string name="loading">Завантаження...</string>
+    <string name="open_after_save">Відкрити після збереження</string>
+    <string name="roll_dice">Кинути</string>
+    <string name="dice_count">Кількість кубиків</string>
+    <string name="sum">Сума</string>
+    <string name="heads">Орел</string>
+    <string name="tails">Решка</string>
+    <string name="result">Результат</string>
+    <string name="swipe_hint">Проведіть вгору, щоб підкинути</string>
+    <string name="generator_settings">Налаштування генератора</string>
+    <string name="result_count">Кількість результатів</string>
+    <string name="allow_repetitions">Дозволити повторення</string>
+    <string name="used_count">Використано</string>
+    <string name="reset_history">Скинути історію використаних чисел</string>
+
+    <!-- Dialogs -->
+    <string name="use_delay">Використати затримку</string>
+    <string name="delay">Затримка</string>
+    <string name="seconds">сек</string>
+    <string name="seconds_short">с</string>
+    <string name="fixed_delay_1_second">Фіксована затримка: 1 секунда</string>
+    <string name="close">Закрити</string>
+
+    <string name="expandable_section_collapse">Згорнути</string>
+    <string name="expandable_section_expand">Розгорнути</string>
+
+    <!-- About Screen -->
+    <string name="about_app">Про застосунок</string>
+    <string name="version">Версія</string>
+    <string name="app_icon">Іконка застосунку</string>
+    <string name="made_with_love">Зроблено з ❤️ ByteFlipper</string>
+    <string name="contact_us">Звʼяжіться з нами</string>
+    <!-- Categories -->
+    <string name="support_feedback_category_title">Підтримка та відгуки</string>
+    <string name="connect_with_us_category_title">Звʼязок з нами</string>
+    <string name="development_category_title">Розробка</string>
+    <!-- Actions/Links -->
+    <string name="bug_report_title">Звіт про помилку</string>
+    <string name="bug_report_subtitle">Будь ласка, опишіть проблему та надішліть нам</string>
+    <string name="rate_the_app_title">Оцінити застосунок</string>
+    <string name="rate_the_app_subtitle">Оцініть застосунок у Google Play</string>
+    <string name="other_apps_title">Інші застосунки</string>
+    <string name="other_apps_subtitle">Наші інші застосунки</string>
+    <string name="website_title">Сайт ByteFlipper</string>
+    <string name="website_subtitle">Наш вебсайт</string>
+    <string name="vk_title">VK</string>
+    <string name="vk_subtitle">Наша спільнота у VK</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_subtitle">Наш Telegram-канал</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_subtitle">Наш YouTube-канал</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_subtitle">Наш Discord-сервер</string>
+    <string name="github_title">GitHub</string>
+    <string name="github_subtitle">Наш репозиторій на GitHub</string>
+    <string name="source_code_title">Вихідний код</string>
+    <string name="source_code_subtitle">Вихідний код застосунку на GitHub</string>
+    <string name="error_no_browser_found">Браузер не знайдено для відкриття URL</string>
+
+    <!-- Setup Screen -->
+    <string name="setup_welcome_title">Ласкаво просимо в Randify</string>
+    <string name="setup_welcome_description">Давайте підготуємо застосунок до роботи.</string>
+
+    <string name="setup_permission_error">Будь ласка, надайте всі необхідні дозволи.</string>
+
+    <string name="setup_notifications_title">Сповіщення</string>
+    <string name="setup_notifications_description">Увімкніть сповіщення, щоб отримувати пуш-алерти про нові оновлення та інші важливі події.</string>
+
+    <string name="setup_permission_granted">Дозвіл надано</string>
+    <string name="setup_enable_notifications">Увімкнути сповіщення</string>
+
+    <string name="setup_finish_title">Усе готово!</string>
+    <string name="setup_finish_description">Тепер ви готові довіритися випадковості 🎲</string>
+</resources>

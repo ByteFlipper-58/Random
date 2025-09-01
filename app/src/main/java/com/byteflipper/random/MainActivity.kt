@@ -25,6 +25,7 @@ import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.data.settings.AppLanguage
 import com.byteflipper.random.navigation.AppNavGraph
+import com.byteflipper.random.navigation.Route
 import com.byteflipper.random.ui.components.HeartBeatAnimation
 import com.byteflipper.random.ui.theme.RandomTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +88,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    AppNavGraph(navController = navController)
+                    val startDestination = if (settings.setupCompleted) {
+                        Route.Home.route
+                    } else {
+                        Route.Setup.route
+                    }
+                    AppNavGraph(navController = navController, startDestination = startDestination)
                 }
             }
         }

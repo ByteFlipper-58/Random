@@ -17,8 +17,8 @@ android {
         applicationId = "com.byteflipper.random"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.0.2 ALPHA"
+        versionCode = 3
+        versionName = "v1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -80,10 +80,14 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.56")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation(libs.androidx.ui.text.google.fonts)
     ksp("com.google.dagger:hilt-compiler:2.56")
 
     // Room annotation processor
     ksp(libs.androidx.room.compiler)
+
+    implementation("com.github.racra:smooth-corner-rect-android-compose:v1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
 
     // Tests
     testImplementation(libs.junit)

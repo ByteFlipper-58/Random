@@ -17,8 +17,10 @@ import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.dice.DiceScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
 import com.byteflipper.random.ui.about.AboutScreen
+import com.byteflipper.random.ui.setup.SetupScreen
 
 sealed class Route(val route: String) {
+    data object Setup : Route("setup")
     data object Home : Route("home")
     data object Numbers : Route("numbers")
     data object List : Route("list")
@@ -32,8 +34,15 @@ sealed class Route(val route: String) {
 }
 
 @Composable
-fun AppNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Route.Home.route) {
+fun AppNavGraph(navController: NavHostController, startDestination: String = Route.Home.route) {
+    NavHost(navController = navController, startDestination = startDestination) {
+        composable(Route.Setup.route) {
+            SetupScreen(onSetupComplete = {
+                navController.navigate(Route.Home.route) {
+                    popUpTo(Route.Setup.route) { inclusive = true }
+                }
+            })
+        }
         composable(Route.Home.route) {
             HomeScreen(
                 onOpenNumbers = { navController.navigate(Route.Numbers.route) },

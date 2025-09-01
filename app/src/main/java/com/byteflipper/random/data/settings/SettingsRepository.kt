@@ -64,7 +64,8 @@ data class Settings(
     val themeMode: ThemeMode = ThemeMode.System,
     val dynamicColors: Boolean = true,
     val fabSize: FabSizeSetting = FabSizeSetting.Medium,
-    val appLanguage: AppLanguage = AppLanguage.System
+    val appLanguage: AppLanguage = AppLanguage.System,
+    val setupCompleted: Boolean = false
 )
 
 @Singleton
@@ -77,6 +78,7 @@ class SettingsRepository @Inject constructor(
         val dynamicColors: Preferences.Key<Boolean> = booleanPreferencesKey("dynamic_colors")
         val fabSize: Preferences.Key<Int> = intPreferencesKey("fab_size")
         val appLanguage: Preferences.Key<Int> = intPreferencesKey("app_language")
+        val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
 
         // Default list storage
         val defaultListName: Preferences.Key<String> = stringPreferencesKey("default_list_name")
@@ -88,7 +90,8 @@ class SettingsRepository @Inject constructor(
             themeMode = ThemeMode.fromValue(prefs[Keys.themeMode]),
             dynamicColors = prefs[Keys.dynamicColors] ?: true,
             fabSize = FabSizeSetting.fromValue(prefs[Keys.fabSize]),
-            appLanguage = AppLanguage.fromValue(prefs[Keys.appLanguage])
+            appLanguage = AppLanguage.fromValue(prefs[Keys.appLanguage]),
+            setupCompleted = prefs[Keys.setupCompleted] ?: false
         )
     }
 
@@ -113,6 +116,12 @@ class SettingsRepository @Inject constructor(
     suspend fun setAppLanguage(language: AppLanguage) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.appLanguage] = language.value
+        }
+    }
+
+    suspend fun setSetupCompleted(completed: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.setupCompleted] = completed
         }
     }
 

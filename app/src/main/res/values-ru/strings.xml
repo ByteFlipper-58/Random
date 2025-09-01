@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Рандом</string>
+    <string name="app_name">Randify</string>
 
     <!-- Общие строки -->
     <string name="back">Назад</string>
@@ -153,4 +153,19 @@
 
     <string name="source_code_title">Исходный код</string>
     <string name="source_code_subtitle">Исходный код приложения на GitHub</string>
+
+    <!-- Setup Screen -->
+    <string name="setup_welcome_title">Добро пожаловать в Randify</string>
+    <string name="setup_welcome_description">Давайте подготовим приложение для работы.</string>
+
+    <string name="setup_permission_error">Пожалуйста, предоставьте все необходимые разрешения.</string>
+
+    <string name="setup_notifications_title">Уведомления</string>
+    <string name="setup_notifications_description">Включите уведомления, чтобы получать пуш-уведомления о новых обновлениях и других важных событиях.</string>
+
+    <string name="setup_permission_granted">Разрешение предоставлено</string>
+    <string name="setup_enable_notifications">Включить уведомления</string>
+
+    <string name="setup_finish_title">Готово!</string>
+    <string name="setup_finish_description">Теперь вы готовы довериться случайности 🎲</string>
 </resources>

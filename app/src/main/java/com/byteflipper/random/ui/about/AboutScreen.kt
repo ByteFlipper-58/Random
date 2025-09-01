@@ -97,7 +97,11 @@ fun AboutScreen(
                         title = stringResource(R.string.rate_the_app_title),
                         subtitle = stringResource(R.string.rate_the_app_subtitle),
                         icon = painterResource(id = R.drawable.rate_review_24px),
-                        onClick = { } //TODO
+                        onClick = { ChromeCustomTabUtil.openUrl(
+                            context = context,
+                            url = "https://play.google.com/store/apps/details?id=com.byteflipper.random",
+                            primaryColor = primaryColorArgb
+                        ) } //TODO
                     )
 
                     AnimatedActionItem(

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Random</string>
+    <string name="app_name">Randify</string>
 
     <!-- Common strings -->
     <string name="back">Back</string>
@@ -129,10 +129,10 @@
     <string name="rate_the_app_subtitle">Rate the app on Google Play</string>
     <string name="other_apps_title">Other Apps</string>
     <string name="other_apps_subtitle">Our Other Apps</string>
-    <string name="other_apps_url" translatable="false">https://www.google.com/</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
     <string name="website_title">ByteFlipper Website</string>
     <string name="website_subtitle">Our Website</string>
-    <string name="website_url" translatable="false">https://byteflipper.web.app/</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
     <string name="vk_title">VK</string>
     <string name="vk_subtitle">Our community on VK</string>
     <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
@@ -152,4 +152,19 @@
     <string name="source_code_subtitle">Source code of the application on GitHub</string>
     <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
     <string name="error_no_browser_found">No browser found to open URL</string>
+
+    <!-- Setup Screen -->
+    <string name="setup_welcome_title">Welcome to Randify</string>
+    <string name="setup_welcome_description">Let\'s get the app ready for you.</string>
+
+    <string name="setup_permission_error">Please grant all required permissions.</string>
+
+    <string name="setup_notifications_title">Notifications</string>
+    <string name="setup_notifications_description">Enable notifications to receive push alerts about new updates and other important events.</string>
+
+    <string name="setup_permission_granted">Permission Granted</string>
+    <string name="setup_enable_notifications">Enable Notifications</string>
+
+    <string name="setup_finish_title">All Set!</string>
+    <string name="setup_finish_description">You\'re ready to trust randomness 🎲</string>
 </resources>
