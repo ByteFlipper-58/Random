@@ -19,17 +19,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import com.byteflipper.random.data.preset.ListPresetRepository
 
 @Composable
 fun CreateListDialog(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     presetCount: Int,
-    repository: ListPresetRepository,
-    coroutineScope: CoroutineScope,
+    onCreate: (name: String, defaultItems: List<String>) -> Unit,
     onPresetCreated: () -> Unit
 ) {
     val context = LocalContext.current
@@ -57,15 +53,13 @@ fun CreateListDialog(
             confirmButton = {
                 TextButton(onClick = {
                     val name = createName.trim().ifEmpty { "${context.getString(R.string.new_list)} $nextNumber" }
-                    coroutineScope.launch {
-                        repository.upsert(
-                            ListPreset(
-                                name = name,
-                                items = listOf(context.getString(R.string.item_1), context.getString(R.string.item_2), context.getString(R.string.item_3))
-                            )
-                        )
-                        onPresetCreated()
-                    }
+                    val items = listOf(
+                        context.getString(R.string.item_1),
+                        context.getString(R.string.item_2),
+                        context.getString(R.string.item_3)
+                    )
+                    onCreate(name, items)
+                    onPresetCreated()
                 }) { Text(stringResource(R.string.save)) }
             },
             dismissButton = {

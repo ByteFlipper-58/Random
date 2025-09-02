@@ -32,14 +32,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,13 +47,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
-import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.ui.home.components.CreateListDialog
 import com.byteflipper.random.ui.home.components.MenuCard
 import com.byteflipper.random.ui.home.components.PresetCard
 import com.byteflipper.random.ui.home.components.RenameListDialog
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+ 
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -88,8 +84,7 @@ fun HomeScreen(
     onAddNumbersPreset: () -> Unit,
     onAddListPreset: () -> Unit, // оставлен для совместимости
 ) {
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+ 
     val viewModel: HomeViewModel = hiltViewModel()
     val presets by viewModel.presets.collectAsStateWithLifecycle()
 
@@ -257,8 +252,7 @@ fun HomeScreen(
             createName = ""
         },
         presetCount = presets.size,
-        repository = viewModel.listPresetRepository,
-        coroutineScope = scope,
+        onCreate = { name, items -> viewModel.createPreset(name, items) },
         onPresetCreated = {
             showCreateDialog = false
             createName = ""
@@ -269,8 +263,7 @@ fun HomeScreen(
         RenameListDialog(
             preset = renameTarget,
             onDismiss = { renameTarget = null },
-            repository = viewModel.listPresetRepository,
-            coroutineScope = scope,
+            onRename = { preset, newName -> viewModel.renamePreset(preset, newName) },
             onPresetRenamed = { renameTarget = null }
         )
     }

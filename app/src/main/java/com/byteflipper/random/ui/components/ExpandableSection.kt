@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.byteflipper.random.ui.theme.ShapesTokens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.CardDefaults
@@ -62,7 +63,7 @@ fun ExpandableSection(
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 4.dp
         ),
-        shape = RoundedCornerShape(16.dp),
+        shape = ShapesTokens.MediumShape,
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )

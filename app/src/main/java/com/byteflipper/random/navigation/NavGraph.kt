@@ -1,10 +1,5 @@
 package com.byteflipper.random.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -59,120 +54,64 @@ fun AppNavGraph(navController: NavHostController, startDestination: String = Rou
         }
         composable(
             route = Route.Numbers.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             NumbersScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.Lot.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             LotScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.Dice.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             DiceScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.Coin.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             CoinScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.Settings.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             SettingsScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.About.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             AboutScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.List.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             ListScreen(
                 onBack = { navController.popBackStack() },
@@ -185,18 +124,10 @@ fun AppNavGraph(navController: NavHostController, startDestination: String = Rou
         }
         composable(
             route = Route.ListWithId.route,
-            enterTransition = {
-                scaleIn(initialScale = 0.92f) + fadeIn()
-            },
-            exitTransition = {
-                scaleOut(targetScale = 1.06f) + fadeOut()
-            },
-            popEnterTransition = {
-                scaleIn(initialScale = 1.06f) + fadeIn()
-            },
-            popExitTransition = {
-                scaleOut(targetScale = 0.92f) + fadeOut()
-            }
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
         ) {
             val id = it.arguments?.getString("id")?.toLongOrNull()
             ListScreen(

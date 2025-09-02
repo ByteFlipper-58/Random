@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.byteflipper.random.ui.theme.ShapesTokens
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +46,7 @@ fun AppInfoCard(
         elevation = CardDefaults.elevatedCardElevation(
             defaultElevation = 6.dp
         ),
-        shape = RoundedCornerShape(24.dp),
+        shape = ShapesTokens.CardShape,
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         )

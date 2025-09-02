@@ -3,7 +3,6 @@ package com.byteflipper.random.ui.lists
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,17 +21,13 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
@@ -41,16 +36,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.EditorList
-import com.byteflipper.random.ui.components.FlipCardControls
-import com.byteflipper.random.ui.components.FlipCardOverlay
+import com.byteflipper.random.ui.components.flip.FlipCardControls
+import com.byteflipper.random.ui.components.flip.FlipCardOverlay
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
-import com.byteflipper.random.ui.components.rememberFlipCardState
+import com.byteflipper.random.ui.components.flip.rememberFlipCardState
 import com.byteflipper.random.ui.lists.components.ListRenameDialog
 import com.byteflipper.random.ui.lists.components.ListSaveDialog
 import com.byteflipper.random.ui.lists.components.ListResultsDisplay
 import com.byteflipper.random.ui.lists.components.ListFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
-import kotlin.math.min
 import kotlinx.coroutines.launch
 
 

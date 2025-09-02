@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.byteflipper.random.ui.theme.ShapesTokens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material.icons.outlined.FormatListBulleted
@@ -75,7 +76,7 @@ fun PresetCard(
         modifier = modifier
             .fillMaxWidth()
             .height(88.dp),
-        shape = RoundedCornerShape(24.dp),
+        shape = ShapesTokens.CardShape,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
@@ -93,7 +94,7 @@ fun PresetCard(
         ) {
             // Иконка в контейнере
             Surface(
-                shape = RoundedCornerShape(16.dp),
+                shape = ShapesTokens.MediumShape,
                 color = MaterialTheme.colorScheme.secondaryContainer,
                 modifier = Modifier.size(48.dp)
             ) {

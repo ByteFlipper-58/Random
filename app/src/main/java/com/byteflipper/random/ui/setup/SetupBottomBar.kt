@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.byteflipper.random.ui.theme.Dimens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Check
@@ -77,7 +78,7 @@ fun SetupBottomBar(
 
     Surface(
         modifier = modifier
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(24.dp), clip = true),
+            .shadow(elevation = Dimens.CardElevation, shape = RoundedCornerShape(Dimens.CardCornerRadius), clip = true),
         color = MaterialTheme.colorScheme.surfaceContainer,
         shape = AbsoluteSmoothCornerShape(
             cornerRadiusTR = 36.dp,

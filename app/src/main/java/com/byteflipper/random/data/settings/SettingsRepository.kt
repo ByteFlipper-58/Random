@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.byteflipper.random.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -14,9 +15,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val DATASTORE_NAME = "user_settings"
-
-private val Context.dataStore by preferencesDataStore(name = DATASTORE_NAME)
+private val Context.dataStore by preferencesDataStore(name = Constants.DATASTORE_SETTINGS_NAME)
 
 enum class ThemeMode(val value: Int) {
     System(0),
@@ -81,8 +80,8 @@ class SettingsRepository @Inject constructor(
         val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
 
         // Default list storage
-        val defaultListName: Preferences.Key<String> = stringPreferencesKey("default_list_name")
-        val defaultListItems: Preferences.Key<String> = stringPreferencesKey("default_list_items")
+        val defaultListName: Preferences.Key<String> = stringPreferencesKey(Constants.DEFAULT_LIST_NAME_KEY)
+        val defaultListItems: Preferences.Key<String> = stringPreferencesKey(Constants.DEFAULT_LIST_ITEMS_KEY)
     }
 
     val settingsFlow: Flow<Settings> = appContext.dataStore.data.map { prefs ->

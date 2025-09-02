@@ -14,16 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import com.byteflipper.random.data.preset.ListPresetRepository
 
 @Composable
 fun RenameListDialog(
     preset: ListPreset?,
     onDismiss: () -> Unit,
-    repository: ListPresetRepository,
-    coroutineScope: CoroutineScope,
+    onRename: (ListPreset, String) -> Unit,
     onPresetRenamed: () -> Unit
 ) {
     var renameName by rememberSaveable { mutableStateOf(preset?.name ?: "") }
@@ -45,10 +41,8 @@ fun RenameListDialog(
                 TextButton(onClick = {
                     val newName = renameName.trim()
                     if (newName.isNotEmpty()) {
-                        coroutineScope.launch {
-                            repository.upsert(preset.copy(name = newName))
-                            onPresetRenamed()
-                        }
+                        onRename(preset, newName)
+                        onPresetRenamed()
                     }
                 }) { Text(stringResource(R.string.save)) }
             },

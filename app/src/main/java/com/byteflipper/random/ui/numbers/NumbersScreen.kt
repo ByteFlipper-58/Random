@@ -6,19 +6,14 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
@@ -27,8 +22,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Autorenew
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,18 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -75,24 +62,17 @@ import kotlin.math.min
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
-import com.byteflipper.random.ui.components.FlipCardOverlay
-import com.byteflipper.random.ui.components.rememberFlipCardState
-import com.byteflipper.random.ui.components.FlipCardControls
+import com.byteflipper.random.ui.components.flip.FlipCardOverlay
+import com.byteflipper.random.ui.components.flip.rememberFlipCardState
+import com.byteflipper.random.ui.components.flip.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
-import com.byteflipper.random.ui.components.SizedFab
-import com.byteflipper.random.ui.numbers.components.NumbersInputFields
 import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
 import com.byteflipper.random.ui.numbers.components.NumbersFabControls
-import com.byteflipper.random.ui.numbers.components.NumbersResetDialog
 import com.byteflipper.random.ui.theme.getRainbowColors
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.byteflipper.random.data.settings.Settings
-import com.byteflipper.random.data.settings.SettingsRepository
 
 private const val MIN_DELAY_MS = 1_000
 private const val MAX_DELAY_MS = 60_000
