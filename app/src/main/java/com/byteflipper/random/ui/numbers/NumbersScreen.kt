@@ -411,6 +411,15 @@ fun NumbersScreen(onBack: () -> Unit) {
             }
 
             val dynamicCardSize = computeCardSize(resultsCountForSizing)
+            // Динамическая высота карточки на основе количества результатов
+            val heightScale = when {
+                resultsCountForSizing <= 10 -> 1.0f
+                resultsCountForSizing <= 25 -> 1.2f
+                resultsCountForSizing <= 50 -> 1.4f
+                resultsCountForSizing <= 100 -> 1.6f
+                else -> 1.8f
+            }
+            val contentTargetHeight = (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
 
             fun numberFontSizeFor(count: Int, cardSize: Dp): TextUnit {
                 // Адаптивный размер текста в зависимости от размера карточки и количества чисел
@@ -438,19 +447,22 @@ fun NumbersScreen(onBack: () -> Unit) {
                     backValues = emptyList()
                 },
                 cardSize = dynamicCardSize,
+                cardHeight = contentTargetHeight,
                 // Используем один и тот же цвет для обеих сторон карточки
                 frontContainerColor = cardColor,
                 backContainerColor = cardColor,
                 frontContent = {
                     NumbersResultsDisplay(
                         results = frontValues,
-                        cardColor = cardColor
+                        cardColor = cardColor,
+                        cardSize = contentTargetHeight
                     )
                 },
                 backContent = {
                     NumbersResultsDisplay(
                         results = backValues,
-                        cardColor = cardColor
+                        cardColor = cardColor,
+                        cardSize = contentTargetHeight
                     )
                 }
             )

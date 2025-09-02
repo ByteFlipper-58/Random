@@ -187,8 +187,21 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             val rainbowColors = getRainbowColors()
             val cardColor = remember(uiState.results) { rainbowColors.random() }
 
-            // Адаптивный размер карточки для списков
-            val listCardSize = 320.dp
+            // Динамический размер карточки для списков
+            val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+            val maxCardSide = (kotlin.math.min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).dp
+            val listCardSize = 320.dp.coerceAtMost(maxCardSide)
+            
+            // Динамическая высота на основе количества результатов
+            val resultsCount = uiState.results.size
+            val heightScale = when {
+                resultsCount <= 5 -> 1.0f
+                resultsCount <= 10 -> 1.2f
+                resultsCount <= 20 -> 1.4f
+                resultsCount <= 40 -> 1.6f
+                else -> 1.8f
+            }
+            val listCardHeight = (listCardSize * heightScale).coerceIn(300.dp, maxCardSide)
 
             // Flip overlay
             FlipCardOverlay(
@@ -199,16 +212,19 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 frontContainerColor = cardColor,
                 backContainerColor = cardColor,
                 cardSize = listCardSize,
+                cardHeight = listCardHeight,
                 frontContent = {
                     ListResultsDisplay(
                         results = uiState.results,
-                        cardColor = cardColor
+                        cardColor = cardColor,
+                        cardSize = listCardHeight
                     )
                 },
                 backContent = {
                     ListResultsDisplay(
                         results = uiState.results,
-                        cardColor = cardColor
+                        cardColor = cardColor,
+                        cardSize = listCardHeight
                     )
                 }
             )

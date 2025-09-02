@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.ui.draw.alpha
@@ -28,6 +29,9 @@ import kotlin.math.hypot
 import kotlin.math.max
 import kotlin.math.sin
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,6 +41,7 @@ fun FlipCardOverlay(
     onClosed: () -> Unit,
     modifier: Modifier = Modifier,
     cardSize: Dp = 280.dp,
+    cardHeight: Dp? = null,
     frontContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primaryContainer,
     backContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.secondaryContainer,
     frontContent: @Composable () -> Unit,
@@ -63,12 +68,13 @@ fun FlipCardOverlay(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .clickable(
-                    interactionSource = overlayClickInteraction,
-                    indication = null,
-                    enabled = state.isVisible && !state.isClosing && !state.isSpinning
-                ) {
-                    startCloseInternal(state, scope, anchorInRoot, onClosed)
+                .pointerInput(state.isVisible, state.isClosing, state.isSpinning) {
+                    // Закрываем только по тапу на фон; жесты скролла не перехватываем
+                    detectTapGestures(onTap = {
+                        if (state.isVisible && !state.isClosing && !state.isSpinning) {
+                            startCloseInternal(state, scope, anchorInRoot, onClosed)
+                        }
+                    })
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -76,6 +82,7 @@ fun FlipCardOverlay(
             FlipCardContent(
                 state = state,
                 cardSize = cardSize,
+                cardHeight = cardHeight,
                 frontContainerColor = frontContainerColor,
                 backContainerColor = backContainerColor,
                 frontContent = frontContent,
@@ -125,6 +132,7 @@ private fun FlipCardScrim(state: FlipCardState, anchorInRoot: Offset, scrimSurfa
 private fun FlipCardContent(
     state: FlipCardState,
     cardSize: Dp,
+    cardHeight: Dp?,
     frontContainerColor: Color,
     backContainerColor: Color,
     frontContent: @Composable () -> Unit,
@@ -139,7 +147,15 @@ private fun FlipCardContent(
 
     Box(
         modifier = Modifier
-            .size(cardSize)
+            .then(
+                if (cardHeight != null) Modifier
+                    .width(cardSize)
+                    .height(cardHeight) else Modifier.size(cardSize)
+            )
+            .pointerInput(Unit) {
+                // Поглощаем тапы внутри карточки, чтобы клик по оверлею не приводил к закрытию
+                detectTapGestures(onTap = { /* consume */ })
+            }
             .onGloballyPositioned { coords ->
                 val bounds = coords.boundsInRoot()
                 state.cardCenterInRoot = bounds.center
