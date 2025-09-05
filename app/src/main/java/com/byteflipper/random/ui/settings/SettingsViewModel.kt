@@ -10,6 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +22,7 @@ class SettingsViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = com.byteflipper.random.data.settings.Settings()
+        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
     )
 
     fun setThemeMode(mode: ThemeMode) {
@@ -44,6 +46,12 @@ class SettingsViewModel @Inject constructor(
     fun setAppLanguage(language: AppLanguage) {
         viewModelScope.launch {
             settingsRepository.setAppLanguage(language)
+        }
+    }
+
+    fun setHapticsEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settingsRepository.setHapticsEnabled(enabled)
         }
     }
 }

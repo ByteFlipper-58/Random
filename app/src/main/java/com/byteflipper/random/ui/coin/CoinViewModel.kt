@@ -1,9 +1,8 @@
-package com.byteflipper.random.ui.dice
+package com.byteflipper.random.ui.coin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.settings.SettingsRepository
-import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @HiltViewModel
-class DiceViewModel @Inject constructor(
+class CoinViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
@@ -22,3 +21,5 @@ class DiceViewModel @Inject constructor(
         initialValue = runBlocking { settingsRepository.settingsFlow.first() }
     )
 }
+
+

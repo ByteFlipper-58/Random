@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -42,7 +44,7 @@ class NumbersViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = com.byteflipper.random.data.settings.Settings()
+        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
     )
 
     fun updateFromText(text: String) {

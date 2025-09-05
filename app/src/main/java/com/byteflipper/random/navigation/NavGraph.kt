@@ -11,6 +11,8 @@ import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.dice.DiceScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
+import com.byteflipper.random.ui.settings.SettingsGeneralScreen
+import com.byteflipper.random.ui.settings.SettingsAppearanceScreen
 import com.byteflipper.random.ui.about.AboutScreen
 import com.byteflipper.random.ui.setup.SetupScreen
 
@@ -25,6 +27,8 @@ sealed class Route(val route: String) {
     data object Lot : Route("lot")
     data object Coin : Route("coin")
     data object Settings : Route("settings")
+    data object SettingsGeneral : Route("settings_general")
+    data object SettingsAppearance : Route("settings_appearance")
     data object About : Route("about")
 }
 
@@ -95,7 +99,29 @@ fun AppNavGraph(navController: NavHostController, startDestination: String = Rou
             popEnterTransition = NavTransitions.popEnter,
             popExitTransition = NavTransitions.popExit
         ) {
-            SettingsScreen(onBack = { navController.popBackStack() })
+            SettingsScreen(
+                onBack = { navController.popBackStack() },
+                onOpenGeneral = { navController.navigate(Route.SettingsGeneral.route) },
+                onOpenAppearance = { navController.navigate(Route.SettingsAppearance.route) }
+            )
+        }
+        composable(
+            route = Route.SettingsGeneral.route,
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
+        ) {
+            SettingsGeneralScreen(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Route.SettingsAppearance.route,
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
+        ) {
+            SettingsAppearanceScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.About.route,

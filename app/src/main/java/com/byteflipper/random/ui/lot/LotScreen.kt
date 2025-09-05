@@ -153,7 +153,6 @@ fun LotScreen(onBack: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
-    var hapticsEnabled by rememberSaveable { mutableStateOf(true) }
     val context = LocalContext.current
     val viewModel: LotViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -219,7 +218,7 @@ fun LotScreen(onBack: () -> Unit) {
         if (cards[pos].isRevealed) return
         val wasMarked = cards[pos].isMarked
         cards = cards.toMutableList().also { it[pos] = it[pos].copy(isRevealed = true) }
-        if (wasMarked && hapticsEnabled) {
+        if (wasMarked && settings.hapticsEnabled) {
             haptics.performHapticFeedback(HapticFeedbackType.LongPress)
         }
         // Если все отмеченные открыты — автоматически раскрыть остальные и переключить FAB на рандом
@@ -251,12 +250,7 @@ fun LotScreen(onBack: () -> Unit) {
             TopAppBar(
                 title = { Text(stringResource(R.string.lot_title)) },
                 navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back)) } },
-                actions = {
-                    IconButton(onClick = { hapticsEnabled = !hapticsEnabled }) {
-                        val icon = if (hapticsEnabled) painterResource(id = R.drawable.mobile_vibrate_24px) else painterResource(id = R.drawable.mobile_vibrate_off_24px)
-                        Icon(icon, contentDescription = if (hapticsEnabled) stringResource(R.string.vibration_on) else stringResource(R.string.vibration_off))
-                    }
-                }
+                actions = {}
             )
         },
         contentWindowInsets = WindowInsets.systemBars,

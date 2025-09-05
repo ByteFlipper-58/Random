@@ -86,6 +86,7 @@ fun HomeScreen(
 ) {
  
     val viewModel: HomeViewModel = hiltViewModel()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
     val presets by viewModel.presets.collectAsStateWithLifecycle()
 
 
@@ -156,7 +157,7 @@ fun HomeScreen(
 
         val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
             moveItem(from.index, to.index)
-            haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            if (settings.hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
         }
 
         LazyColumn(
@@ -187,10 +188,10 @@ fun HomeScreen(
                             .padding(top = 6.dp)
                             .longPressDraggableHandle(
                                 onDragStarted = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    if (settings.hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 },
                                 onDragStopped = {
-                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    if (settings.hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                 }
                             )
 

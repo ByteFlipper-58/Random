@@ -236,7 +236,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     }
 
     fun triggerFabPulse() = scope.launch {
-        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
         view.playSoundEffect(SoundEffectConstants.CLICK)
 
         fabPulseProgress.snapTo(0f)
@@ -333,7 +333,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                             }
                         },
                         onSpinCompleted = {
-                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                         }
                     )
                 },

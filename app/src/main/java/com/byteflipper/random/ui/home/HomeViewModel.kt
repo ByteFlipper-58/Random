@@ -5,6 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.byteflipper.random.data.settings.SettingsRepository
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -14,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val listPresetRepository: ListPresetRepository
+    val listPresetRepository: ListPresetRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     val presets: StateFlow<List<ListPreset>> = listPresetRepository.observeAll()
@@ -23,6 +28,12 @@ class HomeViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
+
+    val settings = settingsRepository.settingsFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
+    )
 
     fun deletePreset(preset: ListPreset) {
         viewModelScope.launch {

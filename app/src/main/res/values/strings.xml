@@ -64,6 +64,10 @@
     <string name="only_available_numbers">Only %1$d unused numbers available</string>
 
     <!-- Settings screen -->
+    <string name="general">General</string>
+    <string name="appearance">Appearance</string>
+    <string name="vibration">Vibration</string>
+    <string name="vibration_description">Haptic feedback on interactions</string>
     <string name="theme">Theme</string>
     <string name="theme_description">Choose app theme</string>
     <string name="system_theme">System</string>
@@ -86,6 +90,8 @@
     <string name="fab_size_medium_desc">Standard size</string>
     <string name="fab_size_large">L (Large)</string>
     <string name="fab_size_large_desc">Large size</string>
+    <string name="settings_general_subtitle">Language and vibration</string>
+    <string name="settings_appearance_subtitle">Theme, dynamic colors, FAB size</string>
     <string name="loading">Loading...</string>
     <string name="open_after_save">Open after saving</string>
     <string name="roll_dice">Roll</string>

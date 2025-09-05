@@ -79,6 +79,8 @@ fun DiceScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
     val view = LocalView.current
+    val viewModel: DiceViewModel = hiltViewModel()
+    val settings by viewModel.settings.collectAsState()
 
     val maxDice = 10
     var diceCount by rememberSaveable { mutableStateOf(2) }
@@ -137,11 +139,11 @@ fun DiceScreen(onBack: () -> Unit) {
         }
     }
 
-    fun rollAll() {
+    fun rollAll(hapticsAllowed: Boolean) {
         currentRollJob?.cancel()
         currentRollJob = scope.launch {
             isRolling = true
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            if (hapticsAllowed) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
             view.playSoundEffect(SoundEffectConstants.CLICK)
             openOverlayIfNeeded()
 
@@ -195,12 +197,9 @@ fun DiceScreen(onBack: () -> Unit) {
         },
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = {
-            val context = LocalContext.current
-            val viewModel: DiceViewModel = hiltViewModel()
-            val settings by viewModel.settings.collectAsState()
             SizedFab(
                 size = settings.fabSize,
-                onClick = { rollAll() },
+                onClick = { rollAll(settings.hapticsEnabled) },
                 containerColor = if (isRolling)
                     MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
                 else
@@ -370,7 +369,7 @@ fun DiceScreen(onBack: () -> Unit) {
                                                     if (!isAnimating.value[i]) {
                                                         scope.launch {
                                                             isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
-                                                            haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                            if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                                                             val newV = Random.nextInt(1, 7)
                                                             diceValues = diceValues.toMutableList().also { it[i] = newV }
                                                             val currentColor = diceColors[i]

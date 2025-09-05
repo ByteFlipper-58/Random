@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.byteflipper.random.R
 import kotlinx.coroutines.launch
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -68,6 +70,8 @@ fun CoinScreen(onBack: () -> Unit) {
     val view = LocalView.current
     val density = LocalDensity.current
     val haptics = LocalHapticFeedback.current
+    val viewModel: CoinViewModel = hiltViewModel()
+    val settings by viewModel.settings.collectAsState()
 
     val rotationXAnim = remember { Animatable(0f) }
     val offsetYAnim = remember { Animatable(0f) } // px
@@ -107,7 +111,7 @@ fun CoinScreen(onBack: () -> Unit) {
         val throwHeightPx = with(density) { 220.dp.toPx() }
 
         view.playSoundEffect(SoundEffectConstants.CLICK)
-        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
 
         val rot = scope.launch {
             rotationXAnim.animateTo(

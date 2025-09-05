@@ -34,6 +34,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.first
 import net.kibotu.splashscreen.SplashScreenDecorator
 import net.kibotu.splashscreen.splash
 import javax.inject.Inject
@@ -65,9 +67,10 @@ class MainActivity : AppCompatActivity() {
         // Применяем сохраненный язык
         applySavedLanguage()
 
+        val initialSettings: Settings = runBlocking { settingsRepository.settingsFlow.first() }
         setContent {
             val context = LocalContext.current
-            val settings: Settings by settingsRepository.settingsFlow.collectAsState(initial = Settings())
+            val settings: Settings by settingsRepository.settingsFlow.collectAsState(initial = initialSettings)
             val darkTheme = when (settings.themeMode) {
                 ThemeMode.System -> isSystemInDarkTheme()
                 ThemeMode.Light -> false

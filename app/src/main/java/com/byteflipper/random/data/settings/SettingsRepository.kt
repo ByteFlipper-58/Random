@@ -64,6 +64,7 @@ data class Settings(
     val dynamicColors: Boolean = true,
     val fabSize: FabSizeSetting = FabSizeSetting.Medium,
     val appLanguage: AppLanguage = AppLanguage.System,
+    val hapticsEnabled: Boolean = true,
     val setupCompleted: Boolean = false
 )
 
@@ -77,6 +78,7 @@ class SettingsRepository @Inject constructor(
         val dynamicColors: Preferences.Key<Boolean> = booleanPreferencesKey("dynamic_colors")
         val fabSize: Preferences.Key<Int> = intPreferencesKey("fab_size")
         val appLanguage: Preferences.Key<Int> = intPreferencesKey("app_language")
+        val hapticsEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("haptics_enabled")
         val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
 
         // Default list storage
@@ -90,6 +92,7 @@ class SettingsRepository @Inject constructor(
             dynamicColors = prefs[Keys.dynamicColors] ?: true,
             fabSize = FabSizeSetting.fromValue(prefs[Keys.fabSize]),
             appLanguage = AppLanguage.fromValue(prefs[Keys.appLanguage]),
+            hapticsEnabled = prefs[Keys.hapticsEnabled] ?: true,
             setupCompleted = prefs[Keys.setupCompleted] ?: false
         )
     }
@@ -109,6 +112,12 @@ class SettingsRepository @Inject constructor(
     suspend fun setFabSize(size: FabSizeSetting) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.fabSize] = size.value
+        }
+    }
+
+    suspend fun setHapticsEnabled(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.hapticsEnabled] = enabled
         }
     }
 
