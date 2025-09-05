@@ -42,6 +42,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.PreferenceCategory
 import com.byteflipper.random.ui.components.SwitchPreference
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,6 +112,44 @@ fun SettingsScreen(onBack: () -> Unit) {
             }
 
             HorizontalDivider(modifier = Modifier.padding(top = 12.dp))
+
+            // Language
+            PreferenceCategory(title = stringResource(R.string.language), description = stringResource(R.string.language_description))
+            val langKey = when (settings.appLanguage) {
+                AppLanguage.System -> "system"
+                AppLanguage.English -> "en"
+                AppLanguage.Russian -> "ru"
+                else -> "system"
+            }
+            SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
+                val langItems = listOf(
+                    "system" to stringResource(R.string.language_system),
+                    "en" to stringResource(R.string.language_english),
+                    "ru" to stringResource(R.string.language_russian)
+                )
+                langItems.forEachIndexed { index, (key, label) ->
+                    SegmentedButton(
+                        selected = langKey == key,
+                        onClick = {
+                            val language = when (key) {
+                                "en" -> AppLanguage.English
+                                "ru" -> AppLanguage.Russian
+                                else -> AppLanguage.System
+                            }
+                            viewModel.setAppLanguage(language)
+                        },
+                        shape = SegmentedButtonDefaults.itemShape(index, langItems.size),
+                        colors = SegmentedButtonDefaults.colors(
+                            activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            inactiveContainerColor = MaterialTheme.colorScheme.surface,
+                            inactiveContentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Text(label)
+                    }
+                }
+            }
 
             val dynamicSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             PreferenceCategory(

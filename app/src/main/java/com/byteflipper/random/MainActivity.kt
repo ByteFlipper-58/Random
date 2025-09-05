@@ -1,7 +1,8 @@
 package com.byteflipper.random
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+// Using AppCompatDelegate for locales across all API levels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
@@ -30,6 +31,8 @@ import com.byteflipper.random.ui.components.HeartBeatAnimation
 import com.byteflipper.random.ui.theme.RandomTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.kibotu.splashscreen.SplashScreenDecorator
 import net.kibotu.splashscreen.splash
@@ -38,7 +41,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var settingsRepository: SettingsRepository
@@ -46,8 +49,10 @@ class MainActivity : ComponentActivity() {
     private var splashScreen: SplashScreenDecorator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // показываем кастомный сплэш до super.onCreate()
-        showSplash()
+        // показываем кастомный сплэш только при холодном старте
+        if (savedInstanceState == null) {
+            showSplash()
+        }
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -113,14 +118,23 @@ class MainActivity : ComponentActivity() {
 
     private fun applySavedLanguage() {
         lifecycleScope.launch {
-            settingsRepository.settingsFlow.collect { settings ->
-                val localeList = when (settings.appLanguage) {
-                    AppLanguage.System -> LocaleListCompat.getEmptyLocaleList()
-                    AppLanguage.English -> LocaleListCompat.forLanguageTags("en")
-                    AppLanguage.Russian -> LocaleListCompat.forLanguageTags("ru")
+            settingsRepository.settingsFlow
+                .map { it.appLanguage.localeTag }
+                .distinctUntilChanged()
+                .collect { tag ->
+                    val desiredLocales = if (tag == "system") {
+                        LocaleListCompat.getEmptyLocaleList()
+                    } else {
+                        LocaleListCompat.forLanguageTags(tag)
+                    }
+                    val currentLocales = AppCompatDelegate.getApplicationLocales()
+                    val desiredTags = desiredLocales.toLanguageTags()
+                    val currentTags = currentLocales.toLanguageTags()
+                    if (desiredTags != currentTags) {
+                        AppCompatDelegate.setApplicationLocales(desiredLocales)
+                        recreate()
+                    }
                 }
-                AppCompatDelegate.setApplicationLocales(localeList)
-            }
         }
     }
 

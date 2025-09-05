@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Random" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Random" parent="Theme.AppCompat.DayNight.NoActionBar" />
 
-    <style name="App.Starting" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="App.Starting" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>
