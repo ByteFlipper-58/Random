@@ -102,12 +102,26 @@
     <string name="reset_history">Скинути історію використаних чисел</string>
 
     <!-- Dialogs -->
-    <string name="use_delay">Використати затримку</string>
+    <string name="use_delay">Використовувати затримку</string>
     <string name="delay">Затримка</string>
     <string name="seconds">сек</string>
     <string name="seconds_short">с</string>
     <string name="fixed_delay_1_second">Фіксована затримка: 1 секунда</string>
     <string name="close">Закрити</string>
+
+    <!-- Сортування -->
+    <string name="sorting">Сортування</string>
+    <string name="random_order">Випадковий порядок</string>
+    <string name="ascending">За зростанням</string>
+    <string name="descending">За спаданням</string>
+    <string name="alphabetical_az">За абеткою (A–Z)</string>
+    <string name="alphabetical_za">У зворотному порядку (Z–A)</string>
+
+    <string name="customize_generation">Налаштувати параметри генерації</string>
+    <string name="result_count_description">Виберіть кількість згенерованих результатів</string>
+    <string name="sorting_description">Порядок відображення результатів</string>
+    <string name="repetitions_description">Дозволити повторення значень</string>
+    <string name="custom_delay_enabled">Користувацька затримка між результатами</string>
 
     <string name="expandable_section_collapse">Згорнути</string>
     <string name="expandable_section_expand">Розгорнути</string>

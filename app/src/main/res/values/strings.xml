@@ -112,6 +112,20 @@
     <string name="expandable_section_collapse">Collapse</string>
     <string name="expandable_section_expand">Expand</string>
 
+    <!-- Sorting -->
+    <string name="sorting">Sorting</string>
+    <string name="random_order">Random order</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="alphabetical_az">Alphabetical (A–Z)</string>
+    <string name="alphabetical_za">Reverse alphabetical (Z–A)</string>
+
+    <string name="customize_generation">Customize generation settings</string>
+    <string name="result_count_description">Select the number of generated results</string>
+    <string name="sorting_description">Order of result display</string>
+    <string name="repetitions_description">Allow value repetition</string>
+    <string name="custom_delay_enabled">Custom delay between results</string>
+
     <!-- About Screen -->
     <string name="about_app">About App</string>
     <string name="version">Version</string>

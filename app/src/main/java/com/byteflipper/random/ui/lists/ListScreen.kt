@@ -28,8 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.material.icons.outlined.SortByAlpha
+import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,6 +48,7 @@ import com.byteflipper.random.ui.lists.components.ListSaveDialog
 import com.byteflipper.random.ui.lists.components.ListResultsDisplay
 import com.byteflipper.random.ui.lists.components.ListFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
+import com.byteflipper.random.ui.components.RadioOption
 import kotlinx.coroutines.launch
 
 
@@ -231,6 +235,23 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
             // Config dialog
             if (uiState.showConfigDialog) {
+            val sortOptions = listOf(
+                RadioOption(
+                    key = com.byteflipper.random.ui.lists.ListSortingMode.Random.name,
+                    title = stringResource(R.string.random_order),
+                    icon = rememberVectorPainter(Icons.Outlined.Shuffle)
+                ),
+                RadioOption(
+                    key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalAZ.name,
+                    title = stringResource(R.string.alphabetical_az),
+                    icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                ),
+                RadioOption(
+                    key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalZA.name,
+                    title = stringResource(R.string.alphabetical_za),
+                    icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                )
+            )
             GeneratorConfigDialog(
                     visible = uiState.showConfigDialog,
                     onDismissRequest = { viewModel.toggleConfigDialog() },
@@ -244,7 +265,13 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     useDelay = uiState.useDelay,
                     onUseDelayChange = { viewModel.updateUseDelay(it) },
                     delayText = uiState.delayText,
-                    onDelayChange = { viewModel.updateDelayText(it) }
+                    onDelayChange = { viewModel.updateDelayText(it) },
+                    sortingOptions = sortOptions,
+                    selectedSortingKey = uiState.sortingMode.name,
+                    onSortingChange = { key ->
+                        val mode = com.byteflipper.random.ui.lists.ListSortingMode.valueOf(key)
+                        viewModel.updateSortingMode(mode)
+                    }
                 )
             }
 

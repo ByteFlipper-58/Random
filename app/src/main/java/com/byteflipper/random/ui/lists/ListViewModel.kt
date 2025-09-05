@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.text.Normalizer
+import java.util.Locale
 import kotlin.random.Random
 
 data class ListUiState(
@@ -39,7 +41,8 @@ data class ListUiState(
     val showSaveDialog: Boolean = false,
     val saveName: String = "",
     val renameName: String = "",
-    val openAfterSave: Boolean = true
+    val openAfterSave: Boolean = true,
+    val sortingMode: ListSortingMode = ListSortingMode.Random
 )
 
 @HiltViewModel
@@ -169,7 +172,8 @@ class ListViewModel @Inject constructor(
     }
 
     fun generateAndUpdateResults(): List<String> {
-        val results = generate()
+        val rawResults = generate()
+        val results = applySorting(rawResults)
         _uiState.update { state ->
             state.copy(
                 results = results,
@@ -181,6 +185,35 @@ class ListViewModel @Inject constructor(
             )
         }
         return results
+    }
+
+    private fun applySorting(input: List<String>): List<String> {
+        val mode = _uiState.value.sortingMode
+        return when (mode) {
+            ListSortingMode.Random -> input.shuffled()
+            ListSortingMode.AlphabeticalAZ -> input.sortedWith(universalStringComparator())
+            ListSortingMode.AlphabeticalZA -> input.sortedWith(universalStringComparator().reversed())
+        }
+    }
+
+    private fun universalStringComparator(): Comparator<String> {
+        return Comparator { a, b ->
+            val ka = normalizeForSort(a)
+            val kb = normalizeForSort(b)
+            ka.compareTo(kb)
+        }
+    }
+
+    private fun normalizeForSort(value: String): String {
+        val trimmed = value.trim()
+        if (trimmed.isEmpty()) return ""
+        val lowerCased = trimmed.lowercase(Locale.ROOT)
+        val decomposed = Normalizer.normalize(lowerCased, Normalizer.Form.NFKD)
+        return decomposed.replace("\\p{M}+".toRegex(), "")
+    }
+
+    fun updateSortingMode(mode: ListSortingMode) {
+        _uiState.update { it.copy(sortingMode = mode) }
     }
 
     fun getEffectiveDelayMs(): Int {

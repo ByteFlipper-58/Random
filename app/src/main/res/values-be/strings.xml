@@ -102,12 +102,26 @@
     <string name="reset_history">Скінуць гісторыю выкарыстаных лічбаў</string>
 
     <!-- Dialogs -->
-    <string name="use_delay">Выкарыстаць затрымку</string>
+    <string name="use_delay">Выкарыстоўваць затрымку</string>
     <string name="delay">Затрымка</string>
     <string name="seconds">сек</string>
     <string name="seconds_short">с</string>
     <string name="fixed_delay_1_second">Фіксаваная затрымка: 1 секунда</string>
     <string name="close">Закрыць</string>
+
+    <!-- Сартыроўка -->
+    <string name="sorting">Сартыроўка</string>
+    <string name="random_order">Выпадковы парадак</string>
+    <string name="ascending">Па ўзрастанні</string>
+    <string name="descending">Па змяншэнні</string>
+    <string name="alphabetical_az">Па алфавіце (А–Я)</string>
+    <string name="alphabetical_za">У зваротным парадку (Я–А)</string>
+
+    <string name="customize_generation">Наладзьце параметры генерацыі</string>
+    <string name="result_count_description">Абярыце колькасць згенераваных вынікаў</string>
+    <string name="sorting_description">Парадак адлюстравання вынікаў</string>
+    <string name="repetitions_description">Дазволіць паўтарэнне значэнняў</string>
+    <string name="custom_delay_enabled">Карыстальніцкая затрымка паміж вынікамі</string>
 
     <string name="expandable_section_collapse">Згарнуць</string>
     <string name="expandable_section_expand">Разгарнуць</string>

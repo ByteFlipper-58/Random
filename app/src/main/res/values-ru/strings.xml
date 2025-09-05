@@ -101,13 +101,28 @@
     <string name="used_count">Использовано</string>
     <string name="reset_history">Сбросить историю использованных чисел</string>
 
-    <!-- Диалоги -->
+    <!-- Dialogs -->
     <string name="use_delay">Использовать задержку</string>
     <string name="delay">Задержка</string>
     <string name="seconds">сек</string>
     <string name="seconds_short">с</string>
     <string name="fixed_delay_1_second">Фиксированная задержка: 1 секунда</string>
     <string name="close">Закрыть</string>
+
+    <!-- Сортировка -->
+    <string name="sorting">Сортировка</string>
+    <string name="random_order">Случайный порядок</string>
+    <string name="ascending">По возрастанию</string>
+    <string name="descending">По убыванию</string>
+    <string name="alphabetical_az">По алфавиту (А–Я)</string>
+    <string name="alphabetical_za">Обратный алфавит (Я–А)</string>
+
+    <string name="customize_generation">Настройте параметры генерации</string>
+    <string name="result_count_description">Выберите количество генерируемых результатов</string>
+    <string name="sorting_description">Порядок отображения результатов</string>
+    <string name="repetitions_description">Разрешить повторение значений</string>
+    <string name="custom_delay_enabled">Настраиваемая задержка между результатами</string>
+
     <string name="error_no_browser_found">Браузер не найден для открытия URL</string>
 
     <string name="expandable_section_collapse">Свернуть</string>

@@ -109,6 +109,20 @@
     <string name="fixed_delay_1_second">Stałe opóźnienie: 1 sekunda</string>
     <string name="close">Zamknij</string>
 
+    <!-- Sortowanie -->
+    <string name="sorting">Sortowanie</string>
+    <string name="random_order">Losowa kolejność</string>
+    <string name="ascending">Rosnąco</string>
+    <string name="descending">Malejąco</string>
+    <string name="alphabetical_az">Alfabetycznie (A–Z)</string>
+    <string name="alphabetical_za">Odwrotnie alfabetycznie (Z–A)</string>
+
+    <string name="customize_generation">Dostosuj ustawienia generowania</string>
+    <string name="result_count_description">Wybierz liczbę wygenerowanych wyników</string>
+    <string name="sorting_description">Kolejność wyświetlania wyników</string>
+    <string name="repetitions_description">Zezwól na powtarzanie wartości</string>
+    <string name="custom_delay_enabled">Niestandardowe opóźnienie między wynikami</string>
+
     <string name="expandable_section_collapse">Zwiń</string>
     <string name="expandable_section_expand">Rozwiń</string>
 

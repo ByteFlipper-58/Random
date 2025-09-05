@@ -69,6 +69,8 @@ import com.byteflipper.random.ui.components.GeneratorConfigDialog
 import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
 import com.byteflipper.random.ui.numbers.components.NumbersFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
+import com.byteflipper.random.ui.components.RadioOption
+import com.byteflipper.random.ui.numbers.NumberSortingMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -105,6 +107,7 @@ fun NumbersScreen(onBack: () -> Unit) {
 
     // Диалог настроек
     var showConfigDialog by rememberSaveable { mutableStateOf(false) }
+    var sortingModeKey by rememberSaveable { mutableStateOf(NumberSortingMode.Random.name) }
 
     // Значения на сторонах карточки - теперь списки
     var frontValues by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
@@ -276,7 +279,14 @@ fun NumbersScreen(onBack: () -> Unit) {
         onDelayChange = { delayText = it },
         minDelayMs = MIN_DELAY_MS,
         maxDelayMs = MAX_DELAY_MS,
-        defaultDelayMs = DEFAULT_DELAY_MS
+        defaultDelayMs = DEFAULT_DELAY_MS,
+        sortingOptions = listOf(
+            RadioOption(key = NumberSortingMode.Random.name, title = stringResource(R.string.random_order)),
+            RadioOption(key = NumberSortingMode.Ascending.name, title = stringResource(R.string.ascending)),
+            RadioOption(key = NumberSortingMode.Descending.name, title = stringResource(R.string.descending))
+        ),
+        selectedSortingKey = sortingModeKey,
+        onSortingChange = { sortingModeKey = it }
     )
 
     Scaffold(
@@ -310,7 +320,12 @@ fun NumbersScreen(onBack: () -> Unit) {
                     flipCardController.spinAndReveal(
                         effectiveDelayMs = delayMs,
                         onReveal = { targetIsFront ->
-                            val newNumbers = generateNumbers(range, count)
+                            val unsorted = generateNumbers(range, count)
+                            val newNumbers = when (NumberSortingMode.valueOf(sortingModeKey)) {
+                                NumberSortingMode.Random -> unsorted.shuffled()
+                                NumberSortingMode.Ascending -> unsorted.sorted()
+                                NumberSortingMode.Descending -> unsorted.sortedDescending()
+                            }
                             if (targetIsFront) {
                                 frontValues = newNumbers
                             } else {
