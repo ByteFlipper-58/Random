@@ -162,9 +162,10 @@ fun NumbersScreen(onBack: () -> Unit) {
         val rangeSize = range.last - range.first + 1
 
         if (!allowRepetitions) {
-            val availableNumbers = range.toSet() - usedNumbers
-            if (availableNumbers.size < count) {
-                if (availableNumbers.isEmpty()) {
+            val usedInRangeCount = usedNumbers.count { it in range }
+            val availableCount = rangeSize - usedInRangeCount
+            if (availableCount < count) {
+                if (availableCount <= 0) {
                     scope.launch {
                         val res = snackbarHostState.showSnackbar(
                             message = context.getString(R.string.all_numbers_used),
@@ -177,7 +178,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     return null
                 } else {
                     scope.launch {
-                        snackbarHostState.showSnackbar(context.getString(R.string.only_available_numbers, availableNumbers.size))
+                        snackbarHostState.showSnackbar(context.getString(R.string.only_available_numbers, availableCount))
                     }
                     return null
                 }
@@ -191,17 +192,27 @@ fun NumbersScreen(onBack: () -> Unit) {
         return if (allowRepetitions) {
             List(count) { range.random() }
         } else {
-            // Исключаем использованные числа
-            val availableNumbers = range.toSet() - usedNumbers
-            if (availableNumbers.size >= count) {
-                val selected = availableNumbers.shuffled().take(count)
-                // Добавляем выбранные числа к использованным
-                usedNumbers = usedNumbers + selected
-                selected
-            } else {
-                // Не должно происходить, так как мы проверяем в validateInputs
-                emptyList()
+            val selected = mutableSetOf<Int>()
+            val lower = range.first
+            val upper = range.last
+            var attempts = 0
+            val maxAttempts = count * 50
+            while (selected.size < count && attempts < maxAttempts) {
+                val value = (lower..upper).random()
+                if (value !in usedNumbers && value !in selected) {
+                    selected += value
+                }
+                attempts++
             }
+            if (selected.size < count) {
+                var v = lower
+                while (selected.size < count && v <= upper) {
+                    if (v !in usedNumbers && v !in selected) selected += v
+                    v++
+                }
+            }
+            usedNumbers = usedNumbers + selected
+            selected.toList()
         }
     }
 
