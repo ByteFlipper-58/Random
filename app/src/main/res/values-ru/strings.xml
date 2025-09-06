@@ -1,186 +1,188 @@
 <resources>
+
+    <!-- App -->
     <string name="app_name">Randify</string>
 
-    <!-- Общие строки -->
-    <string name="back">Назад</string>
-    <string name="settings">Настройки</string>
-    <string name="save">Сохранить</string>
-    <string name="cancel">Отмена</string>
-    <string name="reset">Сбросить</string>
-    <string name="edit">Редактировать</string>
-    <string name="delete">Удалить</string>
-    <string name="rename">Переименовать</string>
+    <!-- Common -->
     <string name="add">Добавить</string>
-    <string name="generate">Сгенерировать</string>
-    <string name="results">Результаты:</string>
+    <string name="back">Назад</string>
+    <string name="cancel">Отмена</string>
+    <string name="close">Закрыть</string>
+    <string name="delete">Удалить</string>
     <string name="disabled">Отключено</string>
+    <string name="edit">Редактировать</string>
     <string name="enabled">Включено</string>
+    <string name="loading">Загрузка...</string>
+    <string name="rename">Переименовать</string>
+    <string name="reset">Сброс</string>
+    <string name="result">Результат</string>
+    <string name="results">Результаты:</string>
+    <string name="save">Сохранить</string>
+    <string name="settings">Настройки</string>
+    <string name="title">Заголовок</string>
 
-    <!-- Главный экран -->
-    <string name="random">Рандом</string>
-    <string name="numbers">Числа</string>
+    <!-- Main screen -->
+    <string name="coin">Монета</string>
+    <string name="dice">Кости</string>
     <string name="list">Список</string>
-    <string name="dice">Игральные кости</string>
-    <string name="lot">Жребий</string>
-    <string name="coin">Монетка</string>
+    <string name="lot">Жеребий</string>
+    <string name="numbers">Числа</string>
+    <string name="random">Случайное</string>
 
-    <!-- Экран жребия -->
-    <string name="lot_title">Жребий</string>
-    <string name="vibration_on">Вибрация: вкл</string>
-    <string name="vibration_off">Вибрация: выкл</string>
-    <string name="show_all">Показать все</string>
-    <string name="reshuffle">Перетасовать</string>
-    <string name="minimum_3_fields">Минимум 3 поля</string>
-    <string name="minimum_1_marked">Минимум 1 отмеченное</string>
+    <!-- Lot screen -->
+    <string name="lot_title">Жеребий</string>
+    <string name="marked_fields_label">Отмеченные поля</string>
     <string name="marked_more_than_total">Отмеченных больше, чем всего</string>
-    <string name="total_fields_label">Общее количество полей</string>
-    <string name="marked_fields_label">Количество отмеченных</string>
+    <string name="minimum_1_marked">Нужно минимум 1 отмеченное</string>
+    <string name="minimum_3_fields">Нужно минимум 3 поля</string>
+    <string name="reshuffle">Перетасовать</string>
+    <string name="show_all">Показать всё</string>
+    <string name="total_fields_label">Всего полей</string>
+    <string name="vibration_off">Вибрация: выкл</string>
+    <string name="vibration_on">Вибрация: вкл</string>
 
-    <!-- Компоненты списков -->
-    <string name="new_list">Новый список</string>
-    <string name="list_name">Название списка</string>
-    <string name="my_list">Мой список</string>
+    <!-- List screen -->
+    <string name="all_options_used">Все варианты исчерпаны</string>
     <string name="item_1">Элемент 1</string>
     <string name="item_2">Элемент 2</string>
     <string name="item_3">Элемент 3</string>
-    <string name="title">Заголовок</string>
-    <string name="use_preset">Использовать пресет</string>
-    <string name="share_preset">Поделиться пресетом</string>
-    <string name="preset_actions">Действия с пресетом</string>
-    <string name="rename_list">Переименовать список</string>
-    <string name="new_name">Новое название</string>
-    <string name="save_settings">Сохранить параметры</string>
     <string name="list_empty">Список пуст</string>
-    <string name="all_options_used">Все варианты закончились</string>
+    <string name="list_name">Название списка</string>
+    <string name="my_list">Мой список</string>
+    <string name="new_list">Новый список</string>
+    <string name="new_name">Новое имя</string>
+    <string name="preset_actions">Действия с пресетами</string>
+    <string name="rename_list">Переименовать список</string>
+    <string name="save_settings">Сохранить настройки</string>
+    <string name="share_preset">Поделиться пресетом</string>
+    <string name="use_preset">Использовать пресет</string>
 
-    <!-- Экран чисел -->
-    <string name="number">Число</string>
-    <string name="from">ОТ</string>
-    <string name="to">ДО</string>
-    <string name="history_cleared">История использованных чисел очищена</string>
-    <string name="enter_valid_numbers">Введите корректные числа в поля \'ОТ\' и \'ДО\'</string>
-    <string name="count_must_be_positive">Количество должно быть больше 0</string>
+    <!-- Numbers screen -->
     <string name="all_numbers_used">Все числа использованы</string>
+    <string name="count_must_be_positive">Количество должно быть больше 0</string>
+    <string name="enter_valid_numbers">Введите корректные числа в `ОТ` и `ДО`</string>
+    <string name="from">ОТ</string>
+    <string name="history_cleared">История использованных чисел очищена</string>
+    <string name="number">Число</string>
     <string name="only_available_numbers">Доступно только %1$d неиспользованных чисел</string>
-
-    <!-- Экран настроек -->
-    <string name="theme">Тема</string>
-    <string name="theme_description">Выбор оформления приложения</string>
-    <string name="system_theme">Системная</string>
-    <string name="light_theme">Светлая</string>
-    <string name="dark_theme">Тёмная</string>
-    <string name="language">Язык</string>
-    <string name="language_description">Выбор языка приложения</string>
-    <string name="language_system">Системный</string>
-    <string name="language_english">English</string>
-    <string name="language_russian">Русский</string>
-    <string name="dynamic_colors">Динамические цвета</string>
-    <string name="dynamic_colors_description">Адаптация палитры к обоям (Material You)</string>
-    <string name="android_12_required">Требуется Android 12+</string>
-    <string name="use_wallpaper_colors">Использовать цвета обоев (Android 12+)</string>
-    <string name="fab_size">Размер FAB</string>
-    <string name="fab_size_description">Размер основной кнопки действия на экранах</string>
-    <string name="fab_size_small">S (Small)</string>
-    <string name="fab_size_small_desc">Компактный размер</string>
-    <string name="fab_size_medium">M (Medium)</string>
-    <string name="fab_size_medium_desc">Стандартный размер</string>
-    <string name="fab_size_large">L (Large)</string>
-    <string name="fab_size_large_desc">Крупный размер</string>
-    <string name="loading">Загрузка...</string>
-    <string name="open_after_save">Открыть после сохранения</string>
-    <string name="roll_dice">Бросить</string>
-    <string name="dice_count">Количество кубиков</string>
-    <string name="sum">Сумма</string>
-    <string name="heads">Орёл</string>
-    <string name="tails">Решка</string>
-    <string name="result">Результат</string>
-    <string name="swipe_hint">Свайп вверх — подбросить</string>
-    <string name="generator_settings">Настройки генерации</string>
-    <string name="result_count">Количество результатов</string>
-    <string name="allow_repetitions">Разрешить повторения</string>
+    <string name="reset_history">Сбросить историю чисел</string>
+    <string name="to">ДО</string>
     <string name="used_count">Использовано</string>
-    <string name="reset_history">Сбросить историю использованных чисел</string>
 
-    <!-- Dialogs -->
-    <string name="use_delay">Использовать задержку</string>
-    <string name="delay">Задержка</string>
-    <string name="seconds">сек</string>
-    <string name="seconds_short">с</string>
-    <string name="fixed_delay_1_second">Фиксированная задержка: 1 секунда</string>
-    <string name="close">Закрыть</string>
+    <!-- Dice / Coin -->
+    <string name="dice_count">Количество костей</string>
+    <string name="heads">Орел</string>
+    <string name="roll_dice">Бросить</string>
+    <string name="sum">Сумма</string>
+    <string name="tails">Решка</string>
 
-    <!-- Сортировка -->
-    <string name="sorting">Сортировка</string>
-    <string name="random_order">Случайный порядок</string>
-    <string name="ascending">По возрастанию</string>
-    <string name="descending">По убыванию</string>
-    <string name="alphabetical_az">По алфавиту (А–Я)</string>
-    <string name="alphabetical_za">Обратный алфавит (Я–А)</string>
-
-    <string name="customize_generation">Настройте параметры генерации</string>
+    <!-- Generator settings -->
+    <string name="allow_repetitions">Разрешить повторы</string>
+    <string name="custom_delay_enabled">Своя задержка между результатами</string>
+    <string name="customize_generation">Настроить генерацию</string>
+    <string name="generator_settings">Настройки генератора</string>
+    <string name="repetitions_description">Разрешить повтор значений</string>
+    <string name="result_count">Количество результатов</string>
     <string name="result_count_description">Выберите количество генерируемых результатов</string>
     <string name="sorting_description">Порядок отображения результатов</string>
-    <string name="repetitions_description">Разрешить повторение значений</string>
-    <string name="custom_delay_enabled">Настраиваемая задержка между результатами</string>
+    <string name="swipe_hint">Проведите вверх, чтобы перевернуть</string>
 
-    <string name="error_no_browser_found">Браузер не найден для открытия URL</string>
+    <!-- Sorting -->
+    <string name="alphabetical_az">По алфавиту (А–Я)</string>
+    <string name="alphabetical_za">В обратном порядке (Я–А)</string>
+    <string name="ascending">По возрастанию</string>
+    <string name="descending">По убыванию</string>
+    <string name="random_order">Случайный порядок</string>
+    <string name="sorting">Сортировка</string>
 
+    <!-- Dialogs -->
+    <string name="delay">Задержка</string>
     <string name="expandable_section_collapse">Свернуть</string>
     <string name="expandable_section_expand">Развернуть</string>
+    <string name="fixed_delay_1_second">Фиксированная задержка: 1 секунда</string>
+    <string name="open_after_save">Открыть после сохранения</string>
+    <string name="seconds">сек</string>
+    <string name="seconds_short">с</string>
+    <string name="use_delay">Использовать задержку</string>
 
-    <!-- About Screen -->
+    <!-- Settings screen -->
+    <string name="android_12_required">Требуется Android 12+</string>
+    <string name="appearance">Внешний вид</string>
+    <string name="dark_theme">Тёмная</string>
+    <string name="dynamic_colors">Динамические цвета</string>
+    <string name="dynamic_colors_description">Подстраивать палитру под обои (Material You)</string>
+    <string name="fab_size">Размер FAB</string>
+    <string name="fab_size_description">Размер основной кнопки на экранах</string>
+    <string name="fab_size_large">L (Большой)</string>
+    <string name="fab_size_large_desc">Увеличенный размер</string>
+    <string name="fab_size_medium">M (Средний)</string>
+    <string name="fab_size_medium_desc">Стандартный размер</string>
+    <string name="fab_size_small">S (Малый)</string>
+    <string name="fab_size_small_desc">Компактный размер</string>
+    <string name="general">Общие</string>
+    <string name="language">Язык</string>
+    <string name="language_description">Выберите язык приложения</string>
+    <string name="language_english">Английский</string>
+    <string name="language_russian">Русский</string>
+    <string name="language_system">Системный</string>
+    <string name="light_theme">Светлая</string>
+    <string name="settings_appearance_subtitle">Тема, динамические цвета, размер FAB</string>
+    <string name="settings_general_subtitle">Язык и вибрация</string>
+    <string name="system_theme">Системная</string>
+    <string name="theme">Тема</string>
+    <string name="theme_description">Выберите тему приложения</string>
+    <string name="use_wallpaper_colors">Использовать цвета обоев (Android 12+)</string>
+    <string name="vibration">Вибрация</string>
+    <string name="vibration_description">Отклик при нажатиях</string>
+
+    <!-- About screen -->
     <string name="about_app">О приложении</string>
-    <string name="version">Версия</string>
     <string name="app_icon">Иконка приложения</string>
-    <string name="made_with_love">Сделано с ❤️ ByteFlipper</string>
-    <string name="contact_us">Связаться с нами</string>
-
-    <!-- Categories -->
-    <string name="support_feedback_category_title">Поддержка и отзывы</string>
-    <string name="connect_with_us_category_title">Мы в сети</string>
-    <string name="development_category_title">Разработка</string>
-
-    <!-- Actions/Links -->
-    <string name="bug_report_title">Сообщить об ошибке</string>
     <string name="bug_report_subtitle">Опишите проблему и отправьте нам</string>
-    <string name="rate_the_app_title">Оценить приложение</string>
-    <string name="rate_the_app_subtitle">Поставьте оценку в Google Play</string>
-    <string name="other_apps_title">Другие приложения</string>
-    <string name="other_apps_subtitle">Наши другие приложения</string>
-
-    <string name="website_title">Сайт ByteFlipper</string>
-    <string name="website_subtitle">Наш сайт</string>
-
-    <string name="vk_title">ВКонтакте</string>
-    <string name="vk_subtitle">Наше сообщество</string>
-
-    <string name="telegram_title">Telegram</string>
-    <string name="telegram_subtitle">Наш канал в Telegram</string>
-
-    <string name="youtube_title">YouTube</string>
-    <string name="youtube_subtitle">Наш канал на YouTube</string>
-
-    <string name="discord_title">Discord</string>
+    <string name="bug_report_title">Сообщить об ошибке</string>
+    <string name="connect_with_us_category_title">Связаться с нами</string>
+    <string name="contact_us">Обратная связь</string>
+    <string name="development_category_title">Разработка</string>
     <string name="discord_subtitle">Наш сервер Discord</string>
-
-    <string name="github_title">GitHub</string>
-    <string name="github_subtitle">Наш репозиторий на GitHub</string>
-
-    <string name="source_code_title">Исходный код</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="error_no_browser_found">Не найден браузер для открытия ссылки</string>
+    <string name="github_subtitle">Наш репозиторий Github</string>
+    <string name="github_title">Github</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="made_with_love">Сделано с ❤️ ByteFlipper</string>
+    <string name="other_apps_subtitle">Наши другие приложения</string>
+    <string name="other_apps_title">Другие приложения</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="rate_the_app_subtitle">Оцените приложение в Google Play</string>
+    <string name="rate_the_app_title">Оценить приложение</string>
     <string name="source_code_subtitle">Исходный код приложения на GitHub</string>
+    <string name="source_code_title">Исходный код</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
+    <string name="support_feedback_category_title">Поддержка и отзывы</string>
+    <string name="telegram_subtitle">Наш канал в Telegram</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="version">Версия</string>
+    <string name="vk_subtitle">Наша группа во ВКонтакте</string>
+    <string name="vk_title">ВКонтакте</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="website_subtitle">Наш сайт</string>
+    <string name="website_title">Сайт ByteFlipper</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
+    <string name="youtube_subtitle">Наш канал на YouTube</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
 
-    <!-- Setup Screen -->
-    <string name="setup_welcome_title">Добро пожаловать в Randify</string>
-    <string name="setup_welcome_description">Давайте подготовим приложение для работы.</string>
-
-    <string name="setup_permission_error">Пожалуйста, предоставьте все необходимые разрешения.</string>
-
-    <string name="setup_notifications_title">Уведомления</string>
-    <string name="setup_notifications_description">Включите уведомления, чтобы получать пуш-уведомления о новых обновлениях и других важных событиях.</string>
-
-    <string name="setup_permission_granted">Разрешение предоставлено</string>
+    <!-- Setup screen -->
     <string name="setup_enable_notifications">Включить уведомления</string>
-
-    <string name="setup_finish_title">Готово!</string>
     <string name="setup_finish_description">Теперь вы готовы довериться случайности 🎲</string>
+    <string name="setup_finish_title">Готово!</string>
+    <string name="setup_notifications_description">Включите уведомления, чтобы получать оповещения о новых обновлениях и событиях.</string>
+    <string name="setup_notifications_title">Уведомления</string>
+    <string name="setup_permission_error">Пожалуйста, предоставьте все необходимые разрешения.</string>
+    <string name="setup_permission_granted">Разрешение предоставлено</string>
+    <string name="setup_welcome_description">Давайте подготовим приложение для вас.</string>
+    <string name="setup_welcome_title">Добро пожаловать в Randify</string>
+
 </resources>

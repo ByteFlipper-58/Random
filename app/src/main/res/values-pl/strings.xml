@@ -1,177 +1,188 @@
 <resources>
+
+    <!-- App -->
     <string name="app_name">Randify</string>
 
-    <!-- Common strings -->
-    <string name="back">Wstecz</string>
-    <string name="settings">Ustawienia</string>
-    <string name="save">Zapisz</string>
-    <string name="cancel">Anuluj</string>
-    <string name="reset">Resetuj</string>
-    <string name="edit">Edytuj</string>
-    <string name="delete">Usuń</string>
-    <string name="rename">Zmień nazwę</string>
+    <!-- Common -->
     <string name="add">Dodaj</string>
-    <string name="generate">Generuj</string>
-    <string name="results">Wyniki:</string>
+    <string name="back">Wstecz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="close">Zamknij</string>
+    <string name="delete">Usuń</string>
     <string name="disabled">Wyłączone</string>
+    <string name="edit">Edytuj</string>
     <string name="enabled">Włączone</string>
+    <string name="loading">Ładowanie...</string>
+    <string name="rename">Zmień nazwę</string>
+    <string name="reset">Resetuj</string>
+    <string name="result">Wynik</string>
+    <string name="results">Wyniki:</string>
+    <string name="save">Zapisz</string>
+    <string name="settings">Ustawienia</string>
+    <string name="title">Tytuł</string>
 
     <!-- Main screen -->
-    <string name="random">Losowe</string>
-    <string name="numbers">Liczby</string>
-    <string name="list">Lista</string>
-    <string name="dice">Kości</string>
-    <string name="lot">Los</string>
     <string name="coin">Moneta</string>
+    <string name="dice">Kostka</string>
+    <string name="list">Lista</string>
+    <string name="lot">Los</string>
+    <string name="numbers">Liczby</string>
+    <string name="random">Losowe</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Los</string>
-    <string name="vibration_on">Wibracja: włączona</string>
-    <string name="vibration_off">Wibracja: wyłączona</string>
-    <string name="show_all">Pokaż wszystko</string>
+    <string name="marked_fields_label">Zaznaczone pola</string>
+    <string name="marked_more_than_total">Zaznaczonych więcej niż łączna liczba</string>
+    <string name="minimum_1_marked">Minimum 1 zaznaczone</string>
+    <string name="minimum_3_fields">Minimum 3 pola</string>
     <string name="reshuffle">Przetasuj</string>
-    <string name="minimum_3_fields">Co najmniej 3 pola</string>
-    <string name="minimum_1_marked">Co najmniej 1 zaznaczone</string>
-    <string name="marked_more_than_total">Zaznaczonych więcej niż wszystkich</string>
-    <string name="total_fields_label">Łącznie pól</string>
-    <string name="marked_fields_label">Zaznaczonych pól</string>
+    <string name="show_all">Pokaż wszystko</string>
+    <string name="total_fields_label">Łączna liczba pól</string>
+    <string name="vibration_off">Wibracja: wył</string>
+    <string name="vibration_on">Wibracja: wł</string>
 
-    <!-- List components -->
-    <string name="new_list">Nowa lista</string>
-    <string name="list_name">Nazwa listy</string>
-    <string name="my_list">Moja lista</string>
+    <!-- List screen -->
+    <string name="all_options_used">Wszystkie opcje zostały użyte</string>
     <string name="item_1">Element 1</string>
     <string name="item_2">Element 2</string>
     <string name="item_3">Element 3</string>
-    <string name="title">Tytuł</string>
-    <string name="use_preset">Użyj presetu</string>
-    <string name="share_preset">Udostępnij preset</string>
-    <string name="preset_actions">Akcje presetu</string>
-    <string name="rename_list">Zmień nazwę listy</string>
-    <string name="new_name">Nowa nazwa</string>
-    <string name="save_settings">Zapisz ustawienia</string>
     <string name="list_empty">Lista jest pusta</string>
-    <string name="all_options_used">Wszystkie opcje zostały użyte</string>
+    <string name="list_name">Nazwa listy</string>
+    <string name="my_list">Moja lista</string>
+    <string name="new_list">Nowa lista</string>
+    <string name="new_name">Nowa nazwa</string>
+    <string name="preset_actions">Gotowe akcje</string>
+    <string name="rename_list">Zmień nazwę listy</string>
+    <string name="save_settings">Zapisz ustawienia</string>
+    <string name="share_preset">Udostępnij preset</string>
+    <string name="use_preset">Użyj presetu</string>
 
     <!-- Numbers screen -->
-    <string name="number">Liczba</string>
-    <string name="from">OD</string>
-    <string name="to">DO</string>
-    <string name="history_cleared">Historia użytych liczb została wyczyszczona</string>
-    <string name="enter_valid_numbers">Wprowadź poprawne liczby w „OD” i „DO”</string>
-    <string name="count_must_be_positive">Liczba musi być większa niż 0</string>
     <string name="all_numbers_used">Wszystkie liczby zostały użyte</string>
-    <string name="only_available_numbers">Dostępnych tylko %1$d nieużytych liczb</string>
+    <string name="count_must_be_positive">Liczba musi być większa niż 0</string>
+    <string name="enter_valid_numbers">Wprowadź poprawne wartości w `OD` i `DO`</string>
+    <string name="from">OD</string>
+    <string name="history_cleared">Historia użytych liczb została wyczyszczona</string>
+    <string name="number">Liczba</string>
+    <string name="only_available_numbers">Dostępne tylko %1$d niewykorzystane liczby</string>
+    <string name="reset_history">Wyczyść historię</string>
+    <string name="to">DO</string>
+    <string name="used_count">Użyto</string>
 
-    <!-- Settings screen -->
-    <string name="theme">Motyw</string>
-    <string name="theme_description">Wybierz motyw aplikacji</string>
-    <string name="system_theme">Systemowy</string>
-    <string name="light_theme">Jasny</string>
-    <string name="dark_theme">Ciemny</string>
-    <string name="language">Język</string>
-    <string name="language_description">Wybierz język aplikacji</string>
-    <string name="language_system">Systemowy</string>
-    <string name="language_english">Angielski</string>
-    <string name="language_russian">Rosyjski</string>
-    <string name="dynamic_colors">Kolory dynamiczne</string>
-    <string name="dynamic_colors_description">Dopasuj paletę do tapety (Material You)</string>
-    <string name="android_12_required">Wymagany Android 12+</string>
-    <string name="use_wallpaper_colors">Użyj kolorów tapety (Android 12+)</string>
-    <string name="fab_size">Rozmiar FAB</string>
-    <string name="fab_size_description">Rozmiar głównego przycisku akcji na ekranach</string>
-    <string name="fab_size_small">S (Mały)</string>
-    <string name="fab_size_small_desc">Kompaktowy rozmiar</string>
-    <string name="fab_size_medium">M (Średni)</string>
-    <string name="fab_size_medium_desc">Standardowy rozmiar</string>
-    <string name="fab_size_large">L (Duży)</string>
-    <string name="fab_size_large_desc">Duży rozmiar</string>
-    <string name="loading">Ładowanie...</string>
-    <string name="open_after_save">Otwórz po zapisaniu</string>
-    <string name="roll_dice">Rzuć</string>
-    <string name="dice_count">Liczba kości</string>
-    <string name="sum">Suma</string>
+    <!-- Dice / Coin -->
+    <string name="dice_count">Liczba kostek</string>
     <string name="heads">Orzeł</string>
+    <string name="roll_dice">Rzuć</string>
+    <string name="sum">Suma</string>
     <string name="tails">Reszka</string>
-    <string name="result">Wynik</string>
-    <string name="swipe_hint">Przesuń w górę, aby rzucić</string>
-    <string name="generator_settings">Ustawienia generatora</string>
-    <string name="result_count">Liczba wyników</string>
+
+    <!-- Generator settings -->
     <string name="allow_repetitions">Zezwól na powtórzenia</string>
-    <string name="used_count">Użyte</string>
-    <string name="reset_history">Wyczyść historię użytych liczb</string>
+    <string name="custom_delay_enabled">Własne opóźnienie między wynikami</string>
+    <string name="customize_generation">Dostosuj generowanie</string>
+    <string name="generator_settings">Ustawienia generatora</string>
+    <string name="repetitions_description">Zezwól na powtarzanie wartości</string>
+    <string name="result_count">Liczba wyników</string>
+    <string name="result_count_description">Wybierz liczbę wyników</string>
+    <string name="sorting_description">Kolejność wyświetlania</string>
+    <string name="swipe_hint">Przesuń w górę, aby obrócić</string>
 
-    <!-- Dialogs -->
-    <string name="use_delay">Użyj opóźnienia</string>
-    <string name="delay">Opóźnienie</string>
-    <string name="seconds">sek</string>
-    <string name="seconds_short">s</string>
-    <string name="fixed_delay_1_second">Stałe opóźnienie: 1 sekunda</string>
-    <string name="close">Zamknij</string>
-
-    <!-- Sortowanie -->
-    <string name="sorting">Sortowanie</string>
-    <string name="random_order">Losowa kolejność</string>
+    <!-- Sorting -->
+    <string name="alphabetical_az">Alfabetycznie (A–Z)</string>
+    <string name="alphabetical_za">Odwrotnie (Z–A)</string>
     <string name="ascending">Rosnąco</string>
     <string name="descending">Malejąco</string>
-    <string name="alphabetical_az">Alfabetycznie (A–Z)</string>
-    <string name="alphabetical_za">Odwrotnie alfabetycznie (Z–A)</string>
+    <string name="random_order">Losowa kolejność</string>
+    <string name="sorting">Sortowanie</string>
 
-    <string name="customize_generation">Dostosuj ustawienia generowania</string>
-    <string name="result_count_description">Wybierz liczbę wygenerowanych wyników</string>
-    <string name="sorting_description">Kolejność wyświetlania wyników</string>
-    <string name="repetitions_description">Zezwól na powtarzanie wartości</string>
-    <string name="custom_delay_enabled">Niestandardowe opóźnienie między wynikami</string>
-
+    <!-- Dialogs -->
+    <string name="delay">Opóźnienie</string>
     <string name="expandable_section_collapse">Zwiń</string>
     <string name="expandable_section_expand">Rozwiń</string>
+    <string name="fixed_delay_1_second">Stałe opóźnienie: 1 sekunda</string>
+    <string name="open_after_save">Otwórz po zapisaniu</string>
+    <string name="seconds">sek</string>
+    <string name="seconds_short">s</string>
+    <string name="use_delay">Użyj opóźnienia</string>
 
-    <!-- About Screen -->
+    <!-- Settings screen -->
+    <string name="android_12_required">Wymagany Android 12+</string>
+    <string name="appearance">Wygląd</string>
+    <string name="dark_theme">Ciemny</string>
+    <string name="dynamic_colors">Dynamiczne kolory</string>
+    <string name="dynamic_colors_description">Dopasuj paletę do tapety (Material You)</string>
+    <string name="fab_size">Rozmiar FAB</string>
+    <string name="fab_size_description">Rozmiar głównego przycisku na ekranach</string>
+    <string name="fab_size_large">L (Duży)</string>
+    <string name="fab_size_large_desc">Duży rozmiar</string>
+    <string name="fab_size_medium">M (Średni)</string>
+    <string name="fab_size_medium_desc">Standardowy rozmiar</string>
+    <string name="fab_size_small">S (Mały)</string>
+    <string name="fab_size_small_desc">Kompaktowy rozmiar</string>
+    <string name="general">Ogólne</string>
+    <string name="language">Język</string>
+    <string name="language_description">Wybierz język aplikacji</string>
+    <string name="language_english">Angielski</string>
+    <string name="language_russian">Rosyjski</string>
+    <string name="language_system">Systemowy</string>
+    <string name="light_theme">Jasny</string>
+    <string name="settings_appearance_subtitle">Motyw, kolory dynamiczne, rozmiar FAB</string>
+    <string name="settings_general_subtitle">Język i wibracja</string>
+    <string name="system_theme">Systemowy</string>
+    <string name="theme">Motyw</string>
+    <string name="theme_description">Wybierz motyw aplikacji</string>
+    <string name="use_wallpaper_colors">Użyj kolorów tapety (Android 12+)</string>
+    <string name="vibration">Wibracja</string>
+    <string name="vibration_description">Sprzężenie dotykowe przy interakcji</string>
+
+    <!-- About screen -->
     <string name="about_app">O aplikacji</string>
-    <string name="version">Wersja</string>
-    <string name="app_icon">Ikona aplikacji</string>
-    <string name="made_with_love">Stworzone z ❤️ przez ByteFlipper</string>
-    <string name="contact_us">Skontaktuj się z nami</string>
-    <!-- Categories -->
-    <string name="support_feedback_category_title">Wsparcie i opinie</string>
-    <string name="connect_with_us_category_title">Skontaktuj się z nami</string>
-    <string name="development_category_title">Rozwój</string>
-    <!-- Actions/Links -->
+    <string name="app_icon">Ikona</string>
+    <string name="bug_report_subtitle">Proszę opisz problem i wyślij do nas</string>
     <string name="bug_report_title">Zgłoś błąd</string>
-    <string name="bug_report_subtitle">Opisz problem i wyślij go do nas</string>
-    <string name="rate_the_app_title">Oceń aplikację</string>
-    <string name="rate_the_app_subtitle">Oceń aplikację w Google Play</string>
-    <string name="other_apps_title">Inne aplikacje</string>
-    <string name="other_apps_subtitle">Nasze inne aplikacje</string>
-    <string name="other_apps_url" translatable="false">https://www.google.com/</string>
-    <string name="website_title">Strona ByteFlipper</string>
-    <string name="website_subtitle">Nasza strona internetowa</string>
-    <string name="vk_title">VK</string>
-    <string name="vk_subtitle">Nasza społeczność na VK</string>
-    <string name="telegram_title">Telegram</string>
-    <string name="telegram_subtitle">Nasz kanał na Telegramie</string>
-    <string name="youtube_title">YouTube</string>
-    <string name="youtube_subtitle">Nasz kanał na YouTube</string>
-    <string name="discord_title">Discord</string>
+    <string name="connect_with_us_category_title">Kontakt z nami</string>
+    <string name="contact_us">Skontaktuj się z nami</string>
+    <string name="development_category_title">Rozwój</string>
     <string name="discord_subtitle">Nasz serwer Discord</string>
-    <string name="github_title">GitHub</string>
-    <string name="github_subtitle">Nasze repozytorium na GitHub</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="error_no_browser_found">Nie znaleziono przeglądarki</string>
+    <string name="github_subtitle">Nasz repozytorium GitHub</string>
+    <string name="github_title">Github</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="made_with_love">Stworzone z ❤️ przez ByteFlipper</string>
+    <string name="other_apps_subtitle">Nasze inne aplikacje</string>
+    <string name="other_apps_title">Inne aplikacje</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="rate_the_app_subtitle">Oceń aplikację w Google Play</string>
+    <string name="rate_the_app_title">Oceń aplikację</string>
+    <string name="source_code_subtitle">Kod źródłowy na GitHub</string>
     <string name="source_code_title">Kod źródłowy</string>
-    <string name="source_code_subtitle">Kod źródłowy aplikacji na GitHub</string>
-    <string name="error_no_browser_found">Nie znaleziono przeglądarki do otwarcia URL</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
+    <string name="support_feedback_category_title">Wsparcie i opinie</string>
+    <string name="telegram_subtitle">Nasz kanał Telegram</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="version">Wersja</string>
+    <string name="vk_subtitle">Nasza społeczność VK</string>
+    <string name="vk_title">VK</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="website_subtitle">Nasza strona</string>
+    <string name="website_title">Strona ByteFlipper</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
+    <string name="youtube_subtitle">Nasz kanał YouTube</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
 
-    <!-- Setup Screen -->
-    <string name="setup_welcome_title">Witamy w Randify</string>
-    <string name="setup_welcome_description">Przygotujmy aplikację do pracy.</string>
-
-    <string name="setup_permission_error">Proszę przyznać wszystkie wymagane uprawnienia.</string>
-
-    <string name="setup_notifications_title">Powiadomienia</string>
-    <string name="setup_notifications_description">Włącz powiadomienia, aby otrzymywać alerty o nowych aktualizacjach i innych ważnych wydarzeniach.</string>
-
-    <string name="setup_permission_granted">Uprawnienie przyznane</string>
+    <!-- Setup screen -->
     <string name="setup_enable_notifications">Włącz powiadomienia</string>
-
-    <string name="setup_finish_title">Wszystko gotowe!</string>
     <string name="setup_finish_description">Jesteś gotów zaufać losowości 🎲</string>
+    <string name="setup_finish_title">Wszystko gotowe!</string>
+    <string name="setup_notifications_description">Włącz powiadomienia, aby otrzymywać aktualizacje i ważne wydarzenia.</string>
+    <string name="setup_notifications_title">Powiadomienia</string>
+    <string name="setup_permission_error">Proszę przyznać wszystkie wymagane uprawnienia.</string>
+    <string name="setup_permission_granted">Uprawnienie przyznane</string>
+    <string name="setup_welcome_description">Przygotujemy aplikację dla Ciebie.</string>
+    <string name="setup_welcome_title">Witamy w Randify</string>
+
 </resources>

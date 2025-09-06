@@ -1,177 +1,188 @@
 <resources>
+
+    <!-- App -->
     <string name="app_name">Randify</string>
 
-    <!-- Common strings -->
-    <string name="back">Назад</string>
-    <string name="settings">Налады</string>
-    <string name="save">Захаваць</string>
-    <string name="cancel">Адмяніць</string>
-    <string name="reset">Скінуць</string>
-    <string name="edit">Рэдагаваць</string>
-    <string name="delete">Выдаліць</string>
-    <string name="rename">Перайменаваць</string>
+    <!-- Common -->
     <string name="add">Дадаць</string>
-    <string name="generate">Згенераваць</string>
-    <string name="results">Вынікі:</string>
-    <string name="disabled">Выключана</string>
+    <string name="back">Назад</string>
+    <string name="cancel">Адмена</string>
+    <string name="close">Закрыць</string>
+    <string name="delete">Выдаліць</string>
+    <string name="disabled">Адключана</string>
+    <string name="edit">Рэдагаваць</string>
     <string name="enabled">Уключана</string>
+    <string name="loading">Загрузка...</string>
+    <string name="rename">Перайменаваць</string>
+    <string name="reset">Скінуць</string>
+    <string name="result">Вынік</string>
+    <string name="results">Вынікі:</string>
+    <string name="save">Захаваць</string>
+    <string name="settings">Налады</string>
+    <string name="title">Назва</string>
 
     <!-- Main screen -->
-    <string name="random">Выпадковае</string>
-    <string name="numbers">Лічбы</string>
-    <string name="list">Спіс</string>
-    <string name="dice">Кубікі</string>
-    <string name="lot">Жэрабя</string>
     <string name="coin">Манета</string>
+    <string name="dice">Кубік</string>
+    <string name="list">Спіс</string>
+    <string name="lot">Жэрабя</string>
+    <string name="numbers">Лікі</string>
+    <string name="random">Выпадковае</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Жэрабя</string>
-    <string name="vibration_on">Вібрацыя: уключана</string>
-    <string name="vibration_off">Вібрацыя: выключана</string>
-    <string name="show_all">Паказаць усё</string>
+    <string name="marked_fields_label">Пазначаныя палі</string>
+    <string name="marked_more_than_total">Пазначаных больш, чым агульная колькасць</string>
+    <string name="minimum_1_marked">Мінімум 1 пазначанае</string>
+    <string name="minimum_3_fields">Мінімум 3 палі</string>
     <string name="reshuffle">Ператасаваць</string>
-    <string name="minimum_3_fields">Як мінімум 3 палі</string>
-    <string name="minimum_1_marked">Як мінімум 1 пазначанае</string>
-    <string name="marked_more_than_total">Пазначаных больш, чым усяго</string>
-    <string name="total_fields_label">Усяго палёў</string>
-    <string name="marked_fields_label">Пазначаных палёў</string>
+    <string name="show_all">Паказаць усё</string>
+    <string name="total_fields_label">Агульная колькасць палёў</string>
+    <string name="vibration_off">Вібрацыя: выкл</string>
+    <string name="vibration_on">Вібрацыя: уключ</string>
 
-    <!-- List components -->
-    <string name="new_list">Новы спіс</string>
-    <string name="list_name">Назва спісу</string>
-    <string name="my_list">Мой спіс</string>
+    <!-- List screen -->
+    <string name="all_options_used">Усе варыянты выкарыстаны</string>
     <string name="item_1">Элемент 1</string>
     <string name="item_2">Элемент 2</string>
     <string name="item_3">Элемент 3</string>
-    <string name="title">Загаловак</string>
-    <string name="use_preset">Выкарыстаць прэсет</string>
-    <string name="share_preset">Падзяліцца прэсетам</string>
-    <string name="preset_actions">Дзеянні з прэсетам</string>
-    <string name="rename_list">Перайменаваць спіс</string>
-    <string name="new_name">Новая назва</string>
-    <string name="save_settings">Захаваць налады</string>
     <string name="list_empty">Спіс пусты</string>
-    <string name="all_options_used">Усе варыянты выкарыстаны</string>
+    <string name="list_name">Назва спісу</string>
+    <string name="my_list">Мой спіс</string>
+    <string name="new_list">Новы спіс</string>
+    <string name="new_name">Новая назва</string>
+    <string name="preset_actions">Гатовыя дзеянні</string>
+    <string name="rename_list">Перайменаваць спіс</string>
+    <string name="save_settings">Захаваць налады</string>
+    <string name="share_preset">Падзяліцца прэсэтам</string>
+    <string name="use_preset">Выкарыстаць прэсэт</string>
 
     <!-- Numbers screen -->
-    <string name="number">Лічба</string>
-    <string name="from">АД</string>
-    <string name="to">ДО</string>
-    <string name="history_cleared">Гісторыя выкарыстаных лічбаў ачышчана</string>
-    <string name="enter_valid_numbers">Увядзіце карэктныя лічбы ў «АД» і «ДО»</string>
+    <string name="all_numbers_used">Усе лікі выкарыстаны</string>
     <string name="count_must_be_positive">Колькасць павінна быць больш за 0</string>
-    <string name="all_numbers_used">Усе лічбы выкарыстаны</string>
-    <string name="only_available_numbers">Даступна толькі %1$d нявыкарыстаных лічбаў</string>
-
-    <!-- Settings screen -->
-    <string name="theme">Тэма</string>
-    <string name="theme_description">Абярыце тэму праграмы</string>
-    <string name="system_theme">Сістэмная</string>
-    <string name="light_theme">Светлая</string>
-    <string name="dark_theme">Цёмная</string>
-    <string name="language">Мова</string>
-    <string name="language_description">Абярыце мову праграмы</string>
-    <string name="language_system">Сістэмная</string>
-    <string name="language_english">Англійская</string>
-    <string name="language_russian">Рускай</string>
-    <string name="dynamic_colors">Дынамічныя колеры</string>
-    <string name="dynamic_colors_description">Падладзіць палітру пад шпалеры (Material You)</string>
-    <string name="android_12_required">Патрабуецца Android 12+</string>
-    <string name="use_wallpaper_colors">Выкарыстоўваць колеры шпалераў (Android 12+)</string>
-    <string name="fab_size">Памер FAB</string>
-    <string name="fab_size_description">Памер галоўнай кнопкі дзеяння на экранах</string>
-    <string name="fab_size_small">S (Малы)</string>
-    <string name="fab_size_small_desc">Кампактны памер</string>
-    <string name="fab_size_medium">M (Сярэдні)</string>
-    <string name="fab_size_medium_desc">Стандартны памер</string>
-    <string name="fab_size_large">L (Вялікі)</string>
-    <string name="fab_size_large_desc">Вялікі памер</string>
-    <string name="loading">Загрузка...</string>
-    <string name="open_after_save">Адкрыць пасля захавання</string>
-    <string name="roll_dice">Кінуць</string>
-    <string name="dice_count">Колькасць кубікаў</string>
-    <string name="sum">Сума</string>
-    <string name="heads">Арэл</string>
-    <string name="tails">Рэшка</string>
-    <string name="result">Вынік</string>
-    <string name="swipe_hint">Правядзіце ўверх, каб падкінуць</string>
-    <string name="generator_settings">Налады генератара</string>
-    <string name="result_count">Колькасць вынікаў</string>
-    <string name="allow_repetitions">Дазволіць паўторы</string>
+    <string name="enter_valid_numbers">Увядзіце карэктныя значэнні ў `АД` і `ДО`</string>
+    <string name="from">АД</string>
+    <string name="history_cleared">Гісторыя выкарыстаных лікаў ачышчана</string>
+    <string name="number">Лік</string>
+    <string name="only_available_numbers">Даступна толькі %1$d нявыкарыстаных лікаў</string>
+    <string name="reset_history">Скінуць гісторыю</string>
+    <string name="to">ДО</string>
     <string name="used_count">Выкарыстана</string>
-    <string name="reset_history">Скінуць гісторыю выкарыстаных лічбаў</string>
 
-    <!-- Dialogs -->
-    <string name="use_delay">Выкарыстоўваць затрымку</string>
-    <string name="delay">Затрымка</string>
-    <string name="seconds">сек</string>
-    <string name="seconds_short">с</string>
-    <string name="fixed_delay_1_second">Фіксаваная затрымка: 1 секунда</string>
-    <string name="close">Закрыць</string>
+    <!-- Dice / Coin -->
+    <string name="dice_count">Колькасць кубікаў</string>
+    <string name="heads">Арол</string>
+    <string name="roll_dice">Кінуць</string>
+    <string name="sum">Сума</string>
+    <string name="tails">Рэшка</string>
 
-    <!-- Сартыроўка -->
-    <string name="sorting">Сартыроўка</string>
-    <string name="random_order">Выпадковы парадак</string>
-    <string name="ascending">Па ўзрастанні</string>
-    <string name="descending">Па змяншэнні</string>
+    <!-- Generator settings -->
+    <string name="allow_repetitions">Дазволіць паўторы</string>
+    <string name="custom_delay_enabled">Свая затрымка паміж вынікамі</string>
+    <string name="customize_generation">Наладзіць генерацыю</string>
+    <string name="generator_settings">Налады генератара</string>
+    <string name="repetitions_description">Дазволіць паўтарэнне значэнняў</string>
+    <string name="result_count">Колькасць вынікаў</string>
+    <string name="result_count_description">Абярыце колькасць вынікаў</string>
+    <string name="sorting_description">Парадак адлюстравання</string>
+    <string name="swipe_hint">Правядзіце ўверх, каб перавярнуць</string>
+
+    <!-- Sorting -->
     <string name="alphabetical_az">Па алфавіце (А–Я)</string>
     <string name="alphabetical_za">У зваротным парадку (Я–А)</string>
+    <string name="ascending">Па ўзрастанні</string>
+    <string name="descending">Па змяншэнні</string>
+    <string name="random_order">Выпадковы парадак</string>
+    <string name="sorting">Сартаванне</string>
 
-    <string name="customize_generation">Наладзьце параметры генерацыі</string>
-    <string name="result_count_description">Абярыце колькасць згенераваных вынікаў</string>
-    <string name="sorting_description">Парадак адлюстравання вынікаў</string>
-    <string name="repetitions_description">Дазволіць паўтарэнне значэнняў</string>
-    <string name="custom_delay_enabled">Карыстальніцкая затрымка паміж вынікамі</string>
-
+    <!-- Dialogs -->
+    <string name="delay">Затрымка</string>
     <string name="expandable_section_collapse">Згарнуць</string>
     <string name="expandable_section_expand">Разгарнуць</string>
+    <string name="fixed_delay_1_second">Фіксаваная затрымка: 1 секунда</string>
+    <string name="open_after_save">Адкрыць пасля захавання</string>
+    <string name="seconds">сек</string>
+    <string name="seconds_short">с</string>
+    <string name="use_delay">Выкарыстаць затрымку</string>
 
-    <!-- About Screen -->
+    <!-- Settings screen -->
+    <string name="android_12_required">Патрабуецца Android 12+</string>
+    <string name="appearance">Выгляд</string>
+    <string name="dark_theme">Цёмная</string>
+    <string name="dynamic_colors">Дынамічныя колеры</string>
+    <string name="dynamic_colors_description">Прыстасаваць палітру да шпалераў (Material You)</string>
+    <string name="fab_size">Памер FAB</string>
+    <string name="fab_size_description">Памер галоўнай кнопкі на экранах</string>
+    <string name="fab_size_large">L (Вялікі)</string>
+    <string name="fab_size_large_desc">Вялікі памер</string>
+    <string name="fab_size_medium">M (Сярэдні)</string>
+    <string name="fab_size_medium_desc">Стандартны памер</string>
+    <string name="fab_size_small">S (Малы)</string>
+    <string name="fab_size_small_desc">Кампактны памер</string>
+    <string name="general">Агульныя</string>
+    <string name="language">Мова</string>
+    <string name="language_description">Абярыце мову прыкладання</string>
+    <string name="language_english">Англійская</string>
+    <string name="language_russian">Руская</string>
+    <string name="language_system">Сістэмная</string>
+    <string name="light_theme">Светлая</string>
+    <string name="settings_appearance_subtitle">Тэма, дынамічныя колеры, памер FAB</string>
+    <string name="settings_general_subtitle">Мова і вібрацыя</string>
+    <string name="system_theme">Сістэмная</string>
+    <string name="theme">Тэма</string>
+    <string name="theme_description">Абярыце тэму прыкладання</string>
+    <string name="use_wallpaper_colors">Выкарыстоўваць колеры шпалераў (Android 12+)</string>
+    <string name="vibration">Вібрацыя</string>
+    <string name="vibration_description">Тактыльная аддача пры ўзаемадзеянні</string>
+
+    <!-- About screen -->
     <string name="about_app">Пра праграму</string>
-    <string name="version">Версія</string>
-    <string name="app_icon">Іконка праграмы</string>
-    <string name="made_with_love">Зроблена з ❤️ ByteFlipper</string>
-    <string name="contact_us">Звяжыцеся з намі</string>
-    <!-- Categories -->
-    <string name="support_feedback_category_title">Падтрымка і водгукі</string>
-    <string name="connect_with_us_category_title">Сувязь з намі</string>
-    <string name="development_category_title">Распрацоўка</string>
-    <!-- Actions/Links -->
+    <string name="app_icon">Іконка</string>
+    <string name="bug_report_subtitle">Калі ласка, апішыце праблему і адпраўце нам</string>
     <string name="bug_report_title">Справаздача пра памылку</string>
-    <string name="bug_report_subtitle">Калі ласка, апішыце праблему і дашліце яе нам</string>
-    <string name="rate_the_app_title">Ацаніць праграму</string>
-    <string name="rate_the_app_subtitle">Ацаніце праграму ў Google Play</string>
-    <string name="other_apps_title">Іншыя праграмы</string>
-    <string name="other_apps_subtitle">Нашы іншыя праграмы</string>
-    <string name="other_apps_url" translatable="false">https://www.google.com/</string>
-    <string name="website_title">Сайт ByteFlipper</string>
-    <string name="website_subtitle">Наш вэбсайт</string>
-    <string name="vk_title">VK</string>
-    <string name="vk_subtitle">Наша супольнасць у VK</string>
-    <string name="telegram_title">Telegram</string>
-    <string name="telegram_subtitle">Наш Telegram-канал</string>
-    <string name="youtube_title">YouTube</string>
-    <string name="youtube_subtitle">Наш YouTube-канал</string>
+    <string name="connect_with_us_category_title">Сувязь з намі</string>
+    <string name="contact_us">Звязацца з намі</string>
+    <string name="development_category_title">Распрацоўка</string>
+    <string name="discord_subtitle">Наш сервер Discord</string>
     <string name="discord_title">Discord</string>
-    <string name="discord_subtitle">Наш Discord-сервер</string>
-    <string name="github_title">GitHub</string>
-    <string name="github_subtitle">Наш рэпазітар на GitHub</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="error_no_browser_found">Браўзер не знойдзены</string>
+    <string name="github_subtitle">Наш рэпазітар GitHub</string>
+    <string name="github_title">Github</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="made_with_love">Зроблена з ❤️ ад ByteFlipper</string>
+    <string name="other_apps_subtitle">Нашы іншыя праграмы</string>
+    <string name="other_apps_title">Іншыя праграмы</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="rate_the_app_subtitle">Ацаніце праграму ў Google Play</string>
+    <string name="rate_the_app_title">Ацаніць праграму</string>
+    <string name="source_code_subtitle">Крынічны код на GitHub</string>
     <string name="source_code_title">Крынічны код</string>
-    <string name="source_code_subtitle">Крынічны код праграмы на GitHub</string>
-    <string name="error_no_browser_found">Не знойдзены браўзер для адкрыцця URL</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
+    <string name="support_feedback_category_title">Падтрымка і водгукі</string>
+    <string name="telegram_subtitle">Наш Telegram-канал</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="version">Версія</string>
+    <string name="vk_subtitle">Наша суполка ў VK</string>
+    <string name="vk_title">VK</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="website_subtitle">Наш сайт</string>
+    <string name="website_title">Сайт ByteFlipper</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
+    <string name="youtube_subtitle">Наш YouTube-канал</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
 
-    <!-- Setup Screen -->
-    <string name="setup_welcome_title">Сардэчна запрашаем у Randify</string>
-    <string name="setup_welcome_description">Давайце падрыхтуем праграму да працы.</string>
-
-    <string name="setup_permission_error">Калі ласка, дайце ўсе неабходныя дазволы.</string>
-
-    <string name="setup_notifications_title">Апавяшчэнні</string>
-    <string name="setup_notifications_description">Уключыце апавяшчэнні, каб атрымліваць push-апавяшчэнні пра новыя абнаўленні і іншыя важныя падзеі.</string>
-
-    <string name="setup_permission_granted">Дазвол дадзены</string>
+    <!-- Setup screen -->
     <string name="setup_enable_notifications">Уключыць апавяшчэнні</string>
-
+    <string name="setup_finish_description">Ты гатовы даверыцца выпадковасці 🎲</string>
     <string name="setup_finish_title">Усё гатова!</string>
-    <string name="setup_finish_description">Цяпер вы гатовыя даверыцца выпадковасці 🎲</string>
+    <string name="setup_notifications_description">Уключы апавяшчэнні, каб атрымліваць абнаўленні і важныя падзеі.</string>
+    <string name="setup_notifications_title">Апавяшчэнні</string>
+    <string name="setup_permission_error">Калі ласка, дай усе патрэбныя дазволы.</string>
+    <string name="setup_permission_granted">Дазвол дадзены</string>
+    <string name="setup_welcome_description">Падрыхтуем праграму для цябе.</string>
+    <string name="setup_welcome_title">Сардэчна запрашаем у Randify</string>
+
 </resources>
