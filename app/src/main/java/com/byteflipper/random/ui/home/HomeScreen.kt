@@ -39,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.data.settings.HapticsIntensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -153,11 +155,14 @@ fun HomeScreen(
         contentWindowInsets = WindowInsets.systemBars
     ) { inner ->
         val haptic = LocalHapticFeedback.current
+        val hapticsManager = LocalHapticsManager.current
         val lazyListState = rememberLazyListState()
 
         val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
             moveItem(from.index, to.index)
-            if (settings.hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            if (settings.hapticsEnabled) {
+                hapticsManager?.performPress(settings.hapticsIntensity)
+            }
         }
 
         LazyColumn(
@@ -188,10 +193,10 @@ fun HomeScreen(
                             .padding(top = 6.dp)
                             .longPressDraggableHandle(
                                 onDragStarted = {
-                                    if (settings.hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
                                 },
                                 onDragStopped = {
-                                    if (settings.hapticsEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
                                 }
                             )
 

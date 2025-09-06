@@ -6,6 +6,7 @@ import com.byteflipper.random.data.settings.AppLanguage
 import com.byteflipper.random.data.settings.FabSizeSetting
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.ThemeMode
+import com.byteflipper.random.data.settings.HapticsIntensity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +53,12 @@ class SettingsViewModel @Inject constructor(
     fun setHapticsEnabled(enabled: Boolean) {
         viewModelScope.launch {
             settingsRepository.setHapticsEnabled(enabled)
+        }
+    }
+
+    fun setHapticsIntensity(intensity: HapticsIntensity) {
+        viewModelScope.launch {
+            settingsRepository.setHapticsIntensity(intensity)
         }
     }
 }

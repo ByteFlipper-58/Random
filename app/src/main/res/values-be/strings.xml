@@ -137,6 +137,10 @@
     <string name="use_wallpaper_colors">Выкарыстоўваць колеры шпалераў (Android 12+)</string>
     <string name="vibration">Вібрацыя</string>
     <string name="vibration_description">Тактыльная аддача пры ўзаемадзеянні</string>
+    <string name="vibration_intensity">Інтэнсіўнасць вібрацыі</string>
+    <string name="vibration_low">Нізкая</string>
+    <string name="vibration_medium">Сярэдняя</string>
+    <string name="vibration_high">Высокая</string>
 
     <!-- About screen -->
     <string name="about_app">Пра праграму</string>

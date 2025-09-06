@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.byteflipper.random.data.settings.Settings
@@ -28,6 +29,8 @@ import com.byteflipper.random.data.settings.AppLanguage
 import com.byteflipper.random.navigation.AppNavGraph
 import com.byteflipper.random.navigation.Route
 import com.byteflipper.random.ui.components.HeartBeatAnimation
+import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.ui.components.SystemHapticsManager
 import com.byteflipper.random.ui.theme.RandomTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -91,17 +94,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             RandomTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColors) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-                    val startDestination = if (settings.setupCompleted) {
-                        Route.Home.route
-                    } else {
-                        Route.Setup.route
+                val hapticsManager = remember { SystemHapticsManager(context) }
+                CompositionLocalProvider(LocalHapticsManager provides hapticsManager) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        val navController = rememberNavController()
+                        val startDestination = if (settings.setupCompleted) {
+                            Route.Home.route
+                        } else {
+                            Route.Setup.route
+                        }
+                        AppNavGraph(navController = navController, startDestination = startDestination)
                     }
-                    AppNavGraph(navController = navController, startDestination = startDestination)
                 }
             }
         }

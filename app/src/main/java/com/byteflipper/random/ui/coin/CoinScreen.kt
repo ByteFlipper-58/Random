@@ -46,6 +46,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.byteflipper.random.ui.components.LocalHapticsManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -70,6 +71,7 @@ fun CoinScreen(onBack: () -> Unit) {
     val view = LocalView.current
     val density = LocalDensity.current
     val haptics = LocalHapticFeedback.current
+    val hapticsManager = LocalHapticsManager.current
     val viewModel: CoinViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsState()
 
@@ -111,7 +113,7 @@ fun CoinScreen(onBack: () -> Unit) {
         val throwHeightPx = with(density) { 220.dp.toPx() }
 
         view.playSoundEffect(SoundEffectConstants.CLICK)
-        if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
 
         val rot = scope.launch {
             rotationXAnim.animateTo(

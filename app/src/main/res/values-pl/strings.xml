@@ -137,6 +137,10 @@
     <string name="use_wallpaper_colors">Użyj kolorów tapety (Android 12+)</string>
     <string name="vibration">Wibracja</string>
     <string name="vibration_description">Sprzężenie dotykowe przy interakcji</string>
+    <string name="vibration_intensity">Intensywność wibracji</string>
+    <string name="vibration_low">Niska</string>
+    <string name="vibration_medium">Średnia</string>
+    <string name="vibration_high">Wysoka</string>
 
     <!-- About screen -->
     <string name="about_app">O aplikacji</string>

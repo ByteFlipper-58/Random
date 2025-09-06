@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.byteflipper.random.ui.components.LocalHapticsManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +79,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun DiceScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
+    val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
     val viewModel: DiceViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsState()
@@ -143,7 +145,7 @@ fun DiceScreen(onBack: () -> Unit) {
         currentRollJob?.cancel()
         currentRollJob = scope.launch {
             isRolling = true
-            if (hapticsAllowed) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            if (hapticsAllowed) hapticsManager?.performPress(settings.hapticsIntensity)
             view.playSoundEffect(SoundEffectConstants.CLICK)
             openOverlayIfNeeded()
 
@@ -369,7 +371,7 @@ fun DiceScreen(onBack: () -> Unit) {
                                                     if (!isAnimating.value[i]) {
                                                         scope.launch {
                                                             isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
-                                                            if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                                            if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
                                                             val newV = Random.nextInt(1, 7)
                                                             diceValues = diceValues.toMutableList().also { it[i] = newV }
                                                             val currentColor = diceColors[i]

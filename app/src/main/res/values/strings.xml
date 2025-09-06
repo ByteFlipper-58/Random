@@ -137,6 +137,10 @@
     <string name="use_wallpaper_colors">Use wallpaper colors (Android 12+)</string>
     <string name="vibration">Vibration</string>
     <string name="vibration_description">Haptic feedback on interactions</string>
+    <string name="vibration_intensity">Vibration intensity</string>
+    <string name="vibration_low">Low</string>
+    <string name="vibration_medium">Medium</string>
+    <string name="vibration_high">High</string>
 
     <!-- About screen -->
     <string name="about_app">About App</string>

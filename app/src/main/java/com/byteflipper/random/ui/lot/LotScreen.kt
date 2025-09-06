@@ -66,6 +66,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.byteflipper.random.ui.components.LocalHapticsManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -153,6 +154,7 @@ fun LotScreen(onBack: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
+    val hapticsManager = LocalHapticsManager.current
     val context = LocalContext.current
     val viewModel: LotViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -219,7 +221,7 @@ fun LotScreen(onBack: () -> Unit) {
         val wasMarked = cards[pos].isMarked
         cards = cards.toMutableList().also { it[pos] = it[pos].copy(isRevealed = true) }
         if (wasMarked && settings.hapticsEnabled) {
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+            hapticsManager?.performPress(settings.hapticsIntensity)
         }
         // Если все отмеченные открыты — автоматически раскрыть остальные и переключить FAB на рандом
         val totalMarked = cards.count { it.isMarked }

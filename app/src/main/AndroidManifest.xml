@@ -4,6 +4,7 @@
 
     <!-- Required for Google Play Billing -->
     <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".RandomApplication"

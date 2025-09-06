@@ -65,12 +65,27 @@ enum class AppLanguage(val value: Int, val localeTag: String) {
     }
 }
 
+enum class HapticsIntensity(val value: Int) {
+    Low(0),
+    Medium(1),
+    High(2);
+
+    companion object {
+        fun fromValue(value: Int?): HapticsIntensity = when (value) {
+            0 -> Low
+            2 -> High
+            else -> Medium
+        }
+    }
+}
+
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.System,
     val dynamicColors: Boolean = true,
     val fabSize: FabSizeSetting = FabSizeSetting.Medium,
     val appLanguage: AppLanguage = AppLanguage.System,
     val hapticsEnabled: Boolean = true,
+    val hapticsIntensity: HapticsIntensity = HapticsIntensity.Medium,
     val setupCompleted: Boolean = false
 )
 
@@ -85,6 +100,7 @@ class SettingsRepository @Inject constructor(
         val fabSize: Preferences.Key<Int> = intPreferencesKey("fab_size")
         val appLanguage: Preferences.Key<Int> = intPreferencesKey("app_language")
         val hapticsEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("haptics_enabled")
+        val hapticsIntensity: Preferences.Key<Int> = intPreferencesKey("haptics_intensity")
         val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
 
         // Default list storage
@@ -99,6 +115,7 @@ class SettingsRepository @Inject constructor(
             fabSize = FabSizeSetting.fromValue(prefs[Keys.fabSize]),
             appLanguage = AppLanguage.fromValue(prefs[Keys.appLanguage]),
             hapticsEnabled = prefs[Keys.hapticsEnabled] ?: true,
+            hapticsIntensity = HapticsIntensity.fromValue(prefs[Keys.hapticsIntensity]),
             setupCompleted = prefs[Keys.setupCompleted] ?: false
         )
     }
@@ -124,6 +141,12 @@ class SettingsRepository @Inject constructor(
     suspend fun setHapticsEnabled(enabled: Boolean) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.hapticsEnabled] = enabled
+        }
+    }
+
+    suspend fun setHapticsIntensity(intensity: HapticsIntensity) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.hapticsIntensity] = intensity.value
         }
     }
 

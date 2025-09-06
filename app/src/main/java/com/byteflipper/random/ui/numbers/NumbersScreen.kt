@@ -46,6 +46,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalHapticFeedback
+import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.data.settings.HapticsIntensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -88,6 +90,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
+    val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
     val scrollState = rememberScrollState()
     val context = LocalContext.current
@@ -236,7 +239,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     }
 
     fun triggerFabPulse() = scope.launch {
-        if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
         view.playSoundEffect(SoundEffectConstants.CLICK)
 
         fabPulseProgress.snapTo(0f)
@@ -333,7 +336,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                             }
                         },
                         onSpinCompleted = {
-                            if (settings.hapticsEnabled) haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                            if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
                         }
                     )
                 },

@@ -137,6 +137,10 @@
     <string name="use_wallpaper_colors">Использовать цвета обоев (Android 12+)</string>
     <string name="vibration">Вибрация</string>
     <string name="vibration_description">Отклик при нажатиях</string>
+    <string name="vibration_intensity">Интенсивность вибрации</string>
+    <string name="vibration_low">Низкая</string>
+    <string name="vibration_medium">Средняя</string>
+    <string name="vibration_high">Высокая</string>
 
     <!-- About screen -->
     <string name="about_app">О приложении</string>
