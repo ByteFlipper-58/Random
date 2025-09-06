@@ -124,6 +124,9 @@
     <string name="language_description">Виберіть мову додатку</string>
     <string name="language_english">Англійська</string>
     <string name="language_russian">Російська</string>
+    <string name="language_ukrainian">Українська</string>
+    <string name="language_belarusian">Білоруська</string>
+    <string name="language_polish">Польська</string>
     <string name="language_system">Системна</string>
     <string name="light_theme">Світла</string>
     <string name="settings_appearance_subtitle">Тема, динамічні кольори, розмір FAB</string>

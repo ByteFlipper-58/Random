@@ -48,12 +48,18 @@ enum class FabSizeSetting(val value: Int) {
 enum class AppLanguage(val value: Int, val localeTag: String) {
     System(0, "system"),
     English(1, "en"),
-    Russian(2, "ru");
+    Russian(2, "ru"),
+    Ukrainian(3, "uk"),
+    Belarusian(4, "be"),
+    Polish(5, "pl");
 
     companion object {
         fun fromValue(value: Int?): AppLanguage = when (value) {
             1 -> English
             2 -> Russian
+            3 -> Ukrainian
+            4 -> Belarusian
+            5 -> Polish
             else -> System
         }
     }

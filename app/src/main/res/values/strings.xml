@@ -124,6 +124,9 @@
     <string name="language_description">Choose app language</string>
     <string name="language_english">English</string>
     <string name="language_russian">Russian</string>
+    <string name="language_ukrainian">Ukrainian</string>
+    <string name="language_belarusian">Belarusian</string>
+    <string name="language_polish">Polish</string>
     <string name="language_system">System</string>
     <string name="light_theme">Light</string>
     <string name="settings_appearance_subtitle">Theme, dynamic colors, FAB size</string>

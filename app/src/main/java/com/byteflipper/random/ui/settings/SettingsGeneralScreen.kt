@@ -14,12 +14,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,35 +66,43 @@ fun SettingsGeneralScreen(onBack: () -> Unit) {
                 AppLanguage.System -> "system"
                 AppLanguage.English -> "en"
                 AppLanguage.Russian -> "ru"
-                else -> "system"
+                AppLanguage.Ukrainian -> "uk"
+                AppLanguage.Belarusian -> "be"
+                AppLanguage.Polish -> "pl"
             }
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
-                val langItems = listOf(
-                    "system" to stringResource(R.string.language_system),
-                    "en" to stringResource(R.string.language_english),
-                    "ru" to stringResource(R.string.language_russian)
-                )
-                langItems.forEachIndexed { index, (key, label) ->
-                    SegmentedButton(
+            val langItems = listOf(
+                "system" to stringResource(R.string.language_system),
+                "en" to stringResource(R.string.language_english),
+                "ru" to stringResource(R.string.language_russian),
+                "uk" to stringResource(R.string.language_ukrainian),
+                "be" to stringResource(R.string.language_belarusian),
+                "pl" to stringResource(R.string.language_polish)
+            )
+            FlowRow(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                langItems.forEach { (key, label) ->
+                    FilterChip(
                         selected = langKey == key,
                         onClick = {
                             val language = when (key) {
                                 "en" -> AppLanguage.English
                                 "ru" -> AppLanguage.Russian
+                                "uk" -> AppLanguage.Ukrainian
+                                "be" -> AppLanguage.Belarusian
+                                "pl" -> AppLanguage.Polish
                                 else -> AppLanguage.System
                             }
                             viewModel.setAppLanguage(language)
                         },
-                        shape = SegmentedButtonDefaults.itemShape(index, langItems.size),
-                        colors = SegmentedButtonDefaults.colors(
-                            activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            inactiveContainerColor = MaterialTheme.colorScheme.surface,
-                            inactiveContentColor = MaterialTheme.colorScheme.onSurface
+                        label = { Text(label) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                    ) {
-                        Text(label)
-                    }
+                    )
                 }
             }
 

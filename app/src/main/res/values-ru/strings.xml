@@ -124,6 +124,9 @@
     <string name="language_description">Выберите язык приложения</string>
     <string name="language_english">Английский</string>
     <string name="language_russian">Русский</string>
+    <string name="language_ukrainian">Украинский</string>
+    <string name="language_belarusian">Белорусский</string>
+    <string name="language_polish">Польский</string>
     <string name="language_system">Системный</string>
     <string name="light_theme">Светлая</string>
     <string name="settings_appearance_subtitle">Тема, динамические цвета, размер FAB</string>

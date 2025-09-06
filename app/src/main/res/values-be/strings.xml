@@ -124,6 +124,9 @@
     <string name="language_description">Абярыце мову прыкладання</string>
     <string name="language_english">Англійская</string>
     <string name="language_russian">Руская</string>
+    <string name="language_ukrainian">Украінская</string>
+    <string name="language_belarusian">Беларуская</string>
+    <string name="language_polish">Польская</string>
     <string name="language_system">Сістэмная</string>
     <string name="light_theme">Светлая</string>
     <string name="settings_appearance_subtitle">Тэма, дынамічныя колеры, памер FAB</string>

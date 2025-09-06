@@ -124,6 +124,9 @@
     <string name="language_description">Wybierz język aplikacji</string>
     <string name="language_english">Angielski</string>
     <string name="language_russian">Rosyjski</string>
+    <string name="language_ukrainian">Ukraiński</string>
+    <string name="language_belarusian">Białoruski</string>
+    <string name="language_polish">Polski</string>
     <string name="language_system">Systemowy</string>
     <string name="light_theme">Jasny</string>
     <string name="settings_appearance_subtitle">Motyw, kolory dynamiczne, rozmiar FAB</string>
