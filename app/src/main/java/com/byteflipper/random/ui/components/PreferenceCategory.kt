@@ -51,7 +51,7 @@ fun PreferenceCategory(
             Text(
                 text = title,
                 color = MaterialTheme.colorScheme.primary,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp
             )

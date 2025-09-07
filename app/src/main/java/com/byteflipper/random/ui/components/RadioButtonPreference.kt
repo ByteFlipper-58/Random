@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -48,7 +49,7 @@ fun RadioButtonPreference(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onClick() }
-                .padding(16.dp),
+                .padding(horizontal = 8.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
@@ -64,7 +65,7 @@ fun RadioButtonPreference(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -73,7 +74,8 @@ fun RadioButtonPreference(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = description,
-                        fontSize = 14.sp,
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -81,7 +83,6 @@ fun RadioButtonPreference(
 
             Box(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
                     .width(2.dp)
                     .height(24.dp)
                     .background(
@@ -100,4 +101,17 @@ fun RadioButtonPreference(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun RadioButtonPreferencePreview() {
+    RadioButtonPreference(
+        title = "Sample Title",
+        selected = true,
+        key = "sample_key",
+        description = "This is a sample description for the radio button preference.",
+        icon = null,
+        onClick = {}
+    )
 }

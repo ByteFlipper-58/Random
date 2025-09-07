@@ -12,7 +12,7 @@
     <string name="disabled">Отключено</string>
     <string name="edit">Редактировать</string>
     <string name="enabled">Включено</string>
-    <string name="loading">Загрузка...</string>
+    <string name="loading">Загрузка…</string>
     <string name="rename">Переименовать</string>
     <string name="reset">Сброс</string>
     <string name="result">Результат</string>
@@ -141,6 +141,8 @@
     <string name="vibration_low">Низкая</string>
     <string name="vibration_medium">Средняя</string>
     <string name="vibration_high">Высокая</string>
+    <string name="vibration_switch_description_on">Включает тактильный отклик по всему приложению</string>
+    <string name="vibration_switch_description_off">Отключает весь тактильный отклик в приложении</string>
 
     <!-- About screen -->
     <string name="about_app">О приложении</string>

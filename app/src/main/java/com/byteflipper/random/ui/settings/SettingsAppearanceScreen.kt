@@ -15,6 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -31,6 +34,8 @@ import com.byteflipper.random.data.settings.FabSizeSetting
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.ui.components.PreferenceCategory
 import com.byteflipper.random.ui.components.SwitchPreference
+import com.byteflipper.random.ui.components.RadioButtonGroup
+import com.byteflipper.random.ui.components.RadioOption
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -94,17 +99,28 @@ fun SettingsAppearanceScreen(onBack: () -> Unit) {
                 }
             }
 
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
+            )
+
             val dynamicSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
             PreferenceCategory(
                 title = stringResource(R.string.dynamic_colors),
-                description = if (dynamicSupported) stringResource(R.string.dynamic_colors_description) else stringResource(R.string.android_12_required)
             )
             SwitchPreference(
                 title = stringResource(R.string.dynamic_colors),
-                descriptionOn = stringResource(R.string.use_wallpaper_colors),
-                descriptionOff = stringResource(R.string.disabled),
+                descriptionOn = stringResource(R.string.dynamic_colors_description),
+                descriptionOff = stringResource(R.string.dynamic_colors_description),
                 checked = settings.dynamicColors && dynamicSupported,
                 onCheckedChange = { enabled -> if (dynamicSupported) viewModel.setDynamicColors(enabled) }
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                thickness = DividerDefaults.Thickness,
+                color = DividerDefaults.color
             )
 
             PreferenceCategory(title = stringResource(R.string.fab_size), description = stringResource(R.string.fab_size_description))
@@ -114,34 +130,35 @@ fun SettingsAppearanceScreen(onBack: () -> Unit) {
                 FabSizeSetting.Large -> "l"
                 else -> "m"
             }
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
-                val fabItems = listOf(
-                    "s" to stringResource(R.string.fab_size_small),
-                    "m" to stringResource(R.string.fab_size_medium),
-                    "l" to stringResource(R.string.fab_size_large)
-                )
-                fabItems.forEachIndexed { index, (key, label) ->
-                    SegmentedButton(
-                        selected = fabKey == key,
-                        onClick = {
-                            val size = when (key) {
-                                "s" -> FabSizeSetting.Small
-                                "l" -> FabSizeSetting.Large
-                                else -> FabSizeSetting.Medium
-                            }
-                            viewModel.setFabSize(size)
-                        },
-                        shape = SegmentedButtonDefaults.itemShape(index, fabItems.size),
-                        colors = SegmentedButtonDefaults.colors(
-                            activeContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            activeContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            inactiveContainerColor = MaterialTheme.colorScheme.surface,
-                            inactiveContentColor = MaterialTheme.colorScheme.onSurface
+            Column(modifier = Modifier.padding(horizontal = 8.dp)) {
+                RadioButtonGroup(
+                    options = listOf(
+                        RadioOption(
+                            key = "s",
+                            title = stringResource(R.string.fab_size_small),
+                            description = stringResource(R.string.fab_size_small_desc)
+                        ),
+                        RadioOption(
+                            key = "m",
+                            title = stringResource(R.string.fab_size_medium),
+                            description = stringResource(R.string.fab_size_medium_desc)
+                        ),
+                        RadioOption(
+                            key = "l",
+                            title = stringResource(R.string.fab_size_large),
+                            description = stringResource(R.string.fab_size_large_desc)
                         )
-                    ) {
-                        Text(label)
+                    ),
+                    selectedKey = fabKey,
+                    onOptionSelected = { key ->
+                        val size = when (key) {
+                            "s" -> FabSizeSetting.Small
+                            "l" -> FabSizeSetting.Large
+                            else -> FabSizeSetting.Medium
+                        }
+                        viewModel.setFabSize(size)
                     }
-                }
+                )
             }
         }
     }

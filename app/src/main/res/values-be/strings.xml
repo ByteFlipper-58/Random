@@ -12,7 +12,7 @@
     <string name="disabled">Адключана</string>
     <string name="edit">Рэдагаваць</string>
     <string name="enabled">Уключана</string>
-    <string name="loading">Загрузка...</string>
+    <string name="loading">Загрузка…</string>
     <string name="rename">Перайменаваць</string>
     <string name="reset">Скінуць</string>
     <string name="result">Вынік</string>
@@ -141,6 +141,8 @@
     <string name="vibration_low">Нізкая</string>
     <string name="vibration_medium">Сярэдняя</string>
     <string name="vibration_high">Высокая</string>
+    <string name="vibration_switch_description_on">Уключае тактыльную аддачу па ўсім дадатку</string>
+    <string name="vibration_switch_description_off">Адключае ўсю тактыльную аддачу ў дадатку</string>
 
     <!-- About screen -->
     <string name="about_app">Пра праграму</string>

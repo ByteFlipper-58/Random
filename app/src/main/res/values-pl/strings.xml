@@ -12,7 +12,7 @@
     <string name="disabled">Wyłączone</string>
     <string name="edit">Edytuj</string>
     <string name="enabled">Włączone</string>
-    <string name="loading">Ładowanie...</string>
+    <string name="loading">Ładowanie…</string>
     <string name="rename">Zmień nazwę</string>
     <string name="reset">Resetuj</string>
     <string name="result">Wynik</string>
@@ -141,6 +141,8 @@
     <string name="vibration_low">Niska</string>
     <string name="vibration_medium">Średnia</string>
     <string name="vibration_high">Wysoka</string>
+    <string name="vibration_switch_description_on">Włącza wibracje w całej aplikacji</string>
+    <string name="vibration_switch_description_off">Wyłącza wszystkie wibracje w aplikacji</string>
 
     <!-- About screen -->
     <string name="about_app">O aplikacji</string>

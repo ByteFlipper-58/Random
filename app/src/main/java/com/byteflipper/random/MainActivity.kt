@@ -53,21 +53,20 @@ class MainActivity : AppCompatActivity() {
 
     private var splashScreen: SplashScreenDecorator? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        // показываем кастомный сплэш только при холодном старте
         if (savedInstanceState == null) {
             showSplash()
         }
+        setTheme(R.style.Theme_Random)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Настраиваем статус-бар по умолчанию для светлой темы (до загрузки настроек)
         window.statusBarColor = android.graphics.Color.argb(128, 255, 255, 255)
         WindowCompat.getInsetsController(window, window.decorView).apply {
             isAppearanceLightStatusBars = true
         }
 
-        // Применяем сохраненный язык
         applySavedLanguage()
 
         val initialSettings: Settings = runBlocking { settingsRepository.settingsFlow.first() }
@@ -141,7 +140,6 @@ class MainActivity : AppCompatActivity() {
                     val currentTags = currentLocales.toLanguageTags()
                     if (desiredTags != currentTags) {
                         AppCompatDelegate.setApplicationLocales(desiredLocales)
-                        recreate()
                     }
                 }
         }
