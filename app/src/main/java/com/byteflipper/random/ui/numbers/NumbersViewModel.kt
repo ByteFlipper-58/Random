@@ -19,6 +19,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
+import com.byteflipper.random.R
+import com.byteflipper.random.data.settings.HapticsIntensity
 
 data class NumbersUiState(
     val fromText: String = "1",
@@ -32,7 +37,9 @@ data class NumbersUiState(
     val showResetDialog: Boolean = false,
     val frontValues: List<Int> = emptyList(),
     val backValues: List<Int> = emptyList(),
-    val sortingMode: SortingMode = SortingMode.Random
+    val sortingMode: SortingMode = SortingMode.Random,
+    val isOverlayVisible: Boolean = false,
+    val cardColorSeed: Long? = null
 )
 
 @HiltViewModel
@@ -50,6 +57,9 @@ class NumbersViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = runBlocking { settingsRepository.settingsFlow.first() }
     )
+
+    private val _events = MutableSharedFlow<NumbersEvent>()
+    val events: SharedFlow<NumbersEvent> = _events
 
     fun updateFromText(text: String) {
         _uiState.update { it.copy(fromText = text) }
@@ -77,6 +87,7 @@ class NumbersViewModel @Inject constructor(
 
     fun resetUsedNumbers() {
         _uiState.update { it.copy(usedNumbers = emptySet(), showResetDialog = false) }
+        emitEvent(NumbersEvent.ShowSnackbar(R.string.history_cleared))
     }
 
     fun clearResults() {
@@ -141,4 +152,34 @@ class NumbersViewModel @Inject constructor(
     fun setConfigDialogVisible(visible: Boolean) {
         _uiState.update { it.copy(showConfigDialog = visible) }
     }
+
+    fun notifyHapticPressIfEnabled() {
+        if (settings.value.hapticsEnabled) {
+            emitEvent(NumbersEvent.HapticPress(settings.value.hapticsIntensity))
+        }
+    }
+
+    fun setOverlayVisible(visible: Boolean) {
+        if (visible) {
+            // assign a new color seed when opening overlay for stable color during session
+            val seed = kotlin.random.Random.nextLong()
+            _uiState.update { it.copy(isOverlayVisible = true, cardColorSeed = seed) }
+        } else {
+            _uiState.update { it.copy(isOverlayVisible = false) }
+        }
+    }
+
+    fun randomizeCardColor() {
+        val newSeed = kotlin.random.Random.nextLong()
+        _uiState.update { it.copy(cardColorSeed = newSeed) }
+    }
+
+    private fun emitEvent(event: NumbersEvent) {
+        viewModelScope.launch { _events.emit(event) }
+    }
+}
+
+sealed interface NumbersEvent {
+    data class ShowSnackbar(val messageRes: Int) : NumbersEvent
+    data class HapticPress(val intensity: HapticsIntensity) : NumbersEvent
 }

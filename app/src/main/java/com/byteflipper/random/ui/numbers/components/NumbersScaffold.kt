@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.numbers
+package com.byteflipper.random.ui.numbers.components
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars

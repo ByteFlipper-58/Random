@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
@@ -111,7 +113,7 @@ fun NumbersResultsDisplay(
                     }
                     val lines = results.chunked(chunkSize)
 
-                    items(lines) { lineNumbers ->
+                    itemsIndexed(lines) { index, lineNumbers ->
                         val line = lineNumbers.joinToString(", ")
                         Text(
                             text = line,

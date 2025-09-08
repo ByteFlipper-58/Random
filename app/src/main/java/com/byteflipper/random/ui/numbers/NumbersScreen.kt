@@ -70,6 +70,8 @@ import com.byteflipper.random.ui.components.flip.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
 import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
 import com.byteflipper.random.ui.numbers.components.NumbersFabControls
+import com.byteflipper.random.ui.numbers.components.NumbersScaffold
+import com.byteflipper.random.ui.numbers.components.NumbersContent
 import com.byteflipper.random.ui.theme.getRainbowColors
 import com.byteflipper.random.ui.components.RadioOption
 import com.byteflipper.random.domain.numbers.SortingMode
@@ -87,7 +89,6 @@ import com.byteflipper.random.utils.Constants.MAX_DELAY_MS
 fun NumbersScreen(onBack: () -> Unit) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val haptics = LocalHapticFeedback.current
     val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
     val context = LocalContext.current
@@ -109,12 +110,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     val flipCardState = rememberFlipCardState()
     val flipCardController = FlipCardControls(flipCardState)
 
-    fun resetUsedNumbers() {
-        viewModel.resetUsedNumbers()
-        scope.launch {
-            snackbarHostState.showSnackbar(context.getString(R.string.history_cleared))
-        }
-    }
+    fun resetUsedNumbers() { viewModel.resetUsedNumbers() }
 
     fun validateInputs(): Pair<IntRange, Int>? {
         val validation = viewModel.validateInputs()
@@ -156,6 +152,15 @@ fun NumbersScreen(onBack: () -> Unit) {
             if (from != null && to != null) {
                 val range = if (from <= to) from..to else to..from
                 viewModel.pruneUsedNumbersToRange(range)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is NumbersEvent.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(event.messageRes))
+                is NumbersEvent.HapticPress -> hapticsManager?.performPress(event.intensity)
             }
         }
     }
@@ -220,6 +225,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     val delayMs = viewModel.getEffectiveDelayMs()
                     if (!flipCardController.isVisible()) {
                         flipCardController.open()
+                        viewModel.setOverlayVisible(true)
                     }
                     flipCardController.spinAndReveal(
                         effectiveDelayMs = delayMs,
@@ -228,7 +234,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                             if (targetIsFront) viewModel.setFrontValues(newNumbers) else viewModel.setBackValues(newNumbers)
                         },
                         onSpinCompleted = {
-                            if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
+                            viewModel.notifyHapticPressIfEnabled()
+                            viewModel.randomizeCardColor()
                         }
                     )
                 },
@@ -261,31 +268,23 @@ fun NumbersScreen(onBack: () -> Unit) {
             val configuration = LocalConfiguration.current
             val maxCardSideDp = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(200).dp
 
-            fun computeCardSize(count: Int): Dp {
-                val base = 280
-                val scale = when {
-                    count <= 10 -> 1.0
-                    count <= 25 -> 1.15
-                    count <= 50 -> 1.3
-                    else -> 1.5
-                }
-                val target = (base * scale).toInt()
-                val clamped = target.coerceIn(240, maxCardSideDp.value.toInt())
-                return clamped.dp
-            }
-
-            val dynamicCardSize = computeCardSize(resultsCountForSizing)
-            val heightScale = when {
-                resultsCountForSizing <= 10 -> 1.0f
-                resultsCountForSizing <= 25 -> 1.2f
-                resultsCountForSizing <= 50 -> 1.4f
-                resultsCountForSizing <= 100 -> 1.6f
-                else -> 1.8f
-            }
+            val basePx = computeCardBaseSizeDp(resultsCountForSizing)
+            val dynamicCardSize = basePx.coerceIn(240, maxCardSideDp.value.toInt()).dp
+            val heightScale = computeHeightScale(resultsCountForSizing)
             val contentTargetHeight = (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
 
             val rainbowColors = getRainbowColors()
-            val cardColor = remember(uiState.frontValues) { rainbowColors.random() }
+            val animatedColor = remember { androidx.compose.animation.Animatable(androidx.compose.ui.graphics.Color.Transparent) }
+            val targetColor = remember(uiState.cardColorSeed, uiState.frontValues) {
+                pickStableColor(uiState.cardColorSeed, rainbowColors)
+            }
+            LaunchedEffect(targetColor) {
+                if (animatedColor.value == androidx.compose.ui.graphics.Color.Transparent) {
+                    animatedColor.snapTo(targetColor)
+                } else {
+                    animatedColor.animateTo(targetColor, tween(400))
+                }
+            }
 
             FlipCardOverlay(
                 state = flipCardState,
@@ -293,22 +292,23 @@ fun NumbersScreen(onBack: () -> Unit) {
                 onClosed = {
                     triggerFabPulse()
                     viewModel.clearResults()
+                    viewModel.setOverlayVisible(false)
                 },
                 cardSize = dynamicCardSize,
                 cardHeight = contentTargetHeight,
-                frontContainerColor = cardColor,
-                backContainerColor = cardColor,
+                frontContainerColor = animatedColor.value,
+                backContainerColor = animatedColor.value,
                 frontContent = {
                     NumbersResultsDisplay(
                         results = uiState.frontValues,
-                        cardColor = cardColor,
+                        cardColor = animatedColor.value,
                         cardSize = contentTargetHeight
                     )
                 },
                 backContent = {
                     NumbersResultsDisplay(
                         results = uiState.backValues,
-                        cardColor = cardColor,
+                        cardColor = animatedColor.value,
                         cardSize = contentTargetHeight
                     )
                 }
