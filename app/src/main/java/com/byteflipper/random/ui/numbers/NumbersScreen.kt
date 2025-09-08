@@ -72,17 +72,15 @@ import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
 import com.byteflipper.random.ui.numbers.components.NumbersFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
 import com.byteflipper.random.ui.components.RadioOption
-import com.byteflipper.random.ui.numbers.NumberSortingMode
+import com.byteflipper.random.domain.numbers.SortingMode
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
-private const val MIN_DELAY_MS = 1_000
-private const val MAX_DELAY_MS = 60_000
-
-
-private const val DEFAULT_DELAY_MS = 3_000
+import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
+import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
+import com.byteflipper.random.utils.Constants.MAX_DELAY_MS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,29 +90,12 @@ fun NumbersScreen(onBack: () -> Unit) {
     val haptics = LocalHapticFeedback.current
     val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    var fromText by rememberSaveable { mutableStateOf("1") }
-    var toText by rememberSaveable { mutableStateOf("10") }
-    var delayText by rememberSaveable { mutableStateOf("") }
-    var countText by rememberSaveable { mutableStateOf("1") }
-
-    // Новые параметры
-    var allowRepetitions by rememberSaveable { mutableStateOf(true) }
-    var useDelay by rememberSaveable { mutableStateOf(true) }
-
-    // Хранение использованных чисел
-    var usedNumbers by rememberSaveable { mutableStateOf(setOf<Int>()) }
-    var showResetDialog by rememberSaveable { mutableStateOf(false) }
-
-    // Диалог настроек
-    var showConfigDialog by rememberSaveable { mutableStateOf(false) }
-    var sortingModeKey by rememberSaveable { mutableStateOf(NumberSortingMode.Random.name) }
-
-    // Значения на сторонах карточки - теперь списки
-    var frontValues by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
-    var backValues by rememberSaveable { mutableStateOf<List<Int>>(emptyList()) }
+    // Все пользовательские параметры и результаты берём из VM
+    val viewModel: NumbersViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
 
     // Позиции FAB
     var fabCenterInRoot by remember { mutableStateOf(Offset.Zero) }
@@ -124,116 +105,37 @@ fun NumbersScreen(onBack: () -> Unit) {
     val fabPulseProgress = remember { Animatable(0f) }
     val fabScale = remember { Animatable(1f) }
 
-    // Цвета
-    val primaryColor = MaterialTheme.colorScheme.primary
-    // Настройки приложения (для размера FAB)
-    val viewModel: NumbersViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val settings by viewModel.settings.collectAsStateWithLifecycle()
-
     // Состояние и контроллер для переиспользуемой карточки
     val flipCardState = rememberFlipCardState()
     val flipCardController = FlipCardControls(flipCardState)
 
-    fun parseIntOrNull(text: String): Int? = text.trim().toIntOrNull()
-
     fun resetUsedNumbers() {
-        usedNumbers = emptySet()
-        showResetDialog = false
+        viewModel.resetUsedNumbers()
         scope.launch {
             snackbarHostState.showSnackbar(context.getString(R.string.history_cleared))
         }
     }
 
     fun validateInputs(): Pair<IntRange, Int>? {
-        val from = parseIntOrNull(fromText)
-        val to = parseIntOrNull(toText)
-        val count = parseIntOrNull(countText) ?: 1
-
-        if (from == null || to == null) {
+        val validation = viewModel.validateInputs()
+        if (validation == null) {
             scope.launch {
                 snackbarHostState.showSnackbar(context.getString(R.string.enter_valid_numbers))
             }
-            return null
         }
-
-        if (count < 1) {
-            scope.launch {
-                snackbarHostState.showSnackbar(context.getString(R.string.count_must_be_positive))
-            }
-            return null
-        }
-
-        val range = if (from <= to) from..to else to..from
-        val rangeSize = range.last - range.first + 1
-
-        if (!allowRepetitions) {
-            val usedInRangeCount = usedNumbers.count { it in range }
-            val availableCount = rangeSize - usedInRangeCount
-            if (availableCount < count) {
-                if (availableCount <= 0) {
-                    scope.launch {
-                        val res = snackbarHostState.showSnackbar(
-                            message = context.getString(R.string.all_numbers_used),
-                            actionLabel = context.getString(R.string.reset)
-                        )
-                        if (res == androidx.compose.material3.SnackbarResult.ActionPerformed) {
-                            resetUsedNumbers()
-                        }
-                    }
-                    return null
-                } else {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(context.getString(R.string.only_available_numbers, availableCount))
-                    }
-                    return null
-                }
-            }
-        }
-
-        return Pair(range, count)
+        return validation
     }
 
-    fun generateNumbers(range: IntRange, count: Int): List<Int> {
-        return if (allowRepetitions) {
-            List(count) { range.random() }
+    // Сброс usedNumbers на изменения диапазона/режима
+    LaunchedEffect(uiState.fromText, uiState.toText, uiState.allowRepetitions) {
+        if (uiState.allowRepetitions) {
+            viewModel.resetUsedNumbers()
         } else {
-            val selected = mutableSetOf<Int>()
-            val lower = range.first
-            val upper = range.last
-            var attempts = 0
-            val maxAttempts = count * 50
-            while (selected.size < count && attempts < maxAttempts) {
-                val value = (lower..upper).random()
-                if (value !in usedNumbers && value !in selected) {
-                    selected += value
-                }
-                attempts++
-            }
-            if (selected.size < count) {
-                var v = lower
-                while (selected.size < count && v <= upper) {
-                    if (v !in usedNumbers && v !in selected) selected += v
-                    v++
-                }
-            }
-            usedNumbers = usedNumbers + selected
-            selected.toList()
-        }
-    }
-
-
-    // Сброс использованных чисел при изменении диапазона или режима повторений
-    LaunchedEffect(fromText, toText, allowRepetitions) {
-        if (allowRepetitions) {
-            usedNumbers = emptySet()
-        } else {
-            // При изменении диапазона очищаем только числа вне нового диапазона
-            val from = parseIntOrNull(fromText)
-            val to = parseIntOrNull(toText)
+            val from = uiState.fromText.trim().toIntOrNull()
+            val to = uiState.toText.trim().toIntOrNull()
             if (from != null && to != null) {
                 val range = if (from <= to) from..to else to..from
-                usedNumbers = usedNumbers.filter { it in range }.toSet()
+                viewModel.pruneUsedNumbersToRange(range)
             }
         }
     }
@@ -241,7 +143,6 @@ fun NumbersScreen(onBack: () -> Unit) {
     fun triggerFabPulse() = scope.launch {
         if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
         view.playSoundEffect(SoundEffectConstants.CLICK)
-
         fabPulseProgress.snapTo(0f)
         val ring = launch {
             fabPulseProgress.animateTo(1f, tween(500, easing = FastOutSlowInEasing))
@@ -255,85 +156,56 @@ fun NumbersScreen(onBack: () -> Unit) {
         scale.join()
     }
 
-    
-
-    // Диалог сброса заменён на snackbar с действием (см. validateInputs)
-
     // Диалог настроек
     GeneratorConfigDialog(
-        visible = showConfigDialog,
-        onDismissRequest = { showConfigDialog = false },
-        countText = countText,
-        onCountChange = { countText = it },
-        allowRepetitions = allowRepetitions,
-        onAllowRepetitionsChange = { allowRepetitions = it },
-        usedNumbers = usedNumbers,
+        visible = uiState.showConfigDialog,
+        onDismissRequest = { viewModel.setConfigDialogVisible(false) },
+        countText = uiState.countText,
+        onCountChange = { viewModel.updateCountText(it) },
+        allowRepetitions = uiState.allowRepetitions,
+        onAllowRepetitionsChange = { viewModel.updateAllowRepetitions(it) },
+        usedNumbers = uiState.usedNumbers,
         availableRange = run {
-                                val from = parseIntOrNull(fromText)
-                                val to = parseIntOrNull(toText)
-                                if (from != null && to != null) {
+            val from = uiState.fromText.trim().toIntOrNull()
+            val to = uiState.toText.trim().toIntOrNull()
+            if (from != null && to != null) {
                 if (from <= to) from..to else to..from
             } else null
         },
         onResetUsedNumbers = { resetUsedNumbers() },
-        useDelay = useDelay,
-        onUseDelayChange = { useDelay = it },
-        delayText = delayText,
-        onDelayChange = { delayText = it },
+        useDelay = uiState.useDelay,
+        onUseDelayChange = { viewModel.updateUseDelay(it) },
+        delayText = uiState.delayText,
+        onDelayChange = { viewModel.updateDelayText(it) },
         minDelayMs = MIN_DELAY_MS,
         maxDelayMs = MAX_DELAY_MS,
         defaultDelayMs = DEFAULT_DELAY_MS,
         sortingOptions = listOf(
-            RadioOption(key = NumberSortingMode.Random.name, title = stringResource(R.string.random_order)),
-            RadioOption(key = NumberSortingMode.Ascending.name, title = stringResource(R.string.ascending)),
-            RadioOption(key = NumberSortingMode.Descending.name, title = stringResource(R.string.descending))
+            RadioOption(key = SortingMode.Random.name, title = stringResource(R.string.random_order)),
+            RadioOption(key = SortingMode.Ascending.name, title = stringResource(R.string.ascending)),
+            RadioOption(key = SortingMode.Descending.name, title = stringResource(R.string.descending))
         ),
-        selectedSortingKey = sortingModeKey,
-        onSortingChange = { sortingModeKey = it }
+        selectedSortingKey = uiState.sortingMode.name,
+        onSortingChange = { key -> viewModel.updateSortingMode(SortingMode.valueOf(key)) }
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.number)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars,
-                floatingActionButton = {
+    NumbersScaffold(
+        onBack = onBack,
+        snackbarHostState = snackbarHostState,
+        floatingActionButton = {
             NumbersFabControls(
-                onConfigClick = { showConfigDialog = true },
+                onConfigClick = { viewModel.setConfigDialogVisible(true) },
                 onGenerateClick = {
                     val result = validateInputs() ?: return@NumbersFabControls
-                    val (range, count) = result
-                    val delayParsed = if (useDelay) {
-                        parseIntOrNull(delayText) ?: DEFAULT_DELAY_MS
-                    } else {
-                        1000
-                    }
-                    val delayMs = delayParsed.coerceIn(MIN_DELAY_MS, MAX_DELAY_MS)
-
+                    val delayMs = viewModel.getEffectiveDelayMs()
                     if (!flipCardController.isVisible()) {
                         flipCardController.open()
                     }
                     flipCardController.spinAndReveal(
                         effectiveDelayMs = delayMs,
                         onReveal = { targetIsFront ->
-                            val unsorted = generateNumbers(range, count)
-                            val newNumbers = when (NumberSortingMode.valueOf(sortingModeKey)) {
-                                NumberSortingMode.Random -> unsorted.shuffled()
-                                NumberSortingMode.Ascending -> unsorted.sorted()
-                                NumberSortingMode.Descending -> unsorted.sortedDescending()
-                            }
-                            if (targetIsFront) {
-                                frontValues = newNumbers
-                            } else {
-                                backValues = newNumbers
-                            }
+                            val newNumbers = viewModel.generate()
+                            if (targetIsFront) viewModel.setFrontValues(newNumbers) else viewModel.setBackValues(newNumbers)
                         },
                         onSpinCompleted = {
                             if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
@@ -345,78 +217,27 @@ fun NumbersScreen(onBack: () -> Unit) {
                     fabSize = size
                 }
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Основной контент с blur (зависит от прогресса скрима карточки)
             val blurRadius = (8f * flipCardController.scrimProgress.value).dp
-            Column(
+
+            NumbersContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
-                    .blur(blurRadius)
-                    .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    stringResource(R.string.from),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(Modifier.height(48.dp))
-                BasicTextField(
-                    value = fromText,
-                    onValueChange = { newValue ->
-                        fromText = newValue.filter { ch -> ch.isDigit() || ch == '-' }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    textStyle = MaterialTheme.typography.displayLarge.copy(
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 64.sp
-                    )
-                )
+                    .blur(blurRadius),
+                fromText = uiState.fromText,
+                toText = uiState.toText,
+                onFromChange = { viewModel.updateFromText(it) },
+                onToChange = { viewModel.updateToText(it) }
+            )
 
-                Spacer(Modifier.height(48.dp))
-
-                Text(
-                    stringResource(R.string.to),
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(Modifier.height(48.dp))
-                BasicTextField(
-                    value = toText,
-                    onValueChange = { newValue ->
-                        toText = newValue.filter { ch -> ch.isDigit() || ch == '-' }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    textStyle = MaterialTheme.typography.displayLarge.copy(
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 64.sp
-                    )
-                )
-            }
-
-            // Переиспользуемый оверлей с карточкой
-            val resultsCountForSizing = max(frontValues.size, backValues.size)
+            val resultsCountForSizing = max(uiState.frontValues.size, uiState.backValues.size)
             val configuration = LocalConfiguration.current
             val maxCardSideDp = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(200).dp
 
@@ -433,14 +254,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                 return clamped.dp
             }
 
-            fun columnsFor(count: Int): Int {
-                if (count <= 1) return 1
-                val approx = ceil(sqrt(count.toDouble())).toInt()
-                return approx.coerceIn(3, 10)
-            }
-
             val dynamicCardSize = computeCardSize(resultsCountForSizing)
-            // Динамическая высота карточки на основе количества результатов
             val heightScale = when {
                 resultsCountForSizing <= 10 -> 1.0f
                 resultsCountForSizing <= 25 -> 1.2f
@@ -450,46 +264,30 @@ fun NumbersScreen(onBack: () -> Unit) {
             }
             val contentTargetHeight = (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
 
-            fun numberFontSizeFor(count: Int, cardSize: Dp): TextUnit {
-                // Адаптивный размер текста в зависимости от размера карточки и количества чисел
-                val baseSize = when {
-                    count <= 5 -> cardSize.value * 0.08f  // Для малого количества - крупный текст
-                    count <= 10 -> cardSize.value * 0.06f
-                    count <= 25 -> cardSize.value * 0.05f
-                    count <= 50 -> cardSize.value * 0.04f
-                    else -> cardSize.value * 0.035f
-                }
-                return baseSize.coerceIn(18f, 36f).sp
-            }
-
-            // Получить цвета радуги и выбрать случайный для карточки
             val rainbowColors = getRainbowColors()
-            val cardColor = remember(frontValues) { rainbowColors.random() }
+            val cardColor = remember(uiState.frontValues) { rainbowColors.random() }
 
             FlipCardOverlay(
                 state = flipCardState,
                 anchorInRoot = fabCenterInRoot,
                 onClosed = {
-                    // Пульс по закрытию + очистка локального результата
                     triggerFabPulse()
-                    frontValues = emptyList()
-                    backValues = emptyList()
+                    viewModel.clearResults()
                 },
                 cardSize = dynamicCardSize,
                 cardHeight = contentTargetHeight,
-                // Используем один и тот же цвет для обеих сторон карточки
                 frontContainerColor = cardColor,
                 backContainerColor = cardColor,
                 frontContent = {
                     NumbersResultsDisplay(
-                        results = frontValues,
+                        results = uiState.frontValues,
                         cardColor = cardColor,
                         cardSize = contentTargetHeight
                     )
                 },
                 backContent = {
                     NumbersResultsDisplay(
-                        results = backValues,
+                        results = uiState.backValues,
                         cardColor = cardColor,
                         cardSize = contentTargetHeight
                     )

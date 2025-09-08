@@ -123,132 +123,23 @@ fun HomeScreen(
 
 
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        stringResource(R.string.random),
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                },
-                actions = {
-                    IconButton(onClick = onOpenAbout) {
-                        Icon(
-                            painterResource(id = R.drawable.info_24px),
-                            contentDescription = stringResource(R.string.about_app),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(
-                            painterResource(id = R.drawable.settings_24px),
-                            contentDescription = stringResource(R.string.settings),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars
-    ) { inner ->
-        val haptic = LocalHapticFeedback.current
-        val hapticsManager = LocalHapticsManager.current
-        val lazyListState = rememberLazyListState()
-
-        val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
-            moveItem(from.index, to.index)
-            if (settings.hapticsEnabled) {
-                hapticsManager?.performPress(settings.hapticsIntensity)
-            }
-        }
-
-        LazyColumn(
+    HomeScaffold(onOpenAbout, onOpenSettings) { inner ->
+        HomeContent(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(inner)
-                .padding(16.dp, 0.dp),
-            state = lazyListState,
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            items(
-                items = items,
-                key = { item -> keyFor(item) }
-            ) { item ->
-                ReorderableItem(
-                    state = reorderState,
-                    key = keyFor(item)
-                ) { isDragging ->
-                    val elevation by animateDpAsState(
-                        targetValue = if (isDragging) 4.dp else 0.dp,
-                        label = "drag-elevation"
-                    )
-
-                    Box() {
-                        val dragModifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 6.dp)
-                            .longPressDraggableHandle(
-                                onDragStarted = {
-                                    if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-                                },
-                                onDragStopped = {
-                                    if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-                                }
-                            )
-
-                        when (item) {
-                            is HomeItem.MenuItem -> {
-                                val onAdd: (() -> Unit)? = when (item.type) {
-                                    MenuItemType.NUMBERS -> null
-                                    MenuItemType.LIST -> { { showCreateDialog = true } }
-                                    else -> null
-                                }
-
-                                MenuCard(
-                                    icon = when (item.type) {
-                                        MenuItemType.NUMBERS -> painterResource(id = R.drawable.looks_one_24px)
-                                        MenuItemType.LIST -> painterResource(id = R.drawable.list_alt_24px)
-                                        MenuItemType.DICE -> painterResource(id = R.drawable.ifl_24px)
-                                        MenuItemType.LOT -> painterResource(id = R.drawable.gavel_24px)
-                                        MenuItemType.COIN -> painterResource(id = R.drawable.paid_24px)
-                                    },
-                                    title = when (item.type) {
-                                        MenuItemType.NUMBERS -> stringResource(R.string.numbers)
-                                        MenuItemType.LIST -> stringResource(R.string.list)
-                                        MenuItemType.DICE -> stringResource(R.string.dice)
-                                        MenuItemType.LOT -> stringResource(R.string.lot)
-                                        MenuItemType.COIN -> stringResource(R.string.coin)
-                                    },
-                                    onClick = when (item.type) {
-                                        MenuItemType.NUMBERS -> onOpenNumbers
-                                        MenuItemType.LIST -> onOpenList
-                                        MenuItemType.DICE -> onOpenDice
-                                        MenuItemType.LOT -> onOpenLot
-                                        MenuItemType.COIN -> onOpenCoin
-                                    },
-                                    onAddClick = onAdd,
-                                    modifier = dragModifier
-                                )
-                            }
-
-                            is HomeItem.PresetItem -> {
-                                PresetCard(
-                                    preset = item.preset,
-                                    onPresetClick = { preset -> onOpenListById(preset.id) },
-                                    onRenameClick = { preset -> renameTarget = preset },
-                                    onDeleteClick = { preset -> viewModel.deletePreset(preset) },
-                                    modifier = dragModifier
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                .padding(inner),
+            items = items,
+            onMoveItem = { a, b -> moveItem(a, b) },
+            onOpenNumbers = onOpenNumbers,
+            onOpenList = onOpenList,
+            onAddList = { showCreateDialog = true },
+            onOpenListById = onOpenListById,
+            onOpenDice = onOpenDice,
+            onOpenLot = onOpenLot,
+            onOpenCoin = onOpenCoin,
+            onRenamePreset = { renameTarget = it },
+            onDeletePreset = { viewModel.deletePreset(it) }
+        )
     }
 
     CreateListDialog(

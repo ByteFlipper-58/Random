@@ -33,43 +33,12 @@ fun SettingsScreen(
     onOpenGeneral: () -> Unit,
     onOpenAppearance: () -> Unit
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars
-    ) { inner ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(inner)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            SettingsCategoryCard(
-                title = stringResource(R.string.general),
-                description = stringResource(R.string.settings_general_subtitle),
-                iconRes = R.drawable.settings_24px,
-                onClick = onOpenGeneral,
-            )
-
-            SettingsCategoryCard(
-                title = stringResource(R.string.appearance),
-                description = stringResource(R.string.settings_appearance_subtitle),
-                iconRes = R.drawable.palette_24px,
-                onClick = onOpenAppearance,
-            )
-
-            Spacer(Modifier.height(4.dp))
-        }
+    SettingsScaffold(onBack) { inner ->
+        SettingsContent(
+            modifier = Modifier.padding(inner),
+            onOpenGeneral = onOpenGeneral,
+            onOpenAppearance = onOpenAppearance
+        )
     }
 }
 

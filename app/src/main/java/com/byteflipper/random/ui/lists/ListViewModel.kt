@@ -25,6 +25,9 @@ import javax.inject.Inject
 import java.text.Normalizer
 import java.util.Locale
 import kotlin.random.Random
+import com.byteflipper.random.domain.lists.ListSortingMode as DomainListSortingMode
+import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
+import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
 
 data class ListUiState(
     val preset: ListPreset? = null,
@@ -42,14 +45,16 @@ data class ListUiState(
     val saveName: String = "",
     val renameName: String = "",
     val openAfterSave: Boolean = true,
-    val sortingMode: ListSortingMode = ListSortingMode.Random
+    val sortingMode: com.byteflipper.random.ui.lists.ListSortingMode = com.byteflipper.random.ui.lists.ListSortingMode.Random
 )
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
     private val listPresetRepository: ListPresetRepository,
     private val settingsRepository: SettingsRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    private val generateListResults: GenerateListResultsUseCase,
+    private val sortListResults: SortListResultsUseCase
 ) : ViewModel() {
 
     private val presetId: Long? = savedStateHandle.get<String>("id")?.toLongOrNull()
@@ -162,13 +167,14 @@ class ListViewModel @Inject constructor(
         val state = _uiState.value
         val base = getBaseItems()
         val count = state.countText.toIntOrNull()?.coerceIn(MIN_GENERATE_COUNT, MAX_GENERATE_COUNT) ?: DEFAULT_GENERATE_COUNT
-
-        return if (state.allowRepetitions) {
-            if (base.isEmpty()) emptyList() else List(count) { base.random() }
-        } else {
-            val pool = base.filter { it !in state.usedItems }.distinct()
-            if (pool.isEmpty()) emptyList() else pool.shuffled().take(count.coerceAtMost(pool.size))
-        }
+        return generateListResults(
+            GenerateListResultsUseCase.Params(
+                baseItems = base,
+                count = count,
+                allowRepetitions = state.allowRepetitions,
+                usedItems = state.usedItems
+            )
+        )
     }
 
     fun generateAndUpdateResults(): List<String> {
@@ -188,28 +194,12 @@ class ListViewModel @Inject constructor(
     }
 
     private fun applySorting(input: List<String>): List<String> {
-        val mode = _uiState.value.sortingMode
-        return when (mode) {
-            ListSortingMode.Random -> input.shuffled()
-            ListSortingMode.AlphabeticalAZ -> input.sortedWith(universalStringComparator())
-            ListSortingMode.AlphabeticalZA -> input.sortedWith(universalStringComparator().reversed())
+        val mode = when (_uiState.value.sortingMode) {
+            com.byteflipper.random.ui.lists.ListSortingMode.Random -> DomainListSortingMode.Random
+            com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalAZ -> DomainListSortingMode.AlphabeticalAZ
+            com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalZA -> DomainListSortingMode.AlphabeticalZA
         }
-    }
-
-    private fun universalStringComparator(): Comparator<String> {
-        return Comparator { a, b ->
-            val ka = normalizeForSort(a)
-            val kb = normalizeForSort(b)
-            ka.compareTo(kb)
-        }
-    }
-
-    private fun normalizeForSort(value: String): String {
-        val trimmed = value.trim()
-        if (trimmed.isEmpty()) return ""
-        val lowerCased = trimmed.lowercase(Locale.ROOT)
-        val decomposed = Normalizer.normalize(lowerCased, Normalizer.Form.NFKD)
-        return decomposed.replace("\\p{M}+".toRegex(), "")
+        return sortListResults(SortListResultsUseCase.Params(input = input, mode = mode))
     }
 
     fun updateSortingMode(mode: ListSortingMode) {

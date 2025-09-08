@@ -158,6 +158,7 @@ fun LotScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val viewModel: LotViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Получение строк из ресурсов
     val minimum3Fields = stringResource(R.string.minimum_3_fields)
@@ -165,8 +166,8 @@ fun LotScreen(onBack: () -> Unit) {
     val markedMoreThanTotal = stringResource(R.string.marked_more_than_total)
 
     // Поля ввода
-    var totalText by rememberSaveable { mutableStateOf("10") }
-    var markedText by rememberSaveable { mutableStateOf("3") }
+    val totalText = uiState.totalText
+    val markedText = uiState.markedText
 
     // Состояние сетки карточек
     var cards by remember { mutableStateOf<List<LotCard>>(emptyList()) }
@@ -180,36 +181,22 @@ fun LotScreen(onBack: () -> Unit) {
     // Получить цвета радуги для текущей темы
     val rainbowColors = getRainbowColors()
 
-    fun parseIntSafe(text: String, minValue: Int, maxValue: Int): Int? {
-        val v = text.trim().toIntOrNull() ?: return null
-        return v.coerceIn(minValue, maxValue)
-    }
-
     fun generateCards(availableColors: List<Color>) {
-        val total = parseIntSafe(totalText, 1, 500) ?: 0
-        val marked = parseIntSafe(markedText, 0, total) ?: 0
-        if (total < 3) {
+        val validated = viewModel.validate()
+        if (validated == null) {
             scope.launch { snackbarHostState.showSnackbar(minimum3Fields) }
             return
         }
-        if (marked < 1) {
-            scope.launch { snackbarHostState.showSnackbar(minimum1Marked) }
-            return
-        }
-        if (marked > total) {
-            scope.launch { snackbarHostState.showSnackbar(markedMoreThanTotal) }
-            return
-        }
-        // Сформировать список отмеченных индексов
-        val indices = (0 until total).toMutableList()
-        indices.shuffle()
-        val markedSet = indices.take(marked).toSet()
+        val (total, marked) = validated
+
+        // генерируем индексы через VM/use-case
+        viewModel.generate()
 
         // Создать список цветов с умным распределением, избегая повторений рядом
         val rows = computeRowSizes(total)
         val colors = distributeColorsSmartly(total, availableColors, rows)
 
-        cards = List(total) { i -> LotCard(id = i, isMarked = i in markedSet, isRevealed = false, color = colors[i]) }
+        cards = List(total) { i -> LotCard(id = i, isMarked = i in uiState.markedIndices, isRevealed = false, color = colors[i]) }
         fabMode = FabMode.RevealAll
         scope.launch { scrimAlpha.animateTo(1f, tween(250)) }
     }
@@ -247,15 +234,9 @@ fun LotScreen(onBack: () -> Unit) {
         fabMode = if (hasMarked) FabMode.RevealAll else FabMode.Randomize
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.lot_title)) },
-                navigationIcon = { IconButton(onClick = onBack) { Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back)) } },
-                actions = {}
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars,
+    LotScaffold(
+        onBack = onBack,
+        snackbarHostState = snackbarHostState,
         floatingActionButton = {
             SizedFab(
                 size = settings.fabSize,
@@ -277,8 +258,7 @@ fun LotScreen(onBack: () -> Unit) {
                     FabMode.Randomize -> Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.reshuffle))
                 }
             }
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { inner ->
         Box(modifier = Modifier.fillMaxSize().padding(inner)) {
             Column(
@@ -289,51 +269,13 @@ fun LotScreen(onBack: () -> Unit) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
+                LotContent(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(48.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.total_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.height(48.dp))
-                        BasicTextField(
-                            value = totalText,
-                            onValueChange = { new -> totalText = new.filter { ch -> ch.isDigit() } },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            textStyle = MaterialTheme.typography.displayLarge.copy(
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 64.sp
-                            )
-                        )
-                    }
-                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(stringResource(R.string.marked_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        Spacer(Modifier.height(48.dp))
-                        BasicTextField(
-                            value = markedText,
-                            onValueChange = { new ->
-                                val filtered = new.filter { ch -> ch.isDigit() }
-                                val t = filtered.toIntOrNull()
-                                val total = totalText.toIntOrNull()
-                                markedText = if (t != null && total != null) maxOf(1, min(t, total)).toString() else filtered
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            textStyle = MaterialTheme.typography.displayLarge.copy(
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 64.sp
-                            )
-                        )
-                    }
-                }
+                    totalText = totalText,
+                    markedText = markedText,
+                    onTotalChange = { new -> viewModel.updateTotalText(new) },
+                    onMarkedChange = { new -> viewModel.updateMarkedText(new) }
+                )
             }
 
             // Оверлей: скрим + сетка карточек поверх
@@ -343,6 +285,7 @@ fun LotScreen(onBack: () -> Unit) {
                     scope.launch { scrimAlpha.animateTo(0f, tween(200)) }
                     cards = emptyList()
                     fabMode = FabMode.Randomize
+                    viewModel.hideOverlay()
                 }
 
                 // Скрим
@@ -354,6 +297,7 @@ fun LotScreen(onBack: () -> Unit) {
                             scope.launch { scrimAlpha.animateTo(0f, tween(200)) }
                             cards = emptyList()
                             fabMode = FabMode.Randomize
+                            viewModel.hideOverlay()
                         }
                 )
 

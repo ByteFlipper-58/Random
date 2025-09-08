@@ -67,21 +67,17 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val presets by viewModel.presets.collectAsStateWithLifecycle()
 
-    // Получить строковые ресурсы заранее
     val listString = stringResource(R.string.list)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // FAB geometry
     var fabCenterInRoot by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
     var fabSize by remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
 
-    // Flip card
     val flipState = rememberFlipCardState()
     val flipCtrl = FlipCardControls(flipState)
 
-    // Обработка генерации
     fun handleGenerate() {
         val base = viewModel.getBaseItems()
         if (base.isEmpty()) {
@@ -112,45 +108,20 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             effectiveDelayMs = delayMs,
             onReveal = { _ ->
                 val results = viewModel.generateAndUpdateResults()
-                // results уже обновлены в ViewModel
             }
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (presetId == null) stringResource(R.string.list)
-                        else (uiState.preset?.name ?: stringResource(R.string.list))
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = null)
-                    }
-                },
-                actions = {
-                    if (presetId == null) {
-                        IconButton(onClick = {
-                            viewModel.updateSaveName(listString)
-                            viewModel.toggleSaveDialog()
-                        }) {
-                            Icon(painterResource(R.drawable.save_24px), contentDescription = stringResource(R.string.save))
-                        }
-                    } else {
-                        IconButton(onClick = {
-                            viewModel.updateRenameName(uiState.preset?.name ?: "")
-                            viewModel.toggleRenameDialog()
-                        }) {
-                            Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename))
-                        }
-                    }
-                }
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars,
+    val topTitle = if (presetId == null) stringResource(R.string.list) else (uiState.preset?.name ?: stringResource(R.string.list))
+    val topSave = if (presetId == null) ({ viewModel.updateSaveName(listString); viewModel.toggleSaveDialog() }) else null
+    val topRename = if (presetId != null) ({ viewModel.updateRenameName(uiState.preset?.name ?: ""); viewModel.toggleRenameDialog() }) else null
+
+    ListScaffold(
+        onBack = onBack,
+        title = topTitle,
+        onShowSave = topSave,
+        onShowRename = topRename,
+        snackbarHostState = snackbarHostState,
         floatingActionButton = {
             ListFabControls(
                 onConfigClick = { viewModel.toggleConfigDialog() },
@@ -160,43 +131,28 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     fabSize = size
                 }
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        }
     ) { inner ->
         Box(modifier = Modifier.fillMaxSize().padding(inner)) {
             val blur = (8f * flipCtrl.scrimProgress.value).dp
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .blur(blur),
-                verticalArrangement = Arrangement.Top
-            ) {
-                if (presetId == null || uiState.preset != null) {
-                    EditorList(
-                        items = androidx.compose.runtime.snapshots.SnapshotStateList<String>().apply {
-                            clear()
-                            addAll(uiState.editorItems)
-                        },
-                        onItemsChange = { viewModel.updateEditorItems(it) },
-                        modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
-                        minItems = 1
-                    )
-                } else {
-                    Text(stringResource(R.string.loading), style = MaterialTheme.typography.bodyMedium)
-                }
+
+            if (presetId == null || uiState.preset != null) {
+                ListContent(
+                    modifier = Modifier.fillMaxSize().padding(16.dp).blur(blur),
+                    items = uiState.editorItems,
+                    onItemsChange = { viewModel.updateEditorItems(it) }
+                )
+            } else {
+                Text(stringResource(R.string.loading), style = MaterialTheme.typography.bodyMedium)
             }
 
-            // Получить цвета радуги и выбрать случайный для карточки
             val rainbowColors = getRainbowColors()
-            val cardColor = remember(uiState.results) { rainbowColors.random() }
+            val cardColor = androidx.compose.runtime.remember(uiState.results) { rainbowColors.random() }
 
-            // Динамический размер карточки для списков
             val configuration = androidx.compose.ui.platform.LocalConfiguration.current
             val maxCardSide = (kotlin.math.min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).dp
             val listCardSize = 320.dp.coerceAtMost(maxCardSide)
-            
-            // Динамическая высота на основе количества результатов
+
             val resultsCount = uiState.results.size
             val heightScale = when {
                 resultsCount <= 5 -> 1.0f
@@ -207,12 +163,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             }
             val listCardHeight = (listCardSize * heightScale).coerceIn(300.dp, maxCardSide)
 
-            // Flip overlay
             FlipCardOverlay(
                 state = flipState,
                 anchorInRoot = fabCenterInRoot,
                 onClosed = { viewModel.clearResults() },
-                // Используем один и тот же цвет для обеих сторон карточки
                 frontContainerColor = cardColor,
                 backContainerColor = cardColor,
                 cardSize = listCardSize,
@@ -233,26 +187,25 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 }
             )
 
-            // Config dialog
             if (uiState.showConfigDialog) {
-            val sortOptions = listOf(
-                RadioOption(
-                    key = com.byteflipper.random.ui.lists.ListSortingMode.Random.name,
-                    title = stringResource(R.string.random_order),
-                    icon = rememberVectorPainter(Icons.Outlined.Shuffle)
-                ),
-                RadioOption(
-                    key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalAZ.name,
-                    title = stringResource(R.string.alphabetical_az),
-                    icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
-                ),
-                RadioOption(
-                    key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalZA.name,
-                    title = stringResource(R.string.alphabetical_za),
-                    icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                val sortOptions = listOf(
+                    RadioOption(
+                        key = com.byteflipper.random.ui.lists.ListSortingMode.Random.name,
+                        title = stringResource(R.string.random_order),
+                        icon = rememberVectorPainter(Icons.Outlined.Shuffle)
+                    ),
+                    RadioOption(
+                        key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalAZ.name,
+                        title = stringResource(R.string.alphabetical_az),
+                        icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                    ),
+                    RadioOption(
+                        key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalZA.name,
+                        title = stringResource(R.string.alphabetical_za),
+                        icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                    )
                 )
-            )
-            GeneratorConfigDialog(
+                GeneratorConfigDialog(
                     visible = uiState.showConfigDialog,
                     onDismissRequest = { viewModel.toggleConfigDialog() },
                     countText = uiState.countText,
@@ -260,7 +213,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     allowRepetitions = uiState.allowRepetitions,
                     onAllowRepetitionsChange = { viewModel.updateAllowRepetitions(it) },
                     usedNumbers = uiState.usedItems.indicesOf(baseSize = 1_000_000),
-                availableRange = null,
+                    availableRange = null,
                     onResetUsedNumbers = { viewModel.resetUsedItems() },
                     useDelay = uiState.useDelay,
                     onUseDelayChange = { viewModel.updateUseDelay(it) },
@@ -275,7 +228,6 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 )
             }
 
-            // Rename dialog (only for saved presets)
             if (uiState.showRenameDialog && presetId != null) {
                 ListRenameDialog(
                     currentName = uiState.renameName,
@@ -287,7 +239,6 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 )
             }
 
-            // Save as new preset dialog (for default screen)
             if (uiState.showSaveDialog) {
                 ListSaveDialog(
                     currentName = uiState.saveName,
@@ -306,8 +257,6 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             }
         }
     }
-
-
 }
 
 

@@ -3,21 +3,22 @@ package com.byteflipper.random.ui.numbers
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.domain.numbers.SortingMode
+import com.byteflipper.random.domain.numbers.usecase.GenerateNumbersUseCase
+import com.byteflipper.random.domain.numbers.usecase.ValidateNumberInputsUseCase
 import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
 import com.byteflipper.random.utils.Constants.DEFAULT_GENERATE_COUNT
-import com.byteflipper.random.utils.Constants.MAX_GENERATE_COUNT
 import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
-import kotlin.random.Random
 
 data class NumbersUiState(
     val fromText: String = "1",
@@ -30,12 +31,15 @@ data class NumbersUiState(
     val showConfigDialog: Boolean = false,
     val showResetDialog: Boolean = false,
     val frontValues: List<Int> = emptyList(),
-    val backValues: List<Int> = emptyList()
+    val backValues: List<Int> = emptyList(),
+    val sortingMode: SortingMode = SortingMode.Random
 )
 
 @HiltViewModel
 class NumbersViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val validateNumberInputs: ValidateNumberInputsUseCase,
+    private val generateNumbers: GenerateNumbersUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NumbersUiState())
@@ -89,56 +93,32 @@ class NumbersViewModel @Inject constructor(
 
     fun validateInputs(): Pair<IntRange, Int>? {
         val state = _uiState.value
-        val from = state.fromText.trim().toIntOrNull()
-        val to = state.toText.trim().toIntOrNull()
-        val count = state.countText.trim().toIntOrNull() ?: 1
-
-        if (from == null || to == null) return null
-        if (count < 1) return null
-
-        val range = if (from <= to) from..to else to..from
-        val rangeSize = range.last - range.first + 1
-
-        if (!state.allowRepetitions) {
-            val availableNumbers = rangeSize - state.usedNumbers.size
-            if (availableNumbers < count) return null
-        }
-
-        return Pair(range, count)
+        return validateNumberInputs(
+            ValidateNumberInputsUseCase.Params(
+                fromText = state.fromText,
+                toText = state.toText,
+                countText = state.countText,
+                allowRepetitions = state.allowRepetitions,
+                usedNumbers = state.usedNumbers
+            )
+        )
     }
 
     fun generate(): List<Int> {
-        val validation = validateInputs()
-        if (validation == null) return emptyList()
-
-        val (range, count) = validation
         val state = _uiState.value
-
-        return if (state.allowRepetitions) {
-            List(count) { range.random() }
-        } else {
-            val availableNumbers = range.filter { it !in state.usedNumbers }
-            availableNumbers.shuffled().take(count)
-        }
-    }
-
-    fun generateAndUpdateResults(): List<Int> {
-        val results = generate()
-        if (results.isNotEmpty()) {
-            val state = _uiState.value
-            _uiState.update {
-                it.copy(
-                    frontValues = results,
-                    backValues = results,
-                    usedNumbers = if (!state.allowRepetitions) {
-                        state.usedNumbers + results
-                    } else {
-                        state.usedNumbers
-                    }
-                )
-            }
-        }
-        return results
+        val validation = validateInputs() ?: return emptyList()
+        val (range, count) = validation
+        val result = generateNumbers(
+            GenerateNumbersUseCase.Params(
+                range = range,
+                count = count,
+                allowRepetitions = state.allowRepetitions,
+                usedNumbers = state.usedNumbers,
+                sortingMode = state.sortingMode
+            )
+        )
+        _uiState.update { it.copy(usedNumbers = result.updatedUsedNumbers) }
+        return result.values
     }
 
     fun getEffectiveDelayMs(): Int {
@@ -159,15 +139,35 @@ class NumbersViewModel @Inject constructor(
     }
 
     fun getAvailableNumbersCount(): Int {
-        val validation = validateInputs()
-        if (validation == null) return 0
-
-        val (range, _) = validation
         val state = _uiState.value
-        return if (state.allowRepetitions) {
-            range.last - range.first + 1
-        } else {
-            range.count { it !in state.usedNumbers }
-        }
+        val from = state.fromText.trim().toIntOrNull()
+        val to = state.toText.trim().toIntOrNull()
+        if (from == null || to == null) return 0
+        val range = if (from <= to) from..to else to..from
+        return if (state.allowRepetitions) range.count() else range.count { it !in state.usedNumbers }
+    }
+
+    fun updateSortingMode(mode: SortingMode) {
+        _uiState.update { it.copy(sortingMode = mode) }
+    }
+
+    fun setFrontValues(values: List<Int>) {
+        _uiState.update { it.copy(frontValues = values) }
+    }
+
+    fun setBackValues(values: List<Int>) {
+        _uiState.update { it.copy(backValues = values) }
+    }
+
+    fun pruneUsedNumbersToRange(range: IntRange) {
+        _uiState.update { it.copy(usedNumbers = it.usedNumbers.filter { v -> v in range }.toSet()) }
+    }
+
+    fun setConfigDialogVisible(visible: Boolean) {
+        _uiState.update { it.copy(showConfigDialog = visible) }
+    }
+
+    fun setResetDialogVisible(visible: Boolean) {
+        _uiState.update { it.copy(showResetDialog = visible) }
     }
 }

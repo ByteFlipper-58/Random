@@ -42,131 +42,14 @@ import com.byteflipper.random.ui.components.LocalHapticsManager
 fun SettingsGeneralScreen(onBack: () -> Unit) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
-    val hapticsManager = LocalHapticsManager.current
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.general)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars
-    ) { inner ->
-        Column(
-            modifier = Modifier
-                .padding(inner),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
-        ) {
-            PreferenceCategory(
-                title = stringResource(R.string.language),
-                description = stringResource(R.string.language_description)
-            )
-
-            val langKey = when (settings.appLanguage) {
-                AppLanguage.System -> "system"
-                AppLanguage.English -> "en"
-                AppLanguage.Russian -> "ru"
-                AppLanguage.Ukrainian -> "uk"
-                AppLanguage.Belarusian -> "be"
-                AppLanguage.Polish -> "pl"
-            }
-
-            val langItems = listOf(
-                "system" to stringResource(R.string.language_system),
-                "en" to stringResource(R.string.language_english),
-                "ru" to stringResource(R.string.language_russian),
-                "uk" to stringResource(R.string.language_ukrainian),
-                "be" to stringResource(R.string.language_belarusian),
-                "pl" to stringResource(R.string.language_polish)
-            )
-
-            FlowRow(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                langItems.forEach { (key, label) ->
-                    CustomChip(
-                        label = label,
-                        selected = langKey == key,
-                        onClick = {
-                            val language = when (key) {
-                                "en" -> AppLanguage.English
-                                "ru" -> AppLanguage.Russian
-                                "uk" -> AppLanguage.Ukrainian
-                                "be" -> AppLanguage.Belarusian
-                                "pl" -> AppLanguage.Polish
-                                else -> AppLanguage.System
-                            }
-                            viewModel.setAppLanguage(language)
-                        }
-                    )
-                }
-            }
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                thickness = DividerDefaults.Thickness,
-                color = DividerDefaults.color
-            )
-
-            PreferenceCategory(
-                title = stringResource(R.string.vibration),
-                description = stringResource(R.string.vibration_description)
-            )
-
-            SwitchPreference(
-                title = stringResource(R.string.vibration),
-                descriptionOn = stringResource(R.string.vibration_switch_description_on),
-                descriptionOff = stringResource(R.string.vibration_switch_description_off),
-                checked = settings.hapticsEnabled,
-                icon = painterResource(id = R.drawable.mobile_vibrate_24px),
-                onCheckedChange = { enabled -> viewModel.setHapticsEnabled(enabled) }
-            )
-
-            if (settings.hapticsEnabled) {
-                Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = stringResource(R.string.vibration_intensity), style = MaterialTheme.typography.titleSmall)
-                    val sliderValue = when (settings.hapticsIntensity) {
-                        HapticsIntensity.Low -> 0f
-                        HapticsIntensity.Medium -> 1f
-                        HapticsIntensity.High -> 2f
-                    }
-                    Slider(
-                        value = sliderValue,
-                        onValueChange = { value ->
-                            val level = when (value.coerceIn(0f, 2f).toInt()) {
-                                0 -> HapticsIntensity.Low
-                                2 -> HapticsIntensity.High
-                                else -> HapticsIntensity.Medium
-                            }
-                            viewModel.setHapticsIntensity(level)
-                            // тактильный отклик при смене значения в соответствии с выбранной интенсивностью
-                            hapticsManager?.performPress(level)
-                        },
-                        valueRange = 0f..2f,
-                        steps = 1,
-                        colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.primary,
-                            activeTrackColor = MaterialTheme.colorScheme.primary
-                        )
-                    )
-                    androidx.compose.foundation.layout.Row(
-                        modifier = Modifier.padding(horizontal = 2.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(stringResource(R.string.vibration_low), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(R.string.vibration_medium), style = MaterialTheme.typography.labelSmall)
-                        Text(stringResource(R.string.vibration_high), style = MaterialTheme.typography.labelSmall)
-                    }
-                }
-            }
-        }
+    SettingsGeneralScaffold(onBack) { inner ->
+        SettingsGeneralContent(
+            modifier = Modifier.padding(inner),
+            state = settings,
+            onSetLanguage = { viewModel.setAppLanguage(it) },
+            onSetHapticsEnabled = { viewModel.setHapticsEnabled(it) },
+            onSetHapticsIntensity = { viewModel.setHapticsIntensity(it) }
+        )
     }
 }

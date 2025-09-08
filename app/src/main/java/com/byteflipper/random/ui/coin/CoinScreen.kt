@@ -60,9 +60,8 @@ import kotlinx.coroutines.launch
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.collectAsState
 import kotlin.math.abs
+import com.byteflipper.random.domain.coin.CoinSide
 import kotlin.random.Random
-
-private enum class CoinSide { HEADS, TAILS }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,22 +73,19 @@ fun CoinScreen(onBack: () -> Unit) {
     val hapticsManager = LocalHapticsManager.current
     val viewModel: CoinViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsState()
+    val coinSide by viewModel.currentSide.collectAsState()
 
     val rotationXAnim = remember { Animatable(0f) }
     val offsetYAnim = remember { Animatable(0f) } // px
     val bgScaleAnim = remember { Animatable(1.18f) }
     var isAnimating by rememberSaveable { mutableStateOf(false) }
-    var currentSide by rememberSaveable { mutableStateOf(CoinSide.HEADS) }
-    
 
     suspend fun toss() {
         if (isAnimating) return
         isAnimating = true
 
-        // Случайный итог (орёл/решка)
-        val target = if (Random.nextBoolean()) CoinSide.HEADS else CoinSide.TAILS
+        val target = viewModel.toss()
 
-        // Нужная видимая сторона: front = Решка, back = Орёл
         fun isFront(angle: Float): Boolean {
             val a = ((angle % 360f) + 360f) % 360f
             return a <= 90f || a >= 270f
@@ -97,7 +93,6 @@ fun CoinScreen(onBack: () -> Unit) {
         val wantFront = (target == CoinSide.TAILS)
         val startFront = isFront(rotationXAnim.value)
 
-        // Кол-во полупереворотов (180°) для реалистичного вращения, корректируем чётность под нужную сторону
         var halfTurns = Random.nextInt(10, 18)
         val needOdd = (wantFront != startFront)
         val isOdd = (halfTurns % 2 == 1)
@@ -132,7 +127,6 @@ fun CoinScreen(onBack: () -> Unit) {
             )
         }
 
-        // Масштаб фона: отдалить при взлёте и вернуть при падении
         val bg = scope.launch {
             val near = 1.18f
             val far = 1.04f
@@ -149,21 +143,11 @@ fun CoinScreen(onBack: () -> Unit) {
         rot.join()
         move.join()
         bg.join()
-        currentSide = target
         isAnimating = false
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.coin)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        },
+        topBar = { CoinTopBar(onBack = onBack) },
         contentWindowInsets = WindowInsets.systemBars
     ) { inner ->
         Box(
@@ -171,7 +155,6 @@ fun CoinScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .background(Color(0xFF4E342E))
         ) {
-            // Фон с текстурой стола (parallax лёгкий)
             Image(
                 painter = painterResource(R.drawable.desk),
                 contentDescription = null,
@@ -199,7 +182,6 @@ fun CoinScreen(onBack: () -> Unit) {
                 val maxThrowPx = with(density) { 220.dp.toPx() }
                 val fillScale = 1.12f
 
-                // Обёртка монеты: внешняя обводка, тень и сама монета
                 Box(
                     modifier = Modifier
                         .size(coinSize)
@@ -232,28 +214,6 @@ fun CoinScreen(onBack: () -> Unit) {
                         },
                     contentAlignment = Alignment.Center
                 ) {
-                    // Динамичная тень на «столе»
-                    /*
-                    val lift = (-offsetYAnim.value).coerceAtLeast(0f)
-                    val t = (lift / maxThrowPx).coerceIn(0f, 1f)
-                    val shadowScaleX = 1.2f - 0.3f * t
-                    val shadowScaleY = 0.40f - 0.18f * t
-                    val shadowAlpha = 0.40f * (1f - t) + 0.12f
-                    Box(
-                        modifier = Modifier
-                            .size(coinSize)
-                            .graphicsLayer {
-                                scaleX = shadowScaleX
-                                scaleY = shadowScaleY
-                                alpha = shadowAlpha
-                            }
-                            .clip(CircleShape)
-                            .background(Color.Black)
-                            .blur(22.dp)
-                    )
-                    */
-
-                    // Монета с 3D-вращением (без статического наклона)
                     Box(
                         modifier = Modifier
                             .matchParentSize()
@@ -265,11 +225,9 @@ fun CoinScreen(onBack: () -> Unit) {
                                 clip = true
                             }
                     ) {
-                        // Определяем видимую сторону
                         val angle = ((rotationXAnim.value % 360f) + 360f) % 360f
                         val showFront = angle <= 90f || angle >= 270f
 
-                        // FRONT: решка (coin_front)
                         Image(
                             painter = painterResource(R.drawable.coin_front),
                             contentDescription = stringResource(R.string.tails),
@@ -277,14 +235,12 @@ fun CoinScreen(onBack: () -> Unit) {
                             modifier = Modifier
                                 .matchParentSize()
                                 .graphicsLayer {
-                                    // равномерное заполнение, чтобы не было внутренней обводки
                                     scaleX = fillScale
                                     scaleY = fillScale
                                     alpha = if (showFront) 1f else 0f
                                 }
                         )
 
-                        // BACK: орёл (coin_back)
                         Image(
                             painter = painterResource(R.drawable.coin_back),
                             contentDescription = stringResource(R.string.heads),
@@ -292,19 +248,16 @@ fun CoinScreen(onBack: () -> Unit) {
                             modifier = Modifier
                                 .matchParentSize()
                                 .graphicsLayer {
-                                    // равномерное заполнение + переворот обратной стороны
                                     scaleX = fillScale
                                     scaleY = fillScale
                                     rotationX = 180f
                                     alpha = if (!showFront) 1f else 0f
                                 }
-                                // клип на слое контейнера, тут не нужен
                         )
                     }
                 }
             }
 
-            // Нижний блок: результат и подсказка у низа экрана
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -312,7 +265,7 @@ fun CoinScreen(onBack: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = when (currentSide) {
+                    text = when (coinSide) {
                         CoinSide.HEADS -> "${stringResource(R.string.result)}: ${stringResource(R.string.heads)}"
                         CoinSide.TAILS -> "${stringResource(R.string.result)}: ${stringResource(R.string.tails)}"
                     },

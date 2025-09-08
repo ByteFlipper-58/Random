@@ -83,10 +83,10 @@ fun DiceScreen(onBack: () -> Unit) {
     val view = LocalView.current
     val viewModel: DiceViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     val maxDice = 10
-    var diceCount by rememberSaveable { mutableStateOf(2) }
-    var diceValues by rememberSaveable { mutableStateOf(listOf(1, 2)) }
+    var diceCount by rememberSaveable { mutableStateOf(uiState.diceCount) }
 
     val rotations = remember { List(maxDice) { Animatable(0f) } }
     val scales = remember { List(maxDice) { Animatable(1f) } }
@@ -107,7 +107,7 @@ fun DiceScreen(onBack: () -> Unit) {
         animateColorAsState(
             targetValue = color,
             animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
-            label = "dice_color_$index"
+            label = "dice_color_${index}"
         )
     }
 
@@ -116,15 +116,8 @@ fun DiceScreen(onBack: () -> Unit) {
     var overlayVisible by rememberSaveable { mutableStateOf(false) }
     var currentRollJob by remember { mutableStateOf<Job?>(null) }
 
-    LaunchedEffect(diceCount) {
-        if (diceValues.size != diceCount) {
-            val base = if (diceValues.isEmpty()) emptyList() else diceValues.take(diceCount)
-            diceValues = buildList(diceCount) {
-                addAll(base)
-                repeat(diceCount - base.size) { add(Random.nextInt(1, 7)) }
-            }
-        }
-    }
+    LaunchedEffect(uiState.diceCount) { diceCount = uiState.diceCount }
+    LaunchedEffect(diceCount) { viewModel.setDiceCount(diceCount) }
 
     suspend fun openOverlayIfNeeded() {
         if (!overlayVisible) {
@@ -149,7 +142,7 @@ fun DiceScreen(onBack: () -> Unit) {
             view.playSoundEffect(SoundEffectConstants.CLICK)
             openOverlayIfNeeded()
 
-            val newValues = List(diceCount) { Random.nextInt(1, 7) }
+            val newValues = viewModel.rollAll()
 
             diceColors = List(maxDice) { index ->
                 val currentColor = diceColors[index]
@@ -162,7 +155,6 @@ fun DiceScreen(onBack: () -> Unit) {
 
             val jobs = mutableListOf<Job>()
             repeat(diceCount) { i ->
-                diceValues = diceValues.toMutableList().also { it[i] = newValues[i] }
 
                 val currentRotation = rotations[i].value
                 val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
@@ -186,18 +178,8 @@ fun DiceScreen(onBack: () -> Unit) {
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.dice)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                }
-            )
-        },
-        contentWindowInsets = WindowInsets.systemBars,
+    DiceScaffold(
+        onBack = onBack,
         floatingActionButton = {
             SizedFab(
                 size = settings.fabSize,
@@ -224,94 +206,11 @@ fun DiceScreen(onBack: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = stringResource(R.string.dice_count),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            DiceContent(
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                diceCount = diceCount,
+                onDiceCountChange = { diceCount = it }
             )
-            Spacer(Modifier.height(12.dp))
-            Column(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                // Первый ряд: 1, 2
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-                ) {
-                    listOf(1, 2).forEach { n ->
-                        val selected = n == diceCount
-                        FloatingActionButton(
-                            onClick = { diceCount = n },
-                            modifier = Modifier.size(56.dp),
-                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                            else MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                        ) {
-                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                        }
-                    }
-                }
-                // Второй ряд: 3, 4, 5
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-                ) {
-                    listOf(3, 4, 5).forEach { n ->
-                        val selected = n == diceCount
-                        FloatingActionButton(
-                            onClick = { diceCount = n },
-                            modifier = Modifier.size(56.dp),
-                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                            else MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                        ) {
-                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                        }
-                    }
-                }
-                // Третий ряд: 6, 7, 8
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-                ) {
-                    listOf(6, 7, 8).forEach { n ->
-                        val selected = n == diceCount
-                        FloatingActionButton(
-                            onClick = { diceCount = n },
-                            modifier = Modifier.size(56.dp),
-                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                            else MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                        ) {
-                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                        }
-                    }
-                }
-                // Четвертый ряд: 9, 10
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
-                ) {
-                    listOf(9, 10).forEach { n ->
-                        val selected = n == diceCount
-                        FloatingActionButton(
-                            onClick = { diceCount = n },
-                            modifier = Modifier.size(56.dp),
-                            containerColor = if (selected) MaterialTheme.colorScheme.secondaryContainer
-                            else MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                            else MaterialTheme.colorScheme.onSurfaceVariant
-                        ) {
-                            Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
-                        }
-                    }
-                }
-            }
         }
 
         if (overlayVisible) {
@@ -372,8 +271,7 @@ fun DiceScreen(onBack: () -> Unit) {
                                                         scope.launch {
                                                             isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
                                                             if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-                                                            val newV = Random.nextInt(1, 7)
-                                                            diceValues = diceValues.toMutableList().also { it[i] = newV }
+                                                            val newV = viewModel.rollOne(i)
                                                             val currentColor = diceColors[i]
                                                             var newColor = diceColorPalette.random()
                                                             while (newColor == currentColor && diceColorPalette.size > 1) {
@@ -397,7 +295,7 @@ fun DiceScreen(onBack: () -> Unit) {
                                                 },
                                             contentAlignment = Alignment.Center
                                         ) {
-                                            DieFace(value = diceValues[i], color = animatedColors[i].value)
+                                            DieFace(value = uiState.values.getOrNull(i) ?: 1, color = animatedColors[i].value)
                                         }
                                         index++
                                     }
@@ -406,7 +304,7 @@ fun DiceScreen(onBack: () -> Unit) {
                             if (rowIdx < rows - 1) Spacer(Modifier.height(spacing))
                         }
                         Spacer(Modifier.height(32.dp))
-                        val total = diceValues.take(diceCount).sum()
+                        val total = uiState.values.take(diceCount).sum()
                         Text(
                             text = "${stringResource(R.string.sum)}: $total",
                             style = MaterialTheme.typography.headlineSmall,

@@ -17,8 +17,8 @@ android {
         applicationId = "com.byteflipper.random"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "v1.0.0"
+        versionCode = 4
+        versionName = "v1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
