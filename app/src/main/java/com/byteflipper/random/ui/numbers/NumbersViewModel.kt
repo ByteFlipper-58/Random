@@ -75,14 +75,6 @@ class NumbersViewModel @Inject constructor(
         _uiState.update { it.copy(useDelay = useDelay) }
     }
 
-    fun toggleConfigDialog() {
-        _uiState.update { it.copy(showConfigDialog = !it.showConfigDialog) }
-    }
-
-    fun toggleResetDialog() {
-        _uiState.update { it.copy(showResetDialog = !it.showResetDialog) }
-    }
-
     fun resetUsedNumbers() {
         _uiState.update { it.copy(usedNumbers = emptySet(), showResetDialog = false) }
     }
@@ -130,23 +122,6 @@ class NumbersViewModel @Inject constructor(
         }
     }
 
-    fun canGenerate(): Boolean {
-        return validateInputs() != null
-    }
-
-    fun canResetUsedNumbers(): Boolean {
-        return _uiState.value.usedNumbers.isNotEmpty()
-    }
-
-    fun getAvailableNumbersCount(): Int {
-        val state = _uiState.value
-        val from = state.fromText.trim().toIntOrNull()
-        val to = state.toText.trim().toIntOrNull()
-        if (from == null || to == null) return 0
-        val range = if (from <= to) from..to else to..from
-        return if (state.allowRepetitions) range.count() else range.count { it !in state.usedNumbers }
-    }
-
     fun updateSortingMode(mode: SortingMode) {
         _uiState.update { it.copy(sortingMode = mode) }
     }
@@ -165,9 +140,5 @@ class NumbersViewModel @Inject constructor(
 
     fun setConfigDialogVisible(visible: Boolean) {
         _uiState.update { it.copy(showConfigDialog = visible) }
-    }
-
-    fun setResetDialogVisible(visible: Boolean) {
-        _uiState.update { it.copy(showResetDialog = visible) }
     }
 }

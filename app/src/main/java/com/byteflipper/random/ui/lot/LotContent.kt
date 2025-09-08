@@ -36,7 +36,9 @@ fun LotContent(
     ) {
         Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(stringResource(R.string.total_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+
             Spacer(Modifier.height(48.dp))
+
             BasicTextField(
                 value = totalText,
                 onValueChange = onTotalChange,
@@ -50,10 +52,13 @@ fun LotContent(
                     fontSize = 64.sp
                 )
             )
-        }
-        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(stringResource(R.string.marked_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+
             Spacer(Modifier.height(48.dp))
+
+            Text(stringResource(R.string.marked_fields_label), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+            Spacer(Modifier.height(48.dp))
+
             BasicTextField(
                 value = markedText,
                 onValueChange = onMarkedChange,

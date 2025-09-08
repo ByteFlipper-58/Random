@@ -118,12 +118,32 @@ fun NumbersScreen(onBack: () -> Unit) {
 
     fun validateInputs(): Pair<IntRange, Int>? {
         val validation = viewModel.validateInputs()
-        if (validation == null) {
-            scope.launch {
-                snackbarHostState.showSnackbar(context.getString(R.string.enter_valid_numbers))
+        if (validation != null) return validation
+
+        // Если не прошло валидацию, отдельно обработаем исчерпание вариантов при запрете повторов
+        val from = uiState.fromText.trim().toIntOrNull()
+        val to = uiState.toText.trim().toIntOrNull()
+        if (from != null && to != null && !uiState.allowRepetitions) {
+            val range = if (from <= to) from..to else to..from
+            val availableCount = range.count { it !in uiState.usedNumbers }
+            if (availableCount <= 0) {
+                scope.launch {
+                    val result = snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.all_numbers_used),
+                        actionLabel = context.getString(R.string.reset)
+                    )
+                    if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
+                        viewModel.resetUsedNumbers()
+                    }
+                }
+                return null
             }
         }
-        return validation
+
+        scope.launch {
+            snackbarHostState.showSnackbar(context.getString(R.string.enter_valid_numbers))
+        }
+        return null
     }
 
     // Сброс usedNumbers на изменения диапазона/режима
