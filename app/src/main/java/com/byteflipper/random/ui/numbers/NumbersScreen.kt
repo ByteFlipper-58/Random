@@ -6,77 +6,41 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalHapticFeedback
 import com.byteflipper.random.ui.components.LocalHapticsManager
-import com.byteflipper.random.data.settings.HapticsIntensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.byteflipper.random.R
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.ceil
-import kotlin.math.sqrt
 
 import com.byteflipper.random.ui.components.flip.FlipCardOverlay
 import com.byteflipper.random.ui.components.flip.rememberFlipCardState
 import com.byteflipper.random.ui.components.flip.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
-import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
-import com.byteflipper.random.ui.numbers.components.NumbersFabControls
-import com.byteflipper.random.ui.numbers.components.NumbersScaffold
-import com.byteflipper.random.ui.numbers.components.NumbersContent
 import com.byteflipper.random.ui.theme.getRainbowColors
 import com.byteflipper.random.ui.components.RadioOption
 import com.byteflipper.random.domain.numbers.SortingMode
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -274,12 +238,12 @@ fun NumbersScreen(onBack: () -> Unit) {
             val contentTargetHeight = (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
 
             val rainbowColors = getRainbowColors()
-            val animatedColor = remember { androidx.compose.animation.Animatable(androidx.compose.ui.graphics.Color.Transparent) }
+            val animatedColor = remember { androidx.compose.animation.Animatable(Color.Transparent) }
             val targetColor = remember(uiState.cardColorSeed, uiState.frontValues) {
                 pickStableColor(uiState.cardColorSeed, rainbowColors)
             }
             LaunchedEffect(targetColor) {
-                if (animatedColor.value == androidx.compose.ui.graphics.Color.Transparent) {
+                if (animatedColor.value == Color.Transparent) {
                     animatedColor.snapTo(targetColor)
                 } else {
                     animatedColor.animateTo(targetColor, tween(400))

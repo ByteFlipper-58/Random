@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Random" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+    <style name="Theme.Random" parent="Theme.AppCompat.NoActionBar"/>
 
     <style name="App.Starting" parent="Theme.SplashScreen">
-        <!-- Обязательные атрибуты -->
-        <item name="windowSplashScreenBackground">@android:color/transparent</item>
+        <item name="android:forceDarkAllowed" tools:ignore="NewApi">false</item>
+        <item name="windowSplashScreenBackground">@color/splash_bg_dark</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
 

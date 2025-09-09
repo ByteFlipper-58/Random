@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.numbers.components
+package com.byteflipper.random.ui.numbers
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

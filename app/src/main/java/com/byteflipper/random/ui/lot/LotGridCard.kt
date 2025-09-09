@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.lot.components
+package com.byteflipper.random.ui.lot
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -6,7 +6,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Box as FoundationBox
 import androidx.compose.material3.Text
-import com.byteflipper.random.ui.lot.getContrastColor
+import androidx.compose.ui.geometry.Offset
 
 @Composable
 fun LotGridCard(
@@ -101,9 +100,9 @@ private fun Checkmark(cardSize: Dp) {
     Canvas(modifier = Modifier.size(checkmarkSize).alpha(0.96f)) {
         val w = size.width
         val h = size.height
-        val p1 = androidx.compose.ui.geometry.Offset(w * 0.82f, h * 0.64f)
-        val p2 = androidx.compose.ui.geometry.Offset(w * 0.58f, h * 0.84f)
-        val p3 = androidx.compose.ui.geometry.Offset(w * 0.14f, h * 0.22f)
+        val p1 = Offset(w * 0.82f, h * 0.64f)
+        val p2 = Offset(w * 0.58f, h * 0.84f)
+        val p3 = Offset(w * 0.14f, h * 0.22f)
         drawLine(color = color, start = p1, end = p2, strokeWidth = strokeWidth, cap = StrokeCap.Round)
         drawLine(color = color, start = p2, end = p3, strokeWidth = strokeWidth, cap = StrokeCap.Round)
     }

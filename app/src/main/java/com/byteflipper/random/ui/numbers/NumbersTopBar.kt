@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.numbers.components
+package com.byteflipper.random.ui.numbers
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.ExperimentalMaterial3Api

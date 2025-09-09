@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.lot.components
+package com.byteflipper.random.ui.lot
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.byteflipper.random.ui.lot.LotCard
 
 @Composable
 fun LotOverlay(

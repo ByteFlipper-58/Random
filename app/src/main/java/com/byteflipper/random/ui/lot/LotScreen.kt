@@ -24,10 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.LocalHapticsManager
-import com.byteflipper.random.ui.lot.components.LotOverlay
 import com.byteflipper.random.ui.theme.getRainbowColors
-import com.byteflipper.random.ui.lot.components.LotFab
-import com.byteflipper.random.ui.lot.components.LotFabMode as FabMode
+import com.byteflipper.random.ui.lot.LotFabMode as FabMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LotScreen(onBack: () -> Unit) {

@@ -1,11 +1,9 @@
-package com.byteflipper.random.ui.numbers.components
+package com.byteflipper.random.ui.numbers
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import com.byteflipper.random.R
 
 @Composable
 fun NumbersResetDialog(

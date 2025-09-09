@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.lot.components
+package com.byteflipper.random.ui.lot
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -6,11 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.byteflipper.random.R
+import com.byteflipper.random.data.settings.FabSizeSetting
 import com.byteflipper.random.ui.components.SizedFab
 
 @Composable
 fun LotFab(
-    size: com.byteflipper.random.data.settings.FabSizeSetting,
+    size: FabSizeSetting,
     mode: LotFabMode,
     onClick: () -> Unit
 ) {

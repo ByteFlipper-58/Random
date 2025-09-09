@@ -19,7 +19,6 @@ import javax.inject.Inject
 import com.byteflipper.random.R
 import androidx.compose.ui.graphics.Color
 import kotlin.random.Random
-import com.byteflipper.random.ui.lot.components.LotFabMode
 import com.byteflipper.random.data.settings.HapticsIntensity
 import kotlinx.coroutines.launch
 

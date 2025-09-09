@@ -61,11 +61,7 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.Theme_Random)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        window.statusBarColor = android.graphics.Color.argb(128, 255, 255, 255)
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = true
-        }
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         applySavedLanguage()
 
@@ -77,19 +73,6 @@ class MainActivity : AppCompatActivity() {
                 ThemeMode.System -> isSystemInDarkTheme()
                 ThemeMode.Light -> false
                 ThemeMode.Dark -> true
-            }
-
-            // Настраиваем цвет статус-бара при изменении темы
-            LaunchedEffect(darkTheme) {
-                window.statusBarColor = if (darkTheme) {
-                    android.graphics.Color.TRANSPARENT
-                } else {
-                    // Для светлой темы делаем статус-бар полупрозрачным с темным текстом
-                    android.graphics.Color.argb(128, 255, 255, 255)
-                }
-                WindowCompat.getInsetsController(window, window.decorView).apply {
-                    isAppearanceLightStatusBars = !darkTheme
-                }
             }
 
             RandomTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColors) {

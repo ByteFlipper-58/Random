@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.lot.components
+package com.byteflipper.random.ui.lot
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.byteflipper.random.ui.lot.LotCard
-import com.byteflipper.random.ui.lot.computeRowSizes
+import kotlin.math.abs
+import kotlin.math.min
 
 @Composable
 fun LotGrid(
@@ -33,7 +33,7 @@ fun LotGrid(
         val maxInRow = rows.maxOrNull() ?: 1
         val widthCandidate = (maxWidth - spacing * (maxInRow - 1)) / maxInRow
         val heightCandidate = (maxHeight - spacing * (rows.size - 1)) / rows.size
-        val cardSize = kotlin.math.min(widthCandidate.value, heightCandidate.value).dp
+        val cardSize = min(widthCandidate.value, heightCandidate.value).dp
             .coerceIn(40.dp, 180.dp)
 
         Column(
@@ -55,9 +55,9 @@ fun LotGrid(
                         val card = cards[idx]
                         // вычисляем задержку появления от центра
                         val centerCol = (countInRow - 1) / 2f
-                        val dist = kotlin.math.abs(colInRow - centerCol)
+                        val dist = abs(colInRow - centerCol)
                         val centerRow = (rows.size - 1) / 2f
-                        val rowDist = kotlin.math.abs(rowIndex - centerRow)
+                        val rowDist = abs(rowIndex - centerRow)
                         val baseDelay = 30
                         val appearDelayMs = (rowDist * 55 + dist * 45 + baseDelay).toInt()
                         LotGridCard(
