@@ -52,6 +52,7 @@ import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
 import com.byteflipper.random.ui.numbers.components.computeCardBaseSizeDp
 import com.byteflipper.random.ui.numbers.components.computeHeightScale
 import com.byteflipper.random.ui.numbers.components.pickStableColor
+import com.byteflipper.random.ui.theme.CardContentTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -278,18 +279,22 @@ fun NumbersScreen(onBack: () -> Unit) {
                 frontContainerColor = animatedColor.value,
                 backContainerColor = animatedColor.value,
                 frontContent = {
-                    NumbersResultsDisplay(
-                        results = uiState.frontValues,
-                        cardColor = animatedColor.value,
-                        cardSize = contentTargetHeight
-                    )
+                    CardContentTheme {
+                        NumbersResultsDisplay(
+                            results = uiState.frontValues,
+                            cardColor = animatedColor.value,
+                            cardSize = contentTargetHeight
+                        )
+                    }
                 },
                 backContent = {
-                    NumbersResultsDisplay(
-                        results = uiState.backValues,
-                        cardColor = animatedColor.value,
-                        cardSize = contentTargetHeight
-                    )
+                    CardContentTheme {
+                        NumbersResultsDisplay(
+                            results = uiState.backValues,
+                            cardColor = animatedColor.value,
+                            cardSize = contentTargetHeight
+                        )
+                    }
                 }
             )
         }

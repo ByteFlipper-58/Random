@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.lists.components.ListSortingMode
+import com.byteflipper.random.ui.theme.CardContentTheme
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -199,18 +200,22 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 cardSize = listCardSize,
                 cardHeight = listCardHeight,
                 frontContent = {
-                    ListResultsDisplay(
-                        results = uiState.results,
-                        cardColor = animatedColor.value,
-                        cardSize = listCardHeight
-                    )
+                    CardContentTheme {
+                        ListResultsDisplay(
+                            results = uiState.results,
+                            cardColor = animatedColor.value,
+                            cardSize = listCardHeight
+                        )
+                    }
                 },
                 backContent = {
-                    ListResultsDisplay(
-                        results = uiState.results,
-                        cardColor = animatedColor.value,
-                        cardSize = listCardHeight
-                    )
+                    CardContentTheme {
+                        ListResultsDisplay(
+                            results = uiState.results,
+                            cardColor = animatedColor.value,
+                            cardSize = listCardHeight
+                        )
+                    }
                 }
             )
 
