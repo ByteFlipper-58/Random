@@ -192,6 +192,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                 onGenerateClick = {
                     val result = validateInputs() ?: return@NumbersFabControls
                     val delayMs = viewModel.getEffectiveDelayMs()
+                    // цвет для каждого нового спина
+                    viewModel.onEvent(NumbersUiEvent.RandomizeCardColor)
                     if (!flipCardController.isVisible()) {
                         flipCardController.open()
                         viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(true))
@@ -208,7 +210,6 @@ fun NumbersScreen(onBack: () -> Unit) {
                         },
                         onSpinCompleted = {
                             viewModel.notifyHapticPressIfEnabled()
-                            viewModel.onEvent(NumbersUiEvent.RandomizeCardColor)
                         }
                     )
                 },

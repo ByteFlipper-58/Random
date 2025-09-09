@@ -99,6 +99,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
         val delayMs = viewModel.getEffectiveDelayMs().toInt()
         if (!flipCtrl.isVisible()) {
+            // назначаем цвет для текущего спина
+            viewModel.onEvent(ListUiEvent.RandomizeCardColor)
             flipCtrl.open()
             viewModel.onEvent(ListUiEvent.SetOverlayVisible(true))
         }
@@ -110,7 +112,6 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             },
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
-                viewModel.onEvent(ListUiEvent.RandomizeCardColor)
             }
         )
     }

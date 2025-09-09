@@ -329,12 +329,7 @@ class ListViewModel @Inject constructor(
     }
 
     fun setOverlayVisible(visible: Boolean) {
-        if (visible) {
-            val seed = kotlin.random.Random.nextLong()
-            _uiState.update { it.copy(isOverlayVisible = true, cardColorSeed = seed) }
-        } else {
-            _uiState.update { it.copy(isOverlayVisible = false) }
-        }
+        _uiState.update { it.copy(isOverlayVisible = visible) }
     }
 
     fun randomizeCardColor() {
