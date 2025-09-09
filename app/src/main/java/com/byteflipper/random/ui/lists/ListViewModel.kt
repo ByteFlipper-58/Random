@@ -28,6 +28,7 @@ import kotlin.random.Random
 import com.byteflipper.random.domain.lists.ListSortingMode as DomainListSortingMode
 import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
 import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
+import com.byteflipper.random.ui.lists.components.ListSortingMode
 
 data class ListUiState(
     val preset: ListPreset? = null,
@@ -45,10 +46,29 @@ data class ListUiState(
     val saveName: String = "",
     val renameName: String = "",
     val openAfterSave: Boolean = true,
-    val sortingMode: com.byteflipper.random.ui.lists.ListSortingMode = com.byteflipper.random.ui.lists.ListSortingMode.Random,
+    val sortingMode: ListSortingMode = ListSortingMode.Random,
     val isOverlayVisible: Boolean = false,
     val cardColorSeed: Long? = null
 )
+
+sealed interface ListUiEvent {
+    data class UpdateEditorItems(val items: List<String>) : ListUiEvent
+    data class UpdateCountText(val text: String) : ListUiEvent
+    data class UpdateDelayText(val text: String) : ListUiEvent
+    data class UpdateUseDelay(val value: Boolean) : ListUiEvent
+    data class UpdateAllowRepetitions(val value: Boolean) : ListUiEvent
+    data object ToggleConfigDialog : ListUiEvent
+    data object ToggleRenameDialog : ListUiEvent
+    data class UpdateRenameName(val name: String) : ListUiEvent
+    data object ToggleSaveDialog : ListUiEvent
+    data class UpdateSaveName(val name: String) : ListUiEvent
+    data class UpdateOpenAfterSave(val value: Boolean) : ListUiEvent
+    data object ResetUsedItems : ListUiEvent
+    data object ClearResults : ListUiEvent
+    data class UpdateSortingMode(val mode: ListSortingMode) : ListUiEvent
+    data class SetOverlayVisible(val visible: Boolean) : ListUiEvent
+    data object RandomizeCardColor : ListUiEvent
+}
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
@@ -59,7 +79,8 @@ class ListViewModel @Inject constructor(
     private val sortListResults: SortListResultsUseCase
 ) : ViewModel() {
 
-    private val presetId: Long? = savedStateHandle.get<String>("id")?.toLongOrNull()
+    private val presetId: Long? = savedStateHandle.get<Long?>("id")
+        ?: savedStateHandle.get<String>("id")?.toLongOrNull()
 
     private val _uiState = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = _uiState.asStateFlow()
@@ -70,8 +91,8 @@ class ListViewModel @Inject constructor(
         initialValue = com.byteflipper.random.data.settings.Settings()
     )
 
-    private val _events = kotlinx.coroutines.flow.MutableSharedFlow<ListEvent>()
-    val events: kotlinx.coroutines.flow.SharedFlow<ListEvent> = _events
+    private val _effects = kotlinx.coroutines.flow.MutableSharedFlow<ListUiEffect>()
+    val effects: kotlinx.coroutines.flow.SharedFlow<ListUiEffect> = _effects
 
     val presets = listPresetRepository.observeAll().stateIn(
         scope = viewModelScope,
@@ -82,6 +103,27 @@ class ListViewModel @Inject constructor(
     init {
         loadPreset()
     }
+    fun onEvent(event: ListUiEvent) {
+        when (event) {
+            is ListUiEvent.UpdateEditorItems -> updateEditorItems(event.items)
+            is ListUiEvent.UpdateCountText -> updateCountText(event.text)
+            is ListUiEvent.UpdateDelayText -> updateDelayText(event.text)
+            is ListUiEvent.UpdateUseDelay -> updateUseDelay(event.value)
+            is ListUiEvent.UpdateAllowRepetitions -> updateAllowRepetitions(event.value)
+            is ListUiEvent.ToggleConfigDialog -> toggleConfigDialog()
+            is ListUiEvent.ToggleRenameDialog -> toggleRenameDialog()
+            is ListUiEvent.UpdateRenameName -> updateRenameName(event.name)
+            is ListUiEvent.ToggleSaveDialog -> toggleSaveDialog()
+            is ListUiEvent.UpdateSaveName -> updateSaveName(event.name)
+            is ListUiEvent.UpdateOpenAfterSave -> updateOpenAfterSave(event.value)
+            is ListUiEvent.ResetUsedItems -> resetUsedItems()
+            is ListUiEvent.ClearResults -> clearResults()
+            is ListUiEvent.UpdateSortingMode -> updateSortingMode(event.mode)
+            is ListUiEvent.SetOverlayVisible -> setOverlayVisible(event.visible)
+            is ListUiEvent.RandomizeCardColor -> randomizeCardColor()
+        }
+    }
+
 
     private fun loadPreset() {
         viewModelScope.launch {
@@ -200,9 +242,9 @@ class ListViewModel @Inject constructor(
 
     private fun applySorting(input: List<String>): List<String> {
         val mode = when (_uiState.value.sortingMode) {
-            com.byteflipper.random.ui.lists.ListSortingMode.Random -> DomainListSortingMode.Random
-            com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalAZ -> DomainListSortingMode.AlphabeticalAZ
-            com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalZA -> DomainListSortingMode.AlphabeticalZA
+            ListSortingMode.Random -> DomainListSortingMode.Random
+            ListSortingMode.AlphabeticalAZ -> DomainListSortingMode.AlphabeticalAZ
+            ListSortingMode.AlphabeticalZA -> DomainListSortingMode.AlphabeticalZA
         }
         return sortListResults(SortListResultsUseCase.Params(input = input, mode = mode))
     }
@@ -282,7 +324,7 @@ class ListViewModel @Inject constructor(
 
     fun notifyHapticPressIfEnabled() {
         if (settings.value.hapticsEnabled) {
-            emitEvent(ListEvent.HapticPress(settings.value.hapticsIntensity))
+            emitEffect(ListUiEffect.HapticPress(settings.value.hapticsIntensity))
         }
     }
 
@@ -300,12 +342,12 @@ class ListViewModel @Inject constructor(
         _uiState.update { it.copy(cardColorSeed = newSeed) }
     }
 
-    private fun emitEvent(event: ListEvent) {
-        viewModelScope.launch { _events.emit(event) }
+    private fun emitEffect(effect: ListUiEffect) {
+        viewModelScope.launch { _effects.emit(effect) }
     }
 }
 
-sealed interface ListEvent {
-    data class ShowSnackbar(val messageRes: Int) : ListEvent
-    data class HapticPress(val intensity: com.byteflipper.random.data.settings.HapticsIntensity) : ListEvent
+sealed interface ListUiEffect {
+    data class ShowSnackbar(val messageRes: Int) : ListUiEffect
+    data class HapticPress(val intensity: com.byteflipper.random.data.settings.HapticsIntensity) : ListUiEffect
 }

@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.numbers.NumbersScreen
 import com.byteflipper.random.ui.lists.ListScreen
@@ -11,8 +13,8 @@ import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.dice.DiceScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
-import com.byteflipper.random.ui.settings.SettingsGeneralScreen
-import com.byteflipper.random.ui.settings.SettingsAppearanceScreen
+import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
+import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
 import com.byteflipper.random.ui.about.AboutScreen
 import com.byteflipper.random.ui.setup.SetupScreen
 
@@ -150,12 +152,13 @@ fun AppNavGraph(navController: NavHostController, startDestination: String = Rou
         }
         composable(
             route = Route.ListWithId.route,
+            arguments = listOf(navArgument("id") { type = NavType.LongType }),
             enterTransition = NavTransitions.enter,
             exitTransition = NavTransitions.exit,
             popEnterTransition = NavTransitions.popEnter,
             popExitTransition = NavTransitions.popExit
-        ) {
-            val id = it.arguments?.getString("id")?.toLongOrNull()
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id")
             ListScreen(
                 onBack = { navController.popBackStack() },
                 presetId = id,

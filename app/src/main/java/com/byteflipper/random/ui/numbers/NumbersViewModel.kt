@@ -14,10 +14,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -42,6 +40,23 @@ data class NumbersUiState(
     val cardColorSeed: Long? = null
 )
 
+sealed interface NumbersUiEvent {
+    data class UpdateFromText(val text: String) : NumbersUiEvent
+    data class UpdateToText(val text: String) : NumbersUiEvent
+    data class UpdateCountText(val text: String) : NumbersUiEvent
+    data class UpdateDelayText(val text: String) : NumbersUiEvent
+    data class UpdateAllowRepetitions(val value: Boolean) : NumbersUiEvent
+    data class UpdateUseDelay(val value: Boolean) : NumbersUiEvent
+    data object ResetUsedNumbers : NumbersUiEvent
+    data object ClearResults : NumbersUiEvent
+    data class UpdateSortingMode(val mode: SortingMode) : NumbersUiEvent
+    data class SetFrontValues(val values: List<Int>) : NumbersUiEvent
+    data class SetBackValues(val values: List<Int>) : NumbersUiEvent
+    data class SetConfigDialogVisible(val visible: Boolean) : NumbersUiEvent
+    data class SetOverlayVisible(val visible: Boolean) : NumbersUiEvent
+    data object RandomizeCardColor : NumbersUiEvent
+}
+
 @HiltViewModel
 class NumbersViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -55,11 +70,30 @@ class NumbersViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
+        initialValue = com.byteflipper.random.data.settings.Settings()
     )
 
-    private val _events = MutableSharedFlow<NumbersEvent>()
-    val events: SharedFlow<NumbersEvent> = _events
+    private val _effects = MutableSharedFlow<NumbersUiEffect>()
+    val effects: SharedFlow<NumbersUiEffect> = _effects
+
+    fun onEvent(event: NumbersUiEvent) {
+        when (event) {
+            is NumbersUiEvent.UpdateFromText -> updateFromText(event.text)
+            is NumbersUiEvent.UpdateToText -> updateToText(event.text)
+            is NumbersUiEvent.UpdateCountText -> updateCountText(event.text)
+            is NumbersUiEvent.UpdateDelayText -> updateDelayText(event.text)
+            is NumbersUiEvent.UpdateAllowRepetitions -> updateAllowRepetitions(event.value)
+            is NumbersUiEvent.UpdateUseDelay -> updateUseDelay(event.value)
+            is NumbersUiEvent.ResetUsedNumbers -> resetUsedNumbers()
+            is NumbersUiEvent.ClearResults -> clearResults()
+            is NumbersUiEvent.UpdateSortingMode -> updateSortingMode(event.mode)
+            is NumbersUiEvent.SetFrontValues -> setFrontValues(event.values)
+            is NumbersUiEvent.SetBackValues -> setBackValues(event.values)
+            is NumbersUiEvent.SetConfigDialogVisible -> setConfigDialogVisible(event.visible)
+            is NumbersUiEvent.SetOverlayVisible -> setOverlayVisible(event.visible)
+            is NumbersUiEvent.RandomizeCardColor -> randomizeCardColor()
+        }
+    }
 
     fun updateFromText(text: String) {
         _uiState.update { it.copy(fromText = text) }
@@ -87,7 +121,7 @@ class NumbersViewModel @Inject constructor(
 
     fun resetUsedNumbers() {
         _uiState.update { it.copy(usedNumbers = emptySet(), showResetDialog = false) }
-        emitEvent(NumbersEvent.ShowSnackbar(R.string.history_cleared))
+        emitEffect(NumbersUiEffect.ShowSnackbar(R.string.history_cleared))
     }
 
     fun clearResults() {
@@ -155,7 +189,7 @@ class NumbersViewModel @Inject constructor(
 
     fun notifyHapticPressIfEnabled() {
         if (settings.value.hapticsEnabled) {
-            emitEvent(NumbersEvent.HapticPress(settings.value.hapticsIntensity))
+            emitEffect(NumbersUiEffect.HapticPress(settings.value.hapticsIntensity))
         }
     }
 
@@ -174,12 +208,12 @@ class NumbersViewModel @Inject constructor(
         _uiState.update { it.copy(cardColorSeed = newSeed) }
     }
 
-    private fun emitEvent(event: NumbersEvent) {
-        viewModelScope.launch { _events.emit(event) }
+    private fun emitEffect(effect: NumbersUiEffect) {
+        viewModelScope.launch { _effects.emit(effect) }
     }
 }
 
-sealed interface NumbersEvent {
-    data class ShowSnackbar(val messageRes: Int) : NumbersEvent
-    data class HapticPress(val intensity: HapticsIntensity) : NumbersEvent
+sealed interface NumbersUiEffect {
+    data class ShowSnackbar(val messageRes: Int) : NumbersUiEffect
+    data class HapticPress(val intensity: HapticsIntensity) : NumbersUiEffect
 }

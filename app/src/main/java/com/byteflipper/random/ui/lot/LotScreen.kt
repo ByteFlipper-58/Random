@@ -24,8 +24,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.ui.lot.components.LotFab
+import com.byteflipper.random.ui.lot.components.LotOverlay
 import com.byteflipper.random.ui.theme.getRainbowColors
-import com.byteflipper.random.ui.lot.LotFabMode as FabMode
+import com.byteflipper.random.ui.lot.components.LotFabMode as FabMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LotScreen(onBack: () -> Unit) {
@@ -58,10 +60,10 @@ fun LotScreen(onBack: () -> Unit) {
     val rainbowColors = getRainbowColors()
 
     LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is LotEvent.ShowSnackbar -> snackbarHostState.showSnackbar(message = context.getString(event.messageRes))
-                is LotEvent.HapticPress -> hapticsManager?.performPress(event.intensity)
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is LotUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(message = context.getString(effect.messageRes))
+                is LotUiEffect.HapticPress -> hapticsManager?.performPress(effect.intensity)
             }
         }
     }
@@ -75,11 +77,11 @@ fun LotScreen(onBack: () -> Unit) {
                 mode = fabMode,
                 onClick = {
                     if (cards.isEmpty()) {
-                        viewModel.process(LotAction.GenerateRequested(rainbowColors))
+                        viewModel.onEvent(LotUiEvent.GenerateRequested(rainbowColors))
                     } else {
                         when (fabMode) {
-                            FabMode.RevealAll -> viewModel.process(LotAction.RevealAll)
-                            FabMode.Randomize -> viewModel.process(LotAction.Shuffle)
+                            FabMode.RevealAll -> viewModel.onEvent(LotUiEvent.RevealAll)
+                            FabMode.Randomize -> viewModel.onEvent(LotUiEvent.Shuffle)
                         }
                     }
                 }
@@ -99,8 +101,8 @@ fun LotScreen(onBack: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     totalText = totalText,
                     markedText = markedText,
-                    onTotalChange = { new -> viewModel.updateTotalText(new) },
-                    onMarkedChange = { new -> viewModel.updateMarkedText(new) }
+                    onTotalChange = { new -> viewModel.onEvent(LotUiEvent.TotalChanged(new)) },
+                    onMarkedChange = { new -> viewModel.onEvent(LotUiEvent.MarkedChanged(new)) }
                 )
             }
 
@@ -110,9 +112,9 @@ fun LotScreen(onBack: () -> Unit) {
                     cards = cards,
                     scrimAlpha = scrimAlpha,
                     onDismiss = {
-                    viewModel.process(LotAction.OverlayDismissed)
+                        viewModel.onEvent(LotUiEvent.OverlayDismissed)
                     },
-                    onCardClick = { id -> viewModel.process(LotAction.CardClicked(id)) }
+                    onCardClick = { id -> viewModel.onEvent(LotUiEvent.CardClicked(id)) }
                 )
             }
         }

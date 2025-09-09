@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,11 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.BuildConfig
 import com.byteflipper.random.R
-import com.byteflipper.random.ui.components.AnimatedActionItem
-import com.byteflipper.random.ui.components.AppInfoCard
-import com.byteflipper.random.ui.components.ExpandableSection
-import com.byteflipper.random.ui.components.InfoCard
-import com.byteflipper.random.ui.components.VersionInfoCard
+import com.byteflipper.random.ui.about.components.AnimatedActionItem
+import com.byteflipper.random.ui.about.components.AppInfoCard
+import com.byteflipper.random.ui.about.components.ExpandableSection
+import com.byteflipper.random.ui.about.components.InfoCard
+import com.byteflipper.random.ui.about.components.VersionInfoCard
 
 @Composable
 fun AboutContent(

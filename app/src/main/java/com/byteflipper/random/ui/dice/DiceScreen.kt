@@ -1,38 +1,16 @@
 package com.byteflipper.random.ui.dice
 
 import android.view.SoundEffectConstants
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,35 +23,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.random.Random
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import com.byteflipper.random.R
-import com.byteflipper.random.data.settings.SettingsRepository
-import com.byteflipper.random.data.settings.Settings
-import com.byteflipper.random.ui.components.SizedFab
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import kotlinx.coroutines.Job
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.material3.FloatingActionButton
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.byteflipper.random.ui.dice.components.DiceFabControls
+import com.byteflipper.random.ui.dice.components.DiceOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,11 +84,11 @@ fun DiceScreen(onBack: () -> Unit) {
     var currentRollJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(uiState.diceCount) { diceCount = uiState.diceCount }
-    LaunchedEffect(diceCount) { viewModel.setDiceCount(diceCount) }
+    LaunchedEffect(diceCount) { viewModel.onEvent(DiceUiEvent.SetDiceCount(diceCount)) }
 
     suspend fun openOverlayIfNeeded() {
         if (!uiState.isOverlayVisible) {
-            viewModel.setOverlayVisible(true)
+            viewModel.onEvent(DiceUiEvent.SetOverlayVisible(true))
             scrimAlpha.snapTo(0f)
             scrimAlpha.animateTo(1f, tween(250, easing = FastOutSlowInEasing))
         }
@@ -131,7 +97,7 @@ fun DiceScreen(onBack: () -> Unit) {
     fun closeOverlay() {
         scope.launch {
             scrimAlpha.animateTo(0f, tween(200, easing = FastOutSlowInEasing))
-            viewModel.setOverlayVisible(false)
+            viewModel.onEvent(DiceUiEvent.SetOverlayVisible(false))
         }
     }
 

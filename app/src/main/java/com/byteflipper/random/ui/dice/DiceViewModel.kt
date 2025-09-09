@@ -10,8 +10,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DiceUiState(
@@ -29,11 +30,23 @@ class DiceViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
+        initialValue = com.byteflipper.random.data.settings.Settings()
     )
 
     private val _uiState = MutableStateFlow(DiceUiState())
     val uiState: StateFlow<DiceUiState> = _uiState.asStateFlow()
+
+    private val _effects = MutableSharedFlow<DiceUiEffect>()
+    val effects: SharedFlow<DiceUiEffect> = _effects
+
+    fun onEvent(event: DiceUiEvent) {
+        when (event) {
+            is DiceUiEvent.SetDiceCount -> setDiceCount(event.count)
+            is DiceUiEvent.SetOverlayVisible -> setOverlayVisible(event.visible)
+            is DiceUiEvent.RollAll -> rollAll()
+            is DiceUiEvent.RollOne -> rollOne(event.index)
+        }
+    }
 
     fun setDiceCount(count: Int) {
         val clamped = count.coerceIn(1, 10)
@@ -66,3 +79,12 @@ class DiceViewModel @Inject constructor(
         return value
     }
 }
+
+sealed interface DiceUiEvent {
+    data class SetDiceCount(val count: Int) : DiceUiEvent
+    data class SetOverlayVisible(val visible: Boolean) : DiceUiEvent
+    data object RollAll : DiceUiEvent
+    data class RollOne(val index: Int) : DiceUiEvent
+}
+
+sealed interface DiceUiEffect

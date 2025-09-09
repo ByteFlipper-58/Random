@@ -13,13 +13,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import com.byteflipper.random.R
 import androidx.compose.ui.graphics.Color
 import kotlin.random.Random
 import com.byteflipper.random.data.settings.HapticsIntensity
+import com.byteflipper.random.ui.lot.components.LotCard
+import com.byteflipper.random.ui.lot.components.LotFabMode
+import com.byteflipper.random.ui.lot.components.computeRowSizes
+import com.byteflipper.random.ui.lot.components.distributeColorsSmartly
 import kotlinx.coroutines.launch
 
 data class LotUiState(
@@ -31,19 +33,19 @@ data class LotUiState(
     val fabMode: LotFabMode = LotFabMode.Randomize
 )
 
-sealed interface LotEvent {
-    data class ShowSnackbar(val messageRes: Int) : LotEvent
-    data class HapticPress(val intensity: HapticsIntensity) : LotEvent
+sealed interface LotUiEffect {
+    data class ShowSnackbar(val messageRes: Int) : LotUiEffect
+    data class HapticPress(val intensity: HapticsIntensity) : LotUiEffect
 }
 
-sealed interface LotAction {
-    data class TotalChanged(val value: String) : LotAction
-    data class MarkedChanged(val value: String) : LotAction
-    data class GenerateRequested(val availableColors: List<Color>) : LotAction
-    data class CardClicked(val id: Int) : LotAction
-    data object RevealAll : LotAction
-    data object Shuffle : LotAction
-    data object OverlayDismissed : LotAction
+sealed interface LotUiEvent {
+    data class TotalChanged(val value: String) : LotUiEvent
+    data class MarkedChanged(val value: String) : LotUiEvent
+    data class GenerateRequested(val availableColors: List<Color>) : LotUiEvent
+    data class CardClicked(val id: Int) : LotUiEvent
+    data object RevealAll : LotUiEvent
+    data object Shuffle : LotUiEvent
+    data object OverlayDismissed : LotUiEvent
 }
 
 @HiltViewModel
@@ -56,14 +58,14 @@ class LotViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
+        initialValue = com.byteflipper.random.data.settings.Settings()
     )
 
     private val _uiState = MutableStateFlow(LotUiState())
     val uiState: StateFlow<LotUiState> = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<LotEvent>()
-    val events: SharedFlow<LotEvent> = _events
+    private val _effects = MutableSharedFlow<LotUiEffect>()
+    val effects: SharedFlow<LotUiEffect> = _effects
 
     fun updateTotalText(text: String) {
         _uiState.value = _uiState.value.copy(totalText = text.filter { it.isDigit() })
@@ -107,15 +109,15 @@ class LotViewModel @Inject constructor(
         )
     }
 
-    fun process(action: LotAction) {
-        when (action) {
-            is LotAction.TotalChanged -> updateTotalText(action.value)
-            is LotAction.MarkedChanged -> updateMarkedText(action.value)
-            is LotAction.GenerateRequested -> onGenerateRequested(action.availableColors)
-            is LotAction.CardClicked -> onCardClicked(action.id)
-            LotAction.RevealAll -> revealAll()
-            LotAction.Shuffle -> reshuffle()
-            LotAction.OverlayDismissed -> hideOverlay()
+    fun onEvent(event: LotUiEvent) {
+        when (event) {
+            is LotUiEvent.TotalChanged -> updateTotalText(event.value)
+            is LotUiEvent.MarkedChanged -> updateMarkedText(event.value)
+            is LotUiEvent.GenerateRequested -> onGenerateRequested(event.availableColors)
+            is LotUiEvent.CardClicked -> onCardClicked(event.id)
+            LotUiEvent.RevealAll -> revealAll()
+            LotUiEvent.Shuffle -> reshuffle()
+            LotUiEvent.OverlayDismissed -> hideOverlay()
         }
     }
 
@@ -123,7 +125,7 @@ class LotViewModel @Inject constructor(
         val validated = validate()
         if (validated == null) {
             // отправим снэкбар
-            emitEvent(LotEvent.ShowSnackbar(R.string.minimum_3_fields))
+            emitEffect(LotUiEffect.ShowSnackbar(R.string.minimum_3_fields))
             return
         }
         val (total, _) = validated
@@ -155,7 +157,7 @@ class LotViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(cards = updated)
 
         if (wasMarked && settings.value.hapticsEnabled) {
-            emitEvent(LotEvent.HapticPress(settings.value.hapticsIntensity))
+            emitEffect(LotUiEffect.HapticPress(settings.value.hapticsIntensity))
         }
 
         val totalMarked = updated.count { it.isMarked }
@@ -166,8 +168,7 @@ class LotViewModel @Inject constructor(
         }
     }
 
-    private fun emitEvent(event: LotEvent) {
-        // fire-and-forget; ignoring backpressure since events are simple
-        viewModelScope.launch { _events.emit(event) }
+    private fun emitEffect(effect: LotUiEffect) {
+        viewModelScope.launch { _effects.emit(effect) }
     }
 }

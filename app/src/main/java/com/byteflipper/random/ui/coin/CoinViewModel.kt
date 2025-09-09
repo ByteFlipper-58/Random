@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class CoinUiState(
@@ -28,7 +29,7 @@ class CoinViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
+        initialValue = com.byteflipper.random.data.settings.Settings()
     )
 
     private val _currentSide = MutableStateFlow(CoinSide.HEADS)
@@ -36,6 +37,16 @@ class CoinViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(CoinUiState())
     val uiState: StateFlow<CoinUiState> = _uiState.asStateFlow()
+
+    private val _effects = MutableSharedFlow<CoinUiEffect>()
+    val effects: SharedFlow<CoinUiEffect> = _effects
+
+    fun onEvent(event: CoinUiEvent) {
+        when (event) {
+            CoinUiEvent.Toss -> toss()
+            is CoinUiEvent.SetOverlayVisible -> setOverlayVisible(event.visible)
+        }
+    }
 
     fun toss(): CoinSide {
         val result = tossCoin()
@@ -47,5 +58,12 @@ class CoinViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isOverlayVisible = visible)
     }
 }
+
+sealed interface CoinUiEvent {
+    data object Toss : CoinUiEvent
+    data class SetOverlayVisible(val visible: Boolean) : CoinUiEvent
+}
+
+sealed interface CoinUiEffect
 
 

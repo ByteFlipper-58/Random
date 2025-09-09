@@ -138,7 +138,7 @@ fun HomeScreen(
             onOpenLot = onOpenLot,
             onOpenCoin = onOpenCoin,
             onRenamePreset = { renameTarget = it },
-            onDeletePreset = { viewModel.deletePreset(it) }
+            onDeletePreset = { viewModel.onEvent(HomeUiEvent.DeletePreset(it)) }
         )
     }
 
@@ -149,7 +149,7 @@ fun HomeScreen(
             createName = ""
         },
         presetCount = presets.size,
-        onCreate = { name, items -> viewModel.createPreset(name, items) },
+        onCreate = { name, items -> viewModel.onEvent(HomeUiEvent.CreatePreset(name, items)) },
         onPresetCreated = {
             showCreateDialog = false
             createName = ""
@@ -160,7 +160,7 @@ fun HomeScreen(
         RenameListDialog(
             preset = renameTarget,
             onDismiss = { renameTarget = null },
-            onRename = { preset, newName -> viewModel.renamePreset(preset, newName) },
+            onRename = { preset, newName -> viewModel.onEvent(HomeUiEvent.RenamePreset(preset, newName)) },
             onPresetRenamed = { renameTarget = null }
         )
     }

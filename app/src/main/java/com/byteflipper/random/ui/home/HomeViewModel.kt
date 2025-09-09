@@ -7,8 +7,6 @@ import com.byteflipper.random.data.preset.ListPresetRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.byteflipper.random.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -32,26 +30,26 @@ class HomeViewModel @Inject constructor(
     val settings = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = runBlocking { settingsRepository.settingsFlow.first() }
+        initialValue = com.byteflipper.random.data.settings.Settings()
     )
 
-    fun deletePreset(preset: ListPreset) {
-        viewModelScope.launch {
-            listPresetRepository.delete(preset)
+    fun onEvent(event: HomeUiEvent) {
+        when (event) {
+            is HomeUiEvent.DeletePreset -> viewModelScope.launch { listPresetRepository.delete(event.preset) }
+            is HomeUiEvent.CreatePreset -> viewModelScope.launch {
+                val preset = ListPreset(name = event.name, items = event.items)
+                listPresetRepository.upsert(preset)
+            }
+            is HomeUiEvent.RenamePreset -> viewModelScope.launch {
+                val updatedPreset = event.preset.copy(name = event.newName)
+                listPresetRepository.upsert(updatedPreset)
+            }
         }
     }
+}
 
-    fun createPreset(name: String, items: List<String>) {
-        viewModelScope.launch {
-            val preset = ListPreset(name = name, items = items)
-            listPresetRepository.upsert(preset)
-        }
-    }
-
-    fun renamePreset(preset: ListPreset, newName: String) {
-        viewModelScope.launch {
-            val updatedPreset = preset.copy(name = newName)
-            listPresetRepository.upsert(updatedPreset)
-        }
-    }
+sealed interface HomeUiEvent {
+    data class DeletePreset(val preset: ListPreset) : HomeUiEvent
+    data class CreatePreset(val name: String, val items: List<String>) : HomeUiEvent
+    data class RenamePreset(val preset: ListPreset, val newName: String) : HomeUiEvent
 }

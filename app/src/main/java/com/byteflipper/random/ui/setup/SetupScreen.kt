@@ -55,9 +55,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.byteflipper.random.R
-import com.byteflipper.random.ui.components.MaterialYouVectorDrawable
-import com.byteflipper.random.ui.components.PermissionIconCollage
-import com.byteflipper.random.ui.components.SineWaveLine
 import com.byteflipper.random.ui.theme.ExpTitleTypography
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf

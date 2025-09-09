@@ -37,12 +37,13 @@ import com.byteflipper.random.ui.lists.components.ListSaveDialog
 import com.byteflipper.random.ui.lists.components.ListResultsDisplay
 import com.byteflipper.random.ui.lists.components.ListFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
-import com.byteflipper.random.ui.components.RadioOption
+import com.byteflipper.random.ui.settings.components.RadioOption
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.ui.lists.components.ListSortingMode
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -89,7 +90,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                         actionLabel = "Reset"
                     )
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.resetUsedItems()
+                        viewModel.onEvent(ListUiEvent.ResetUsedItems)
                     }
                 }
                 return
@@ -99,7 +100,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         val delayMs = viewModel.getEffectiveDelayMs().toInt()
         if (!flipCtrl.isVisible()) {
             flipCtrl.open()
-            viewModel.setOverlayVisible(true)
+            viewModel.onEvent(ListUiEvent.SetOverlayVisible(true))
         }
 
         flipCtrl.spinAndReveal(
@@ -109,16 +110,16 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             },
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
-                viewModel.randomizeCardColor()
+                viewModel.onEvent(ListUiEvent.RandomizeCardColor)
             }
         )
     }
 
     LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is ListEvent.ShowSnackbar -> snackbarHostState.showSnackbar(event.messageRes.toString())
-                is ListEvent.HapticPress -> hapticsManager?.performPress(event.intensity)
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is ListUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.messageRes.toString())
+                is ListUiEffect.HapticPress -> hapticsManager?.performPress(effect.intensity)
             }
         }
     }
@@ -151,7 +152,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 ListContent(
                     modifier = Modifier.fillMaxSize().padding(16.dp).blur(blur),
                     items = uiState.editorItems,
-                    onItemsChange = { viewModel.updateEditorItems(it) }
+                    onItemsChange = { viewModel.onEvent(ListUiEvent.UpdateEditorItems(it)) }
                 )
             } else {
                 Text(stringResource(R.string.loading), style = MaterialTheme.typography.bodyMedium)
@@ -189,8 +190,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 state = flipState,
                 anchorInRoot = fabCenterInRoot,
                 onClosed = {
-                    viewModel.clearResults()
-                    viewModel.setOverlayVisible(false)
+                    viewModel.onEvent(ListUiEvent.ClearResults)
+                    viewModel.onEvent(ListUiEvent.SetOverlayVisible(false))
                 },
                 frontContainerColor = animatedColor.value,
                 backContainerColor = animatedColor.value,
@@ -232,23 +233,23 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 )
                 GeneratorConfigDialog(
                     visible = uiState.showConfigDialog,
-                    onDismissRequest = { viewModel.toggleConfigDialog() },
+                    onDismissRequest = { viewModel.onEvent(ListUiEvent.ToggleConfigDialog) },
                     countText = uiState.countText,
-                    onCountChange = { viewModel.updateCountText(it) },
+                    onCountChange = { viewModel.onEvent(ListUiEvent.UpdateCountText(it)) },
                     allowRepetitions = uiState.allowRepetitions,
-                    onAllowRepetitionsChange = { viewModel.updateAllowRepetitions(it) },
+                    onAllowRepetitionsChange = { viewModel.onEvent(ListUiEvent.UpdateAllowRepetitions(it)) },
                     usedNumbers = uiState.usedItems.indicesOf(baseSize = 1_000_000),
                     availableRange = null,
-                    onResetUsedNumbers = { viewModel.resetUsedItems() },
+                    onResetUsedNumbers = { viewModel.onEvent(ListUiEvent.ResetUsedItems) },
                     useDelay = uiState.useDelay,
-                    onUseDelayChange = { viewModel.updateUseDelay(it) },
+                    onUseDelayChange = { viewModel.onEvent(ListUiEvent.UpdateUseDelay(it)) },
                     delayText = uiState.delayText,
-                    onDelayChange = { viewModel.updateDelayText(it) },
+                    onDelayChange = { viewModel.onEvent(ListUiEvent.UpdateDelayText(it)) },
                     sortingOptions = sortOptions,
                     selectedSortingKey = uiState.sortingMode.name,
                     onSortingChange = { key ->
                         val mode = ListSortingMode.valueOf(key)
-                        viewModel.updateSortingMode(mode)
+                        viewModel.onEvent(ListUiEvent.UpdateSortingMode(mode))
                     }
                 )
             }
@@ -256,9 +257,9 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             if (uiState.showRenameDialog && presetId != null) {
                 ListRenameDialog(
                     currentName = uiState.renameName,
-                    onDismiss = { viewModel.toggleRenameDialog() },
+                    onDismiss = { viewModel.onEvent(ListUiEvent.ToggleRenameDialog) },
                     onConfirm = { newName ->
-                        viewModel.updateRenameName(newName)
+                        viewModel.onEvent(ListUiEvent.UpdateRenameName(newName))
                         viewModel.renamePreset()
                     }
                 )
@@ -268,10 +269,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 ListSaveDialog(
                     currentName = uiState.saveName,
                     presetCount = presets.size,
-                    onDismiss = { viewModel.toggleSaveDialog() },
+                    onDismiss = { viewModel.onEvent(ListUiEvent.ToggleSaveDialog) },
                     onConfirm = { name, shouldOpenAfterSave ->
-                        viewModel.updateSaveName(name)
-                        viewModel.updateOpenAfterSave(shouldOpenAfterSave)
+                        viewModel.onEvent(ListUiEvent.UpdateSaveName(name))
+                        viewModel.onEvent(ListUiEvent.UpdateOpenAfterSave(shouldOpenAfterSave))
                         viewModel.saveAsNewPreset { newId ->
                             if (shouldOpenAfterSave) {
                                 onOpenListById(newId)

@@ -39,7 +39,7 @@ import com.byteflipper.random.ui.components.flip.rememberFlipCardState
 import com.byteflipper.random.ui.components.flip.FlipCardControls
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
 import com.byteflipper.random.ui.theme.getRainbowColors
-import com.byteflipper.random.ui.components.RadioOption
+import com.byteflipper.random.ui.settings.components.RadioOption
 import com.byteflipper.random.domain.numbers.SortingMode
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,6 +47,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
 import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
 import com.byteflipper.random.utils.Constants.MAX_DELAY_MS
+import com.byteflipper.random.ui.numbers.components.NumbersFabControls
+import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
+import com.byteflipper.random.ui.numbers.components.computeCardBaseSizeDp
+import com.byteflipper.random.ui.numbers.components.computeHeightScale
+import com.byteflipper.random.ui.numbers.components.pickStableColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,10 +126,10 @@ fun NumbersScreen(onBack: () -> Unit) {
     }
 
     LaunchedEffect(Unit) {
-        viewModel.events.collect { event ->
-            when (event) {
-                is NumbersEvent.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(event.messageRes))
-                is NumbersEvent.HapticPress -> hapticsManager?.performPress(event.intensity)
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                is NumbersUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(effect.messageRes))
+                is NumbersUiEffect.HapticPress -> hapticsManager?.performPress(effect.intensity)
             }
         }
     }
@@ -148,11 +153,11 @@ fun NumbersScreen(onBack: () -> Unit) {
     // Диалог настроек
     GeneratorConfigDialog(
         visible = uiState.showConfigDialog,
-        onDismissRequest = { viewModel.setConfigDialogVisible(false) },
+        onDismissRequest = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(false)) },
         countText = uiState.countText,
-        onCountChange = { viewModel.updateCountText(it) },
+        onCountChange = { viewModel.onEvent(NumbersUiEvent.UpdateCountText(it)) },
         allowRepetitions = uiState.allowRepetitions,
-        onAllowRepetitionsChange = { viewModel.updateAllowRepetitions(it) },
+        onAllowRepetitionsChange = { viewModel.onEvent(NumbersUiEvent.UpdateAllowRepetitions(it)) },
         usedNumbers = uiState.usedNumbers,
         availableRange = run {
             val from = uiState.fromText.trim().toIntOrNull()
@@ -161,11 +166,11 @@ fun NumbersScreen(onBack: () -> Unit) {
                 if (from <= to) from..to else to..from
             } else null
         },
-        onResetUsedNumbers = { resetUsedNumbers() },
+        onResetUsedNumbers = { viewModel.onEvent(NumbersUiEvent.ResetUsedNumbers) },
         useDelay = uiState.useDelay,
-        onUseDelayChange = { viewModel.updateUseDelay(it) },
+        onUseDelayChange = { viewModel.onEvent(NumbersUiEvent.UpdateUseDelay(it)) },
         delayText = uiState.delayText,
-        onDelayChange = { viewModel.updateDelayText(it) },
+        onDelayChange = { viewModel.onEvent(NumbersUiEvent.UpdateDelayText(it)) },
         minDelayMs = MIN_DELAY_MS,
         maxDelayMs = MAX_DELAY_MS,
         defaultDelayMs = DEFAULT_DELAY_MS,
@@ -175,7 +180,7 @@ fun NumbersScreen(onBack: () -> Unit) {
             RadioOption(key = SortingMode.Descending.name, title = stringResource(R.string.descending))
         ),
         selectedSortingKey = uiState.sortingMode.name,
-        onSortingChange = { key -> viewModel.updateSortingMode(SortingMode.valueOf(key)) }
+        onSortingChange = { key -> viewModel.onEvent(NumbersUiEvent.UpdateSortingMode(SortingMode.valueOf(key))) }
     )
 
     NumbersScaffold(
@@ -183,23 +188,27 @@ fun NumbersScreen(onBack: () -> Unit) {
         snackbarHostState = snackbarHostState,
         floatingActionButton = {
             NumbersFabControls(
-                onConfigClick = { viewModel.setConfigDialogVisible(true) },
+                onConfigClick = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(true)) },
                 onGenerateClick = {
                     val result = validateInputs() ?: return@NumbersFabControls
                     val delayMs = viewModel.getEffectiveDelayMs()
                     if (!flipCardController.isVisible()) {
                         flipCardController.open()
-                        viewModel.setOverlayVisible(true)
+                        viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(true))
                     }
                     flipCardController.spinAndReveal(
                         effectiveDelayMs = delayMs,
                         onReveal = { targetIsFront ->
                             val newNumbers = viewModel.generate()
-                            if (targetIsFront) viewModel.setFrontValues(newNumbers) else viewModel.setBackValues(newNumbers)
+                            if (targetIsFront) viewModel.onEvent(
+                                NumbersUiEvent.SetFrontValues(
+                                    newNumbers
+                                )
+                            ) else viewModel.onEvent(NumbersUiEvent.SetBackValues(newNumbers))
                         },
                         onSpinCompleted = {
                             viewModel.notifyHapticPressIfEnabled()
-                            viewModel.randomizeCardColor()
+                            viewModel.onEvent(NumbersUiEvent.RandomizeCardColor)
                         }
                     )
                 },
@@ -224,21 +233,26 @@ fun NumbersScreen(onBack: () -> Unit) {
                     .blur(blurRadius),
                 fromText = uiState.fromText,
                 toText = uiState.toText,
-                onFromChange = { viewModel.updateFromText(it) },
-                onToChange = { viewModel.updateToText(it) }
+                onFromChange = { viewModel.onEvent(NumbersUiEvent.UpdateFromText(it)) },
+                onToChange = { viewModel.onEvent(NumbersUiEvent.UpdateToText(it)) }
             )
 
             val resultsCountForSizing = max(uiState.frontValues.size, uiState.backValues.size)
             val configuration = LocalConfiguration.current
-            val maxCardSideDp = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(200).dp
+            val maxCardSideDp =
+                (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(
+                    200
+                ).dp
 
             val basePx = computeCardBaseSizeDp(resultsCountForSizing)
             val dynamicCardSize = basePx.coerceIn(240, maxCardSideDp.value.toInt()).dp
             val heightScale = computeHeightScale(resultsCountForSizing)
-            val contentTargetHeight = (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
+            val contentTargetHeight =
+                (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
 
             val rainbowColors = getRainbowColors()
-            val animatedColor = remember { androidx.compose.animation.Animatable(Color.Transparent) }
+            val animatedColor =
+                remember { androidx.compose.animation.Animatable(Color.Transparent) }
             val targetColor = remember(uiState.cardColorSeed, uiState.frontValues) {
                 pickStableColor(uiState.cardColorSeed, rainbowColors)
             }
@@ -255,8 +269,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                 anchorInRoot = fabCenterInRoot,
                 onClosed = {
                     triggerFabPulse()
-                    viewModel.clearResults()
-                    viewModel.setOverlayVisible(false)
+                    viewModel.onEvent(NumbersUiEvent.ClearResults)
+                    viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(false))
                 },
                 cardSize = dynamicCardSize,
                 cardHeight = contentTargetHeight,

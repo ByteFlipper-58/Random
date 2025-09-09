@@ -1,5 +1,6 @@
 package com.byteflipper.random.ui.coin
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,7 +14,7 @@ import androidx.compose.runtime.Composable
 fun CoinScaffold(
     onBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    content: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = { CoinTopBar(onBack) },

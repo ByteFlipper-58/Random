@@ -1,5 +1,6 @@
 package com.byteflipper.random.ui.lot
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -14,7 +15,7 @@ fun LotScaffold(
     onBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     floatingActionButton: @Composable () -> Unit,
-    content: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = { LotTopBar(onBack) },
