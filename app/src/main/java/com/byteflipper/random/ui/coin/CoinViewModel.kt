@@ -15,6 +15,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
+data class CoinUiState(
+    val isOverlayVisible: Boolean = false
+)
+
 @HiltViewModel
 class CoinViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
@@ -30,10 +34,17 @@ class CoinViewModel @Inject constructor(
     private val _currentSide = MutableStateFlow(CoinSide.HEADS)
     val currentSide: StateFlow<CoinSide> = _currentSide.asStateFlow()
 
+    private val _uiState = MutableStateFlow(CoinUiState())
+    val uiState: StateFlow<CoinUiState> = _uiState.asStateFlow()
+
     fun toss(): CoinSide {
         val result = tossCoin()
         _currentSide.value = result
         return result
+    }
+
+    fun setOverlayVisible(visible: Boolean) {
+        _uiState.value = _uiState.value.copy(isOverlayVisible = visible)
     }
 }
 

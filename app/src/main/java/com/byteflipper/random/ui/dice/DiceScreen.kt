@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -78,12 +79,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 @Composable
 fun DiceScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val haptics = LocalHapticFeedback.current
     val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
     val viewModel: DiceViewModel = hiltViewModel()
-    val settings by viewModel.settings.collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
+    val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val maxDice = 10
     var diceCount by rememberSaveable { mutableStateOf(uiState.diceCount) }
@@ -113,15 +115,14 @@ fun DiceScreen(onBack: () -> Unit) {
 
     var isRolling by remember { mutableStateOf(false) }
     val scrimAlpha = remember { Animatable(0f) }
-    var overlayVisible by rememberSaveable { mutableStateOf(false) }
     var currentRollJob by remember { mutableStateOf<Job?>(null) }
 
     LaunchedEffect(uiState.diceCount) { diceCount = uiState.diceCount }
     LaunchedEffect(diceCount) { viewModel.setDiceCount(diceCount) }
 
     suspend fun openOverlayIfNeeded() {
-        if (!overlayVisible) {
-            overlayVisible = true
+        if (!uiState.isOverlayVisible) {
+            viewModel.setOverlayVisible(true)
             scrimAlpha.snapTo(0f)
             scrimAlpha.animateTo(1f, tween(250, easing = FastOutSlowInEasing))
         }
@@ -130,7 +131,7 @@ fun DiceScreen(onBack: () -> Unit) {
     fun closeOverlay() {
         scope.launch {
             scrimAlpha.animateTo(0f, tween(200, easing = FastOutSlowInEasing))
-            overlayVisible = false
+            viewModel.setOverlayVisible(false)
         }
     }
 
@@ -180,21 +181,13 @@ fun DiceScreen(onBack: () -> Unit) {
 
     DiceScaffold(
         onBack = onBack,
+        snackbarHostState = snackbarHostState,
         floatingActionButton = {
-            SizedFab(
+            DiceFabControls(
                 size = settings.fabSize,
-                onClick = { rollAll(settings.hapticsEnabled) },
-                containerColor = if (isRolling)
-                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
-                else
-                    MaterialTheme.colorScheme.primaryContainer,
-                contentColor = if (isRolling)
-                    MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
-                else
-                    MaterialTheme.colorScheme.onPrimaryContainer
-            ) {
-                Icon(painterResource(R.drawable.autorenew_24px), contentDescription = stringResource(R.string.roll_dice))
-            }
+                isRolling = isRolling,
+                onClick = { rollAll(settings.hapticsEnabled) }
+            )
         }
     ) { inner ->
         Column(
@@ -213,107 +206,44 @@ fun DiceScreen(onBack: () -> Unit) {
             )
         }
 
-        if (overlayVisible) {
-            BackHandler { closeOverlay() }
-
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f * scrimAlpha.value))
-                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {
-                    closeOverlay()
-                }
-            ) {
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    val columns = when {
-                        diceCount <= 1 -> 1
-                        diceCount <= 3 -> diceCount
-                        else -> 3
-                    }
-                    val rows = kotlin.math.ceil(diceCount / columns.toFloat()).toInt()
-                    val spacing = 16.dp
-                    val widthCandidate = (maxWidth - spacing * (columns - 1)) / columns
-                    val heightCandidate = (maxHeight - spacing * (rows - 1)) / rows
-                    val dieSize = min(widthCandidate.value, heightCandidate.value).dp.coerceIn(84.dp, 200.dp)
-
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        var index = 0
-                        repeat(rows) { rowIdx ->
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(spacing),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                repeat(columns) {
-                                    if (index < diceCount) {
-                                        val i = index
-                                        Box(
-                                            modifier = Modifier
-                                                .size(dieSize)
-                                                .graphicsLayer {
-                                                    rotationZ = rotations[i].value
-                                                    scaleX = scales[i].value
-                                                    scaleY = scales[i].value
-                                                }
-                                                .clip(RoundedCornerShape(16.dp))
-                                                .clickable(
-                                                    interactionSource = remember { MutableInteractionSource() },
-                                                    indication = null,
-                                                    enabled = !isAnimating.value[i]
-                                                ) {
-                                                    if (!isAnimating.value[i]) {
-                                                        scope.launch {
-                                                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
-                                                            if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-                                                            val newV = viewModel.rollOne(i)
-                                                            val currentColor = diceColors[i]
-                                                            var newColor = diceColorPalette.random()
-                                                            while (newColor == currentColor && diceColorPalette.size > 1) {
-                                                                newColor = diceColorPalette.random()
-                                                            }
-                                                            diceColors = diceColors.toMutableList().also { it[i] = newColor }
-
-                                                            val currentRotation = rotations[i].value
-                                                            val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
-                                                            rotations[i].snapTo(normalizedRotation)
-
-                                                            rotations[i].animateTo(
-                                                                targetValue = normalizedRotation + 360f * Random.nextInt(2, 4),
-                                                                animationSpec = tween(500, easing = FastOutSlowInEasing)
-                                                            )
-                                                            scales[i].animateTo(1.12f, tween(120))
-                                                            scales[i].animateTo(1f, tween(180))
-                                                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = false }
-                                                        }
-                                                    }
-                                                },
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            DieFace(value = uiState.values.getOrNull(i) ?: 1, color = animatedColors[i].value)
-                                        }
-                                        index++
-                                    }
-                                }
+        if (uiState.isOverlayVisible) {
+            DiceOverlay(
+                scrimAlpha = scrimAlpha.value,
+                diceCount = diceCount,
+                rotations = rotations,
+                scales = scales,
+                isAnimating = isAnimating.value,
+                animatedColors = animatedColors,
+                values = uiState.values,
+                onDismiss = { closeOverlay() },
+                onDieClick = { i ->
+                    if (!isAnimating.value[i]) {
+                        scope.launch {
+                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
+                            if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
+                            val newV = viewModel.rollOne(i)
+                            val currentColor = diceColors[i]
+                            var newColor = diceColorPalette.random()
+                            while (newColor == currentColor && diceColorPalette.size > 1) {
+                                newColor = diceColorPalette.random()
                             }
-                            if (rowIdx < rows - 1) Spacer(Modifier.height(spacing))
+                            diceColors = diceColors.toMutableList().also { it[i] = newColor }
+
+                            val currentRotation = rotations[i].value
+                            val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
+                            rotations[i].snapTo(normalizedRotation)
+
+                            rotations[i].animateTo(
+                                targetValue = normalizedRotation + 360f * Random.nextInt(2, 4),
+                                animationSpec = tween(500, easing = FastOutSlowInEasing)
+                            )
+                            scales[i].animateTo(1.12f, tween(120))
+                            scales[i].animateTo(1f, tween(180))
+                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = false }
                         }
-                        Spacer(Modifier.height(32.dp))
-                        val total = uiState.values.take(diceCount).sum()
-                        Text(
-                            text = "${stringResource(R.string.sum)}: $total",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
                     }
                 }
-            }
+            )
         }
     }
 }

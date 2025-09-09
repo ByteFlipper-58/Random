@@ -1,7 +1,6 @@
 package com.byteflipper.random.ui.numbers.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,7 +17,7 @@ fun NumbersTopBar(onBack: () -> Unit) {
         title = { Text(stringResource(R.string.number)) },
         navigationIcon = {
             IconButton(onClick = onBack) {
-                Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.back))
+                Icon(painterResource(R.drawable.arrow_back_24px), contentDescription = stringResource(R.string.back))
             }
         }
     )

@@ -1,25 +1,16 @@
 package com.byteflipper.random.ui.lists
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,7 +21,6 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.Shuffle
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.IntSize
@@ -38,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
-import com.byteflipper.random.ui.components.EditorList
 import com.byteflipper.random.ui.components.flip.FlipCardControls
 import com.byteflipper.random.ui.components.flip.FlipCardOverlay
 import com.byteflipper.random.ui.components.GeneratorConfigDialog
@@ -50,7 +39,12 @@ import com.byteflipper.random.ui.lists.components.ListFabControls
 import com.byteflipper.random.ui.theme.getRainbowColors
 import com.byteflipper.random.ui.components.RadioOption
 import kotlinx.coroutines.launch
-
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import com.byteflipper.random.ui.components.LocalHapticsManager
+import kotlin.math.min
+import kotlin.random.Random
 
 
 private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
@@ -71,6 +65,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val hapticsManager = LocalHapticsManager.current
 
     var fabCenterInRoot by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
     var fabSize by remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
@@ -102,14 +97,30 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         }
 
         val delayMs = viewModel.getEffectiveDelayMs().toInt()
-        if (!flipCtrl.isVisible()) flipCtrl.open()
+        if (!flipCtrl.isVisible()) {
+            flipCtrl.open()
+            viewModel.setOverlayVisible(true)
+        }
 
         flipCtrl.spinAndReveal(
             effectiveDelayMs = delayMs,
             onReveal = { _ ->
                 val results = viewModel.generateAndUpdateResults()
+            },
+            onSpinCompleted = {
+                viewModel.notifyHapticPressIfEnabled()
+                viewModel.randomizeCardColor()
             }
         )
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is ListEvent.ShowSnackbar -> snackbarHostState.showSnackbar(event.messageRes.toString())
+                is ListEvent.HapticPress -> hapticsManager?.performPress(event.intensity)
+            }
+        }
     }
 
     val topTitle = if (presetId == null) stringResource(R.string.list) else (uiState.preset?.name ?: stringResource(R.string.list))
@@ -147,10 +158,21 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             }
 
             val rainbowColors = getRainbowColors()
-            val cardColor = androidx.compose.runtime.remember(uiState.results) { rainbowColors.random() }
+            val animatedColor = remember { Animatable(Color.Transparent) }
+            val targetColor = remember(uiState.cardColorSeed, uiState.results) {
+                val r = uiState.cardColorSeed?.let { Random(it) } ?: Random
+                rainbowColors[r.nextInt(rainbowColors.size)]
+            }
+            LaunchedEffect(targetColor) {
+                if (animatedColor.value == Color.Transparent) {
+                    animatedColor.snapTo(targetColor)
+                } else {
+                    animatedColor.animateTo(targetColor, tween(400))
+                }
+            }
 
-            val configuration = androidx.compose.ui.platform.LocalConfiguration.current
-            val maxCardSide = (kotlin.math.min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).dp
+            val configuration = LocalConfiguration.current
+            val maxCardSide = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).dp
             val listCardSize = 320.dp.coerceAtMost(maxCardSide)
 
             val resultsCount = uiState.results.size
@@ -166,22 +188,25 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             FlipCardOverlay(
                 state = flipState,
                 anchorInRoot = fabCenterInRoot,
-                onClosed = { viewModel.clearResults() },
-                frontContainerColor = cardColor,
-                backContainerColor = cardColor,
+                onClosed = {
+                    viewModel.clearResults()
+                    viewModel.setOverlayVisible(false)
+                },
+                frontContainerColor = animatedColor.value,
+                backContainerColor = animatedColor.value,
                 cardSize = listCardSize,
                 cardHeight = listCardHeight,
                 frontContent = {
                     ListResultsDisplay(
                         results = uiState.results,
-                        cardColor = cardColor,
+                        cardColor = animatedColor.value,
                         cardSize = listCardHeight
                     )
                 },
                 backContent = {
                     ListResultsDisplay(
                         results = uiState.results,
-                        cardColor = cardColor,
+                        cardColor = animatedColor.value,
                         cardSize = listCardHeight
                     )
                 }
@@ -190,17 +215,17 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             if (uiState.showConfigDialog) {
                 val sortOptions = listOf(
                     RadioOption(
-                        key = com.byteflipper.random.ui.lists.ListSortingMode.Random.name,
+                        key = ListSortingMode.Random.name,
                         title = stringResource(R.string.random_order),
                         icon = rememberVectorPainter(Icons.Outlined.Shuffle)
                     ),
                     RadioOption(
-                        key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalAZ.name,
+                        key = ListSortingMode.AlphabeticalAZ.name,
                         title = stringResource(R.string.alphabetical_az),
                         icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
                     ),
                     RadioOption(
-                        key = com.byteflipper.random.ui.lists.ListSortingMode.AlphabeticalZA.name,
+                        key = ListSortingMode.AlphabeticalZA.name,
                         title = stringResource(R.string.alphabetical_za),
                         icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
                     )
@@ -222,7 +247,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     sortingOptions = sortOptions,
                     selectedSortingKey = uiState.sortingMode.name,
                     onSortingChange = { key ->
-                        val mode = com.byteflipper.random.ui.lists.ListSortingMode.valueOf(key)
+                        val mode = ListSortingMode.valueOf(key)
                         viewModel.updateSortingMode(mode)
                     }
                 )

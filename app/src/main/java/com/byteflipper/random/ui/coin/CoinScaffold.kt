@@ -1,6 +1,5 @@
-package com.byteflipper.random.ui.lists
+package com.byteflipper.random.ui.coin
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,19 +10,14 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListScaffold(
+fun CoinScaffold(
     onBack: () -> Unit,
-    title: String,
-    onShowSave: (() -> Unit)? = null,
-    onShowRename: (() -> Unit)? = null,
     snackbarHostState: SnackbarHostState,
-    floatingActionButton: @Composable () -> Unit,
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = { ListTopBar(onBack = onBack, title = title, onShowSave = onShowSave, onShowRename = onShowRename) },
+        topBar = { CoinTopBar(onBack) },
         contentWindowInsets = WindowInsets.systemBars,
-        floatingActionButton = floatingActionButton,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         content = content
     )

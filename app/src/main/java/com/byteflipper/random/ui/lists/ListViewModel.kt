@@ -45,7 +45,9 @@ data class ListUiState(
     val saveName: String = "",
     val renameName: String = "",
     val openAfterSave: Boolean = true,
-    val sortingMode: com.byteflipper.random.ui.lists.ListSortingMode = com.byteflipper.random.ui.lists.ListSortingMode.Random
+    val sortingMode: com.byteflipper.random.ui.lists.ListSortingMode = com.byteflipper.random.ui.lists.ListSortingMode.Random,
+    val isOverlayVisible: Boolean = false,
+    val cardColorSeed: Long? = null
 )
 
 @HiltViewModel
@@ -67,6 +69,9 @@ class ListViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = com.byteflipper.random.data.settings.Settings()
     )
+
+    private val _events = kotlinx.coroutines.flow.MutableSharedFlow<ListEvent>()
+    val events: kotlinx.coroutines.flow.SharedFlow<ListEvent> = _events
 
     val presets = listPresetRepository.observeAll().stateIn(
         scope = viewModelScope,
@@ -274,4 +279,33 @@ class ListViewModel @Inject constructor(
             }
         }
     }
+
+    fun notifyHapticPressIfEnabled() {
+        if (settings.value.hapticsEnabled) {
+            emitEvent(ListEvent.HapticPress(settings.value.hapticsIntensity))
+        }
+    }
+
+    fun setOverlayVisible(visible: Boolean) {
+        if (visible) {
+            val seed = kotlin.random.Random.nextLong()
+            _uiState.update { it.copy(isOverlayVisible = true, cardColorSeed = seed) }
+        } else {
+            _uiState.update { it.copy(isOverlayVisible = false) }
+        }
+    }
+
+    fun randomizeCardColor() {
+        val newSeed = kotlin.random.Random.nextLong()
+        _uiState.update { it.copy(cardColorSeed = newSeed) }
+    }
+
+    private fun emitEvent(event: ListEvent) {
+        viewModelScope.launch { _events.emit(event) }
+    }
+}
+
+sealed interface ListEvent {
+    data class ShowSnackbar(val messageRes: Int) : ListEvent
+    data class HapticPress(val intensity: com.byteflipper.random.data.settings.HapticsIntensity) : ListEvent
 }

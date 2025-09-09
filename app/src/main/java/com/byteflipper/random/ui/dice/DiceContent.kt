@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import com.byteflipper.random.R
 
 @Composable
@@ -40,7 +42,9 @@ fun DiceCountSelector(
                 val selected = n == diceCount
                 FloatingActionButton(
                     onClick = { onChange(n) },
-                    modifier = Modifier.height(56.dp)
+                    modifier = Modifier.height(56.dp),
+                    containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                 ) {
                     Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }
@@ -54,7 +58,9 @@ fun DiceCountSelector(
                 val selected = n == diceCount
                 FloatingActionButton(
                     onClick = { onChange(n) },
-                    modifier = Modifier.height(56.dp)
+                    modifier = Modifier.height(56.dp),
+                    containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                 ) {
                     Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }
@@ -68,7 +74,9 @@ fun DiceCountSelector(
                 val selected = n == diceCount
                 FloatingActionButton(
                     onClick = { onChange(n) },
-                    modifier = Modifier.height(56.dp)
+                    modifier = Modifier.height(56.dp),
+                    containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                 ) {
                     Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }
@@ -82,7 +90,9 @@ fun DiceCountSelector(
                 val selected = n == diceCount
                 FloatingActionButton(
                     onClick = { onChange(n) },
-                    modifier = Modifier.height(56.dp)
+                    modifier = Modifier.height(56.dp),
+                    containerColor = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                    contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
                 ) {
                     Text(text = n.toString(), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                 }
@@ -104,9 +114,14 @@ fun DiceContent(
     ) {
         Text(
             text = stringResource(R.string.dice_count),
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelLarge.copy(
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.CenterHorizontally)
         )
         Spacer(Modifier.height(12.dp))
         DiceCountSelector(diceCount = diceCount, onChange = onDiceCountChange)

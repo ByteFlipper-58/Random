@@ -16,7 +16,8 @@ import javax.inject.Inject
 
 data class DiceUiState(
     val diceCount: Int = 2,
-    val values: List<Int> = listOf(1, 2)
+    val values: List<Int> = listOf(1, 2),
+    val isOverlayVisible: Boolean = false
 )
 
 @HiltViewModel
@@ -39,6 +40,10 @@ class DiceViewModel @Inject constructor(
         val base = _uiState.value.values.take(clamped)
         val padded = base + List(clamped - base.size) { 1 }
         _uiState.value = _uiState.value.copy(diceCount = clamped, values = padded)
+    }
+
+    fun setOverlayVisible(visible: Boolean) {
+        _uiState.value = _uiState.value.copy(isOverlayVisible = visible)
     }
 
     fun rollAll(): List<Int> {
