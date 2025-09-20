@@ -91,7 +91,30 @@
 
 ## 🤝 Feedback
 
-Comments, ideas and suggestions are welcome! Leave an [issue](https://github.com/ByteFlipper-58/Random/issues) or suggest an improvement via [pull request](https://github.com/ByteFlipper-58/Random/pulls).
+### How to contribute
+
+- Important — I don't need external code contributions. This project is maintained solely by me, and I intend to keep it that way. Pull requests will likely be closed as they don't align with the project's vision.
+- Send your suggestions via Issues. Don't hesitate to share your thoughts!
+- Join the Telegram channel to share ideas, report bugs, or just chat with me.
+- Feature ideas: if you're missing something or have an interesting concept — create a new Issue.
+- Bug reports: encountered a crash or something went wrong? Create an Issue with as many details as possible to help resolve it faster.
+- Enjoy the app — the best contribution is to use it and have fun.
+
+Contact links:
+- Issues: https://github.com/ByteFlipper-58/Random/issues
+- Telegram: https://t.me/byteflipper
+- VK: https://vk.com/byteflipper
+
+## 🧩 About clones and forks
+
+- The code is open primarily as a demonstration of Jetpack Compose capabilities and architecture practices. Feel free to use it as a reference.
+- Forks and clones are allowed under GPL‑3.0 compliance:
+  - keep author attribution and the LICENSE file;
+  - publish sources of derivative works;
+  - distribute derivatives under GPL‑compatible terms;
+  - mark your changes.
+- If you publish your own builds to stores, use your own name/icons/description to avoid misleading users or impersonating the original.
+- I reserve intellectual property rights and will protect them, including filing DMCA/strikes in case of license violations, branding abuse, misleading representation, or other violations of applicable law and store policies.
 
 ## 🔗 Links
 
