@@ -5,20 +5,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavType
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.navigation.NavTransitions
@@ -56,23 +54,11 @@ object AppRoutes {
 fun AppRoot() {
     val viewModel: AppViewModel = hiltViewModel()
     val context = LocalContext.current
-
     val initialSettings: Settings? by viewModel.initialSettings.collectAsStateWithLifecycle()
     val settings: Settings by viewModel.settingsFlow.collectAsStateWithLifecycle(
         initialValue = initialSettings ?: Settings()
     )
 
-    LaunchedEffect(settings.appLanguage) {
-        val tag = settings.appLanguage.localeTag
-        val desiredLocales = if (tag == "system") {
-            LocaleListCompat.getEmptyLocaleList()
-        } else {
-            LocaleListCompat.forLanguageTags(tag)
-        }
-        if (AppCompatDelegate.getApplicationLocales().toLanguageTags() != desiredLocales.toLanguageTags()) {
-            AppCompatDelegate.setApplicationLocales(desiredLocales)
-        }
-    }
 
     val darkTheme = when (settings.themeMode) {
         ThemeMode.System -> isSystemInDarkTheme()
@@ -89,7 +75,6 @@ fun AppRoot() {
             ) {
                 val navController = rememberNavController()
                 val startDestination = if (settings.setupCompleted) AppRoutes.Home else AppRoutes.Setup
-
                 NavHost(navController = navController, startDestination = startDestination) {
                     composable(AppRoutes.Setup) {
                         SetupScreen(onSetupComplete = {
@@ -119,7 +104,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { NumbersScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.Lot,
                         enterTransition = NavTransitions.enter,
@@ -127,7 +111,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { LotScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.Dice,
                         enterTransition = NavTransitions.enter,
@@ -135,7 +118,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { DiceScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.Coin,
                         enterTransition = NavTransitions.enter,
@@ -143,7 +125,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { CoinScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.Settings,
                         enterTransition = NavTransitions.enter,
@@ -157,7 +138,6 @@ fun AppRoot() {
                             onOpenAppearance = { navController.navigate(AppRoutes.SettingsAppearance) }
                         )
                     }
-
                     composable(
                         route = AppRoutes.SettingsGeneral,
                         enterTransition = NavTransitions.enter,
@@ -165,7 +145,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { SettingsGeneralScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.SettingsAppearance,
                         enterTransition = NavTransitions.enter,
@@ -173,7 +152,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { SettingsAppearanceScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.About,
                         enterTransition = NavTransitions.enter,
@@ -181,7 +159,6 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { AboutScreen(onBack = { navController.popBackStack() }) }
-
                     composable(
                         route = AppRoutes.List,
                         enterTransition = NavTransitions.enter,
@@ -198,7 +175,6 @@ fun AppRoot() {
                             }
                         )
                     }
-
                     composable(
                         route = AppRoutes.ListWithId,
                         arguments = listOf(navArgument("id") { type = NavType.LongType }),
@@ -219,5 +195,3 @@ fun AppRoot() {
         }
     }
 }
-
-

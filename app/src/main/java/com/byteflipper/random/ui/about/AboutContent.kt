@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.byteflipper.random.BuildConfig
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.about.components.AnimatedActionItem
-import com.byteflipper.random.ui.about.components.AppInfoCard
 import com.byteflipper.random.ui.about.components.ExpandableSection
+import com.byteflipper.random.ui.about.components.HeroAppCard
 import com.byteflipper.random.ui.about.components.InfoCard
 import com.byteflipper.random.ui.about.components.VersionInfoCard
 
@@ -35,11 +35,14 @@ fun AboutContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(horizontal = 20.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AppInfoCard(
+        // Объединенная Hero секция с информацией о приложении
+        HeroAppCard(
+            title = stringResource(R.string.app_name),
+            subtitle = "Ваш надежный помощник для случайного выбора",
             appName = stringResource(R.string.app_name),
             developerName = "ByteFlipper",
             appIcon = painterResource(id = R.drawable.logo)

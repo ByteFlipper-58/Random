@@ -16,9 +16,18 @@ import net.kibotu.splashscreen.SplashScreenDecorator
 import net.kibotu.splashscreen.splash
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import com.byteflipper.random.data.settings.SettingsRepository
+import javax.inject.Inject
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
     private var splashScreen: SplashScreenDecorator? = null
 
@@ -33,6 +42,26 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             RandomTheme { AppRoot() }
+        }
+
+        // Обработка изменения локали
+        lifecycleScope.launch {
+            settingsRepository.settingsFlow
+                .map { it.appLanguage.localeTag }
+                .distinctUntilChanged()
+                .collect { tag ->
+                    val desiredLocales = if (tag == "system") {
+                        LocaleListCompat.getEmptyLocaleList()
+                    } else {
+                        LocaleListCompat.forLanguageTags(tag)
+                    }
+
+                    // Проверяем, нужно ли обновлять локаль
+                    val currentLocales = AppCompatDelegate.getApplicationLocales()
+                    if (currentLocales != desiredLocales) {
+                        AppCompatDelegate.setApplicationLocales(desiredLocales)
+                    }
+                }
         }
 
         lifecycleScope.launch {
