@@ -5,6 +5,11 @@
   <h3>When the choice is difficult — trust randomness</h3>
   <p>One tap — and the decision is ready</p>
   <p><a href="README.md">🇷🇺 Читать на русском</a></p>
+  <p>
+    <a href="https://play.google.com/store/apps/details?id=com.byteflipper.random">
+      <img src="https://img.shields.io/badge/Get%20it%20on-Google%20Play-3DDC84?logo=googleplay&logoColor=white" alt="Get it on Google Play" />
+    </a>
+  </p>
 </div>
 
 ![Android 9+](https://img.shields.io/badge/Android-9%2B-3DDC84?logo=android&logoColor=white)
@@ -12,9 +17,8 @@
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-4285F4)
 ![Material 3](https://img.shields.io/badge/Material%203-Design-FF6F00)
 ![Privacy friendly](https://img.shields.io/badge/Privacy-friendly-00BFA5)
-![No ads](https://img.shields.io/badge/No%20ads-%20-4CAF50)
 ![Offline](https://img.shields.io/badge/Works-Offline-795548)
-![MIT](https://img.shields.io/badge/License-MIT-black)
+![GPLv3](https://img.shields.io/badge/License-GPLv3-black)
 
 ## 🚀 Features
 
@@ -66,14 +70,15 @@
 **Will my lists be saved?**
 > Yes. You can save as a preset and quickly open from the main screen.
 
-**Is there advertising or paid subscriptions?**
-> No. The app is ad-free and payment-free.
+**Ads or in‑app purchases?**
+> Ads and in‑app purchases may be present.
 
 **Do I need internet?**
 > No, everything works locally.
 
 ## 📥 Download
 
+- Google Play: https://play.google.com/store/apps/details?id=com.byteflipper.random
 - [Releases](https://github.com/ByteFlipper-58/Random/releases) tab (if not available — build the app in Android Studio)
 
 ## 🛠 Technologies
@@ -88,9 +93,15 @@
 
 Comments, ideas and suggestions are welcome! Leave an [issue](https://github.com/ByteFlipper-58/Random/issues) or suggest an improvement via [pull request](https://github.com/ByteFlipper-58/Random/pulls).
 
+## 🔗 Links
+
+- 🌐 Website: https://byteflipper.com
+- 💬 Telegram: https://t.me/byteflipper
+- 📱 VK: https://vk.com/byteflipper
+
 ## 📄 License
 
-MIT — use freely.
+GPL-3.0 — see LICENSE file.
 
 ---
 

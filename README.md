@@ -5,6 +5,11 @@
   <h3>Когда выбор сложный — доверься случайности</h3>
   <p>Один тап — и решение готово</p>
   <p><a href="README_EN.md">🇺🇸 Read in English</a></p>
+  <p>
+    <a href="https://play.google.com/store/apps/details?id=com.byteflipper.random">
+      <img src="https://img.shields.io/badge/Get%20it%20on-Google%20Play-3DDC84?logo=googleplay&logoColor=white" alt="Скачать в Google Play" />
+    </a>
+  </p>
 </div>
 
 ![Android 9+](https://img.shields.io/badge/Android-9%2B-3DDC84?logo=android&logoColor=white)
@@ -12,9 +17,8 @@
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-4285F4)
 ![Material 3](https://img.shields.io/badge/Material%203-Design-FF6F00)
 ![Privacy friendly](https://img.shields.io/badge/Privacy-friendly-00BFA5)
-![No ads](https://img.shields.io/badge/No%20ads-%20-4CAF50)
 ![Offline](https://img.shields.io/badge/Works-Offline-795548)
-![MIT](https://img.shields.io/badge/License-MIT-black)
+![GPLv3](https://img.shields.io/badge/License-GPLv3-black)
 
 ## 🚀 Что умеет
 
@@ -66,14 +70,15 @@
 **Мои списки сохранятся?**
 > Да. Можно сохранить как пресет и быстро открывать с главного экрана.
 
-**Есть реклама или платные подписки?**
-> Нет. Приложение без рекламы и платежей.
+**Есть ли реклама или покупки?**
+> Возможны реклама и внутриигровые покупки.
 
 **Нужен интернет?**
 > Нет, всё работает локально.
 
 ## 📥 Скачать
 
+- В Google Play: https://play.google.com/store/apps/details?id=com.byteflipper.random
 - Вкладка [Releases](https://github.com/ByteFlipper-58/Random/releases) (если недоступно — соберите приложение в Android Studio)
 
 ## 🛠 Технологии
@@ -88,9 +93,15 @@
 
 Замечания, идеи и пожелания приветствуются! Оставьте [issue](https://github.com/ByteFlipper-58/Random/issues) или предложите улучшение через [pull request](https://github.com/ByteFlipper-58/Random/pulls).
 
+## 🔗 Ссылки
+
+- 🌐 Сайт: https://byteflipper.com
+- 💬 Telegram: https://t.me/byteflipper
+- 📱 VK: https://vk.com/byteflipper
+
 ## 📄 Лицензия
 
-MIT — используйте свободно.
+GPL-3.0 — см. файл LICENSE.
 
 ---
 

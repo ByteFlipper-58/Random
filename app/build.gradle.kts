@@ -76,6 +76,8 @@ dependencies {
     // Play Billing и прочее
     implementation(libs.play.billing)
     implementation(libs.reorderable)
+    implementation(libs.play.app.update.ktx)
+    implementation(libs.play.review.ktx)
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.56")

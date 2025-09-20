@@ -18,9 +18,9 @@ import com.byteflipper.random.BuildConfig
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.about.components.AnimatedActionItem
 import com.byteflipper.random.ui.about.components.ExpandableSection
-import com.byteflipper.random.ui.about.components.HeroAppCard
 import com.byteflipper.random.ui.about.components.InfoCard
 import com.byteflipper.random.ui.about.components.VersionInfoCard
+import com.byteflipper.random.ui.about.components.HeroAppCard
 
 @Composable
 fun AboutContent(
