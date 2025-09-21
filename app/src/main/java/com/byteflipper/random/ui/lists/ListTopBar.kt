@@ -1,9 +1,11 @@
 package com.byteflipper.random.ui.lists
 
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -13,7 +15,7 @@ import com.byteflipper.random.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListTopBar(onBack: () -> Unit, title: String, onShowSave: (() -> Unit)?, onShowRename: (() -> Unit)?) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = { Text(title) },
         navigationIcon = {
             IconButton(onClick = onBack) {
@@ -27,7 +29,11 @@ fun ListTopBar(onBack: () -> Unit, title: String, onShowSave: (() -> Unit)?, onS
             if (onShowRename != null) {
                 IconButton(onClick = onShowRename) { Icon(painterResource(R.drawable.edit_24px), contentDescription = stringResource(R.string.rename)) }
             }
-        }
+        },
+        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface
+        )
     )
 }
 
