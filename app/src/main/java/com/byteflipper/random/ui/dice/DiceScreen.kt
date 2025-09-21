@@ -40,6 +40,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.byteflipper.random.ui.dice.components.DiceFabControls
 import com.byteflipper.random.ui.dice.components.DiceOverlay
+import com.byteflipper.random.RandomApplication
+import com.byteflipper.random.utils.findActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -142,6 +144,11 @@ fun DiceScreen(onBack: () -> Unit) {
             }
             jobs.forEach { it.join() }
             isRolling = false
+            // Реклама: каждые 8 общих бросков костей
+            val ctx = view.context
+            (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
+                ctx.findActivity()?.let { act -> ctrl.onDiceRolled(act) }
+            }
         }
     }
 
@@ -152,7 +159,9 @@ fun DiceScreen(onBack: () -> Unit) {
             DiceFabControls(
                 size = settings.fabSize,
                 isRolling = isRolling,
-                onClick = { rollAll(settings.hapticsEnabled) }
+                onClick = {
+                    rollAll(settings.hapticsEnabled) 
+                }
             )
         }
     ) { inner ->
@@ -211,70 +220,6 @@ fun DiceScreen(onBack: () -> Unit) {
                 }
             )
         }
-    }
-}
-
-@Composable
-private fun DieFace(value: Int, color: Color) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val w = size.width
-        val h = size.height
-        val s = min(w, h)
-        val corner = s * 0.15f
-
-        // Создаем более темный и светлый оттенки
-        val darkColor = Color(
-            red = (color.red * 0.8f).coerceIn(0f, 1f),
-            green = (color.green * 0.8f).coerceIn(0f, 1f),
-            blue = (color.blue * 0.8f).coerceIn(0f, 1f)
-        )
-
-        val lightColor = Color(
-            red = (color.red * 1.2f).coerceIn(0f, 1f),
-            green = (color.green * 1.2f).coerceIn(0f, 1f),
-            blue = (color.blue * 1.2f).coerceIn(0f, 1f)
-        )
-
-        // Внешняя тень
-        drawRoundRect(
-            brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                colors = listOf(
-                    Color.Black.copy(alpha = 0.3f),
-                    Color.Black.copy(alpha = 0.2f),
-                    Color.Transparent
-                ),
-                center = androidx.compose.ui.geometry.Offset(w/2 + 6f, h/2 + 6f),
-                radius = s * 0.7f
-            ),
-            topLeft = androidx.compose.ui.geometry.Offset(2f, 2f),
-            size = androidx.compose.ui.geometry.Size(w + 4f, h + 4f),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner + 2f, corner + 2f),
-            style = Fill
-        )
-
-        // Основа кубика с градиентом
-        drawRoundRect(
-            brush = androidx.compose.ui.graphics.Brush.linearGradient(
-                colors = listOf(lightColor, color, darkColor),
-                start = androidx.compose.ui.geometry.Offset(0f, 0f),
-                end = androidx.compose.ui.geometry.Offset(w, h)
-            ),
-            size = size,
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner, corner),
-            style = Fill
-        )
-
-        // Внутренняя рамка для глубины
-        drawRoundRect(
-            color = darkColor.copy(alpha = 0.3f),
-            topLeft = androidx.compose.ui.geometry.Offset(2f, 2f),
-            size = androidx.compose.ui.geometry.Size(w - 4f, h - 4f),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(corner - 2f, corner - 2f),
-            style = Stroke(width = 1.5f)
-        )
-
-        // Точки на кубике
-        drawDots(value, s, w, h, lightColor)
     }
 }
 

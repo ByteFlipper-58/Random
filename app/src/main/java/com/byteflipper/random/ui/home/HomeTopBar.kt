@@ -19,7 +19,7 @@ fun HomeTopBar(onOpenMenu: () -> Unit) {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                stringResource(R.string.random),
+                stringResource(R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold
                 )

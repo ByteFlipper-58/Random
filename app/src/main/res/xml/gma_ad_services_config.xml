@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ad-services-config xmlns:adservices="http://schemas.android.com/apk/ad-services">
+
+    <adservices:ad-services
+        adservices:authorized="true"
+        adservices:gma-app-id="ca-app-pub-4346225518624754~7333694259" />
+
+</ad-services-config>

@@ -53,6 +53,8 @@ import com.byteflipper.random.ui.numbers.components.computeCardBaseSizeDp
 import com.byteflipper.random.ui.numbers.components.computeHeightScale
 import com.byteflipper.random.ui.numbers.components.pickStableColor
 import com.byteflipper.random.ui.theme.CardContentTheme
+import com.byteflipper.random.RandomApplication
+import com.byteflipper.random.utils.findActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -211,6 +213,12 @@ fun NumbersScreen(onBack: () -> Unit) {
                         },
                         onSpinCompleted = {
                             viewModel.notifyHapticPressIfEnabled()
+                            // Реклама: каждая 8-я генерация чисел
+                            (context.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
+                                context.findActivity()?.let { act ->
+                                    ctrl.onNumbersOrListsGenerated(act)
+                                }
+                            }
                         }
                     )
                 },

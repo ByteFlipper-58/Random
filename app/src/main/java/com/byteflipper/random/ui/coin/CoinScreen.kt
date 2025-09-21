@@ -31,6 +31,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.domain.coin.CoinSide
 import kotlin.random.Random
+import com.byteflipper.random.RandomApplication
+import com.byteflipper.random.utils.findActivity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,6 +126,11 @@ fun CoinScreen(onBack: () -> Unit) {
         bg.join()
         scrimAlpha.animateTo(0f, tween(200, easing = FastOutSlowInEasing))
         viewModel.onEvent(CoinUiEvent.SetOverlayVisible(false))
+        // Реклама: каждые 10 подбрасываний монеты
+        val ctx = view.context
+        (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
+            ctx.findActivity()?.let { act -> ctrl.onCoinTossed(act) }
+        }
         isAnimating = false
     }
 

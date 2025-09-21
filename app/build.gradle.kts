@@ -17,7 +17,7 @@ android {
         applicationId = "com.byteflipper.random"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1001
+        versionCode = 1003
         versionName = "v1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation("net.kibotu:androidx-splashscreen-compose:1.0.0")
 
+	implementation("com.google.android.gms:play-services-ads:24.6.0")
+	implementation("androidx.lifecycle:lifecycle-process:2.9.4")
+
     // Firebase
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
@@ -79,6 +82,9 @@ dependencies {
     implementation(libs.play.app.update.ktx)
     implementation(libs.play.review.ktx)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
+	// UMP (User Messaging Platform) — форма согласия пользователей
+	implementation("com.google.android.ump:user-messaging-platform:2.2.0")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.56")

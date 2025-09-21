@@ -47,6 +47,9 @@ import com.byteflipper.random.ui.lists.components.ListSortingMode
 import com.byteflipper.random.ui.theme.CardContentTheme
 import kotlin.math.min
 import kotlin.random.Random
+import com.byteflipper.random.RandomApplication
+import com.byteflipper.random.utils.findActivity
+import androidx.compose.ui.platform.LocalContext
 
 
 private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
@@ -74,6 +77,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
     val flipState = rememberFlipCardState()
     val flipCtrl = FlipCardControls(flipState)
+
+    val ctx = LocalContext.current
 
     fun handleGenerate() {
         val base = viewModel.getBaseItems()
@@ -113,6 +118,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             },
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
+                // Реклама: каждая 8-я генерация списка
+                (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
+                    ctx.findActivity()?.let { act -> ctrl.onNumbersOrListsGenerated(act) }
+                }
             }
         )
     }

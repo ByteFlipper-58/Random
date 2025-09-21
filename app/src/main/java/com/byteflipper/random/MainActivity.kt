@@ -35,6 +35,8 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.tasks.await
+import com.byteflipper.random.ads.AppOpenAdManager
+import com.byteflipper.random.ads.InterstitialAdManager
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appUpdateManager: AppUpdateManager
     private var installStateUpdatedListener: InstallStateUpdatedListener? = null
     private val updateLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { /* no-op */ }
+    private lateinit var interstitialAdManager: InterstitialAdManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
@@ -60,6 +63,8 @@ class MainActivity : AppCompatActivity() {
         setContent {
             RandomTheme { AppRoot() }
         }
+        interstitialAdManager = InterstitialAdManager(this)
+        interstitialAdManager.preload()
 
         // In-App Update
         setupInAppUpdate()
@@ -100,6 +105,27 @@ class MainActivity : AppCompatActivity() {
             // Триггерим In-App Review ненавязчиво (не чаще, чем при старте)
             maybeLaunchInAppReview()
         }
+        // App Open Ads: сообщаем текущую Activity менеджеру
+        (application as? RandomApplication)?.appOpenAdManager?.setCurrentActivity(this)
+
+        // UMP: запрос информации о согласии и показ формы при необходимости
+        (application as? RandomApplication)?.consentManager?.requestConsent(
+            activity = this,
+            onReadyForAds = { canRequest ->
+                if (canRequest) {
+                    // Разрешено запрашивать рекламу: загружаем App Open и межстраничные
+                    (application as? RandomApplication)?.appOpenAdManager?.showAdIfAvailable()
+                    interstitialAdManager.preload()
+                }
+            },
+            onError = { _ ->
+                // При ошибке — пробуем продолжить, если можно запрашивать рекламу
+                if ((application as? RandomApplication)?.consentManager?.canRequestAds() == true) {
+                    (application as? RandomApplication)?.appOpenAdManager?.showAdIfAvailable()
+                    interstitialAdManager.preload()
+                }
+            }
+        )
     }
 
     private fun showSplash() {
