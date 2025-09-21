@@ -241,16 +241,16 @@ fun NumbersScreen(onBack: () -> Unit) {
 
             val resultsCountForSizing = max(uiState.frontValues.size, uiState.backValues.size)
             val configuration = LocalConfiguration.current
-            val maxCardSideDp =
-                (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).coerceAtLeast(
-                    200
-                ).dp
+            val minScreenSideDp = min(configuration.screenWidthDp, configuration.screenHeightDp)
+            val maxCardSideDp = (minScreenSideDp - 64).coerceAtLeast(0).dp
 
             val basePx = computeCardBaseSizeDp(resultsCountForSizing)
-            val dynamicCardSize = basePx.coerceIn(240, maxCardSideDp.value.toInt()).dp
+            val dynamicMin = 240.coerceAtMost(maxCardSideDp.value.toInt())
+            val dynamicCardSize = basePx.coerceIn(dynamicMin, maxCardSideDp.value.toInt()).dp
             val heightScale = computeHeightScale(resultsCountForSizing)
+            val minHeight = 300.dp.coerceAtMost(maxCardSideDp)
             val contentTargetHeight =
-                (dynamicCardSize * heightScale).coerceIn(300.dp, maxCardSideDp)
+                (dynamicCardSize * heightScale).coerceIn(minHeight, maxCardSideDp)
 
             val rainbowColors = getRainbowColors()
             val animatedColor =
