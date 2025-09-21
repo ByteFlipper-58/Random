@@ -9,12 +9,11 @@ import androidx.compose.runtime.Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScaffold(
-    onOpenAbout: () -> Unit,
-    onOpenSettings: () -> Unit,
+    onOpenMenu: () -> Unit,
     content: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = { HomeTopBar(onOpenAbout, onOpenSettings) },
+        topBar = { HomeTopBar(onOpenMenu) },
         contentWindowInsets = WindowInsets.systemBars,
         content = content
     )

@@ -39,7 +39,6 @@ fun AboutContent(
         verticalArrangement = Arrangement.spacedBy(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Объединенная Hero секция с информацией о приложении
         HeroAppCard(
             title = stringResource(R.string.app_name),
             subtitle = "Ваш надежный помощник для случайного выбора",

@@ -1,32 +1,47 @@
 package com.byteflipper.random.ui.home
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowForward
 import androidx.compose.material.icons.outlined.Casino
 import androidx.compose.material.icons.outlined.FormatListBulleted
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.Gavel
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.MonetizationOn
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +66,7 @@ import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.ui.home.components.CreateListDialog
 import com.byteflipper.random.ui.home.components.MenuCard
+import com.byteflipper.random.ui.home.components.HomeMenuBottomSheet
 import com.byteflipper.random.ui.home.components.PresetCard
 import com.byteflipper.random.ui.home.components.RenameListDialog
  
@@ -93,6 +109,7 @@ fun HomeScreen(
 
 
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
+    var showMenu by rememberSaveable { mutableStateOf(false) }
     var createName by rememberSaveable { mutableStateOf("") }
     var renameTarget by remember { mutableStateOf<ListPreset?>(null) }
 
@@ -121,9 +138,7 @@ fun HomeScreen(
         items = newItems
     }
 
-
-
-    HomeScaffold(onOpenAbout, onOpenSettings) { inner ->
+    HomeScaffold(onOpenMenu = { showMenu = true }) { inner ->
         HomeContent(
             modifier = Modifier
                 .fillMaxSize()
@@ -141,6 +156,13 @@ fun HomeScreen(
             onDeletePreset = { viewModel.onEvent(HomeUiEvent.DeletePreset(it)) }
         )
     }
+
+    HomeMenuBottomSheet(
+        visible = showMenu,
+        onDismissRequest = { showMenu = false },
+        onOpenAbout = onOpenAbout,
+        onOpenSettings = onOpenSettings
+    )
 
     CreateListDialog(
         showDialog = showCreateDialog,

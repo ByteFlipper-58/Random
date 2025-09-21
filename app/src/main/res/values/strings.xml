@@ -28,6 +28,7 @@
     <string name="lot">Lot</string>
     <string name="numbers">Numbers</string>
     <string name="random">Random</string>
+    <string name="menu">Menu</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Lot</string>

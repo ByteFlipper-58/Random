@@ -28,6 +28,7 @@
     <string name="lot">Жеребий</string>
     <string name="numbers">Числа</string>
     <string name="random">Случайное</string>
+    <string name="menu">Меню</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Жеребий</string>
