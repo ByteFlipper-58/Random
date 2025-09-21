@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.reorderable)
     implementation(libs.play.app.update.ktx)
     implementation(libs.play.review.ktx)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.56")

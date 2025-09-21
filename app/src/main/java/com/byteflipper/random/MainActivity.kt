@@ -4,13 +4,16 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.view.WindowCompat
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import com.byteflipper.random.ui.app.AppRoot
 import com.byteflipper.random.ui.theme.RandomTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.byteflipper.random.ui.setup.HeartBeatAnimation
 import net.kibotu.splashscreen.SplashScreenDecorator
 import net.kibotu.splashscreen.splash
@@ -22,14 +25,16 @@ import com.byteflipper.random.data.settings.SettingsRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import android.content.Intent
+import kotlinx.coroutines.flow.first
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -41,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appUpdateManager: AppUpdateManager
     private var installStateUpdatedListener: InstallStateUpdatedListener? = null
-    private val updateRequestCode = 1001
+    private val updateLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { /* no-op */ }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
@@ -50,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.Theme_Random)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        // enableEdgeToEdge уже управляет системными барами
 
         setContent {
             RandomTheme { AppRoot() }
@@ -59,48 +64,49 @@ class MainActivity : AppCompatActivity() {
         // In-App Update
         setupInAppUpdate()
 
-        // Обработка изменения локали
+        // Обработка изменения локали (собираем только при STARTED)
         lifecycleScope.launch {
-            settingsRepository.settingsFlow
-                .map { it.appLanguage.localeTag }
-                .distinctUntilChanged()
-                .collect { tag ->
-                    val desiredLocales = if (tag == "system") {
-                        LocaleListCompat.getEmptyLocaleList()
-                    } else {
-                        LocaleListCompat.forLanguageTags(tag)
-                    }
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsRepository.settingsFlow
+                    .map { it.appLanguage.localeTag }
+                    .distinctUntilChanged()
+                    .collect { tag ->
+                        val desiredLocales = if (tag == "system") {
+                            LocaleListCompat.getEmptyLocaleList()
+                        } else {
+                            LocaleListCompat.forLanguageTags(tag)
+                        }
 
-                    // Проверяем, нужно ли обновлять локаль
-                    val currentLocales = AppCompatDelegate.getApplicationLocales()
-                    if (currentLocales != desiredLocales) {
-                        AppCompatDelegate.setApplicationLocales(desiredLocales)
+                        val currentLocales = AppCompatDelegate.getApplicationLocales()
+                        if (currentLocales != desiredLocales) {
+                            AppCompatDelegate.setApplicationLocales(desiredLocales)
+                        }
                     }
-                }
+            }
         }
 
         lifecycleScope.launch {
-            delay(1.seconds)
+            // Ожидаем готовность приложения (первую загрузку настроек)
+            settingsRepository.settingsFlow.first()
+
+            // Старт выезда сплэша
             splashScreen?.shouldKeepOnScreen = false
-            delay(3.seconds)
-            splashScreen?.dismiss()
-        }
 
-        // Optionally trigger In-App Review (Google may ignore if not eligible)
-        lifecycleScope.launch {
-            delay(5.seconds)
+            // Дождаться завершения exit-анимации и фейда Compose-контента
+            val totalExitMs = (SPLASH_EXIT_ANIM_MS + SPLASH_FADE_OFFSET_MS)
+            delay(totalExitMs.milliseconds)
+            splashScreen?.dismiss()
+
+            // Триггерим In-App Review ненавязчиво (не чаще, чем при старте)
             maybeLaunchInAppReview()
         }
     }
 
     private fun showSplash() {
-        val exitDuration = 800L
-        val fadeDurationOffset = 200L
-
         splashScreen = splash {
             content {
-                exitAnimationDuration = exitDuration
-                composeViewFadeDurationOffset = fadeDurationOffset
+                exitAnimationDuration = SPLASH_EXIT_ANIM_MS
+                composeViewFadeDurationOffset = SPLASH_FADE_OFFSET_MS
                 RandomTheme {
                     HeartBeatAnimation(
                         isVisible = isVisible.value,
@@ -120,46 +126,45 @@ class MainActivity : AppCompatActivity() {
                 appUpdateManager.completeUpdate()
             }
         }
-        installStateUpdatedListener?.let { appUpdateManager.registerListener(it) }
 
         appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
             val isUpdateAvailable = appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
             val isFlexibleAllowed = appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
             if (isUpdateAvailable && isFlexibleAllowed) {
+                val options = AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build()
                 appUpdateManager.startUpdateFlowForResult(
                     appUpdateInfo,
-                    AppUpdateType.FLEXIBLE,
-                    this,
-                    updateRequestCode
+                    updateLauncher,
+                    options
                 )
             }
         }
     }
 
-    private fun maybeLaunchInAppReview() {
-        val reviewManager = ReviewManagerFactory.create(this)
-        val request = reviewManager.requestReviewFlow()
-        request.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val reviewInfo = task.result
-                reviewManager.launchReviewFlow(this, reviewInfo).addOnCompleteListener {
-                    // Ничего не делаем, результат не предоставляет статус
-                }
-            }
-        }
+    override fun onStart() {
+        super.onStart()
+        installStateUpdatedListener?.let { appUpdateManager.registerListener(it) }
     }
 
-    
+    override fun onStop() {
+        installStateUpdatedListener?.let { appUpdateManager.unregisterListener(it) }
+        super.onStop()
+    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == updateRequestCode) {
-            // Пользователь мог отменить обновление; ничего не делаем
+    private suspend fun maybeLaunchInAppReview() {
+        runCatching {
+            val reviewManager = ReviewManagerFactory.create(this)
+            val reviewInfo = reviewManager.requestReviewFlow().await()
+            reviewManager.launchReviewFlow(this, reviewInfo).await()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        installStateUpdatedListener?.let { appUpdateManager.unregisterListener(it) }
+    }
+
+    private companion object {
+        const val SPLASH_EXIT_ANIM_MS: Long = 3200L
+        const val SPLASH_FADE_OFFSET_MS: Long = 400L
     }
 }
