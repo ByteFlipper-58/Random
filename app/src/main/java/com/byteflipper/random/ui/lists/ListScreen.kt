@@ -175,7 +175,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             }
 
             val configuration = LocalConfiguration.current
-            val maxCardSide = (min(configuration.screenWidthDp, configuration.screenHeightDp) - 64).dp
+            val minScreenSideDp = min(configuration.screenWidthDp, configuration.screenHeightDp)
+            val maxCardSide = (minScreenSideDp - 64).coerceAtLeast(0).dp
             val listCardSize = 320.dp.coerceAtMost(maxCardSide)
 
             val resultsCount = uiState.results.size
@@ -186,7 +187,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 resultsCount <= 40 -> 1.6f
                 else -> 1.8f
             }
-            val listCardHeight = (listCardSize * heightScale).coerceIn(300.dp, maxCardSide)
+            val minHeight = 300.dp.coerceAtMost(maxCardSide)
+            val listCardHeight = (listCardSize * heightScale).coerceIn(minHeight, maxCardSide)
 
             FlipCardOverlay(
                 state = flipState,
