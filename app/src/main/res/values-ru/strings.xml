@@ -20,6 +20,7 @@
     <string name="save">Сохранить</string>
     <string name="settings">Настройки</string>
     <string name="title">Заголовок</string>
+    <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
 
     <!-- Main screen -->
     <string name="coin">Монета</string>

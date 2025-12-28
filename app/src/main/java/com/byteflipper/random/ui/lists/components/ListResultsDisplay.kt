@@ -89,15 +89,29 @@ fun ListResultsDisplay(
                     }
                     val lines = results.chunked(chunkSize)
 
+                    // Вычисляем максимальную длину текста элемента
+                    val maxTextLen = results.maxOfOrNull { it.length } ?: 1
+                    
                     items(lines) { lineItems ->
                         val line = lineItems.joinToString(", ")
-                        // Адаптивный размер шрифта в зависимости от количества элементов
-                        val fontSize = when {
-                            results.size <= 10 -> 18.sp
-                            results.size <= 25 -> 16.sp
-                            results.size <= 50 -> 14.sp
-                            else -> 12.sp
+                        // Адаптивный размер шрифта в зависимости от количества и длины текста
+                        val baseFontSize = when {
+                            results.size == 1 -> 48f  // Один элемент - очень крупно
+                            results.size <= 3 -> 36f  // 2-3 элемента - крупно
+                            results.size <= 5 -> 28f  // 4-5 элементов - крупнее среднего
+                            results.size <= 10 -> 22f
+                            results.size <= 25 -> 16f
+                            results.size <= 50 -> 14f
+                            else -> 12f
                         }
+                        // Корректируем на длину текста
+                        val lenAdjust = when {
+                            maxTextLen <= 10 -> 1.0f
+                            maxTextLen <= 20 -> 0.85f
+                            maxTextLen <= 40 -> 0.7f
+                            else -> 0.55f
+                        }
+                        val fontSize = (baseFontSize * lenAdjust).coerceIn(12f, 48f).sp
                         
                         Text(
                             text = line,

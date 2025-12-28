@@ -1,6 +1,9 @@
 package com.byteflipper.random.ui.numbers
 
 import android.view.SoundEffectConstants
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -286,6 +289,19 @@ fun NumbersScreen(onBack: () -> Unit) {
                 cardHeight = contentTargetHeight,
                 frontContainerColor = animatedColor.value,
                 backContainerColor = animatedColor.value,
+                onLongPress = {
+                    // Копирование результатов в буфер обмена
+                    val results = if (uiState.frontValues.isNotEmpty()) uiState.frontValues else uiState.backValues
+                    if (results.isNotEmpty()) {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val text = results.joinToString(", ")
+                        clipboard.setPrimaryClip(ClipData.newPlainText("Random Numbers", text))
+                        scope.launch {
+                            snackbarHostState.showSnackbar(context.getString(R.string.copied_to_clipboard))
+                        }
+                        if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
+                    }
+                },
                 frontContent = {
                     CardContentTheme {
                         NumbersResultsDisplay(

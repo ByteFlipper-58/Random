@@ -44,6 +44,7 @@ fun FlipCardOverlay(
     cardHeight: Dp? = null,
     frontContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primaryContainer,
     backContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.secondaryContainer,
+    onLongPress: (() -> Unit)? = null,
     frontContent: @Composable () -> Unit,
     backContent: @Composable () -> Unit,
 ) {
@@ -85,6 +86,7 @@ fun FlipCardOverlay(
                 cardHeight = cardHeight,
                 frontContainerColor = frontContainerColor,
                 backContainerColor = backContainerColor,
+                onLongPress = onLongPress,
                 frontContent = frontContent,
                 backContent = backContent
             )
@@ -135,6 +137,7 @@ private fun FlipCardContent(
     cardHeight: Dp?,
     frontContainerColor: Color,
     backContainerColor: Color,
+    onLongPress: (() -> Unit)? = null,
     frontContent: @Composable () -> Unit,
     backContent: @Composable () -> Unit
 ) {
@@ -152,9 +155,12 @@ private fun FlipCardContent(
                     .width(cardSize)
                     .height(cardHeight) else Modifier.size(cardSize)
             )
-            .pointerInput(Unit) {
-                // Поглощаем тапы внутри карточки, чтобы клик по оверлею не приводил к закрытию
-                detectTapGestures(onTap = { /* consume */ })
+            .pointerInput(onLongPress) {
+                // Поглощаем тапы внутри карточки + обрабатываем долгое нажатие для копирования
+                detectTapGestures(
+                    onTap = { /* consume */ },
+                    onLongPress = { onLongPress?.invoke() }
+                )
             }
             .onGloballyPositioned { coords ->
                 val bounds = coords.boundsInRoot()

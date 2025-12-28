@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Random" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="Theme.Random" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:ignore="NewApi">false</item>
+        <item name="android:windowContentTransitions">false</item>
+    </style>
 
     <style name="App.Starting" parent="Theme.SplashScreen">
         <item name="android:forceDarkAllowed" tools:ignore="NewApi">false</item>

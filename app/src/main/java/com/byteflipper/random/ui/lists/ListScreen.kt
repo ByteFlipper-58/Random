@@ -1,5 +1,8 @@
 package com.byteflipper.random.ui.lists
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -210,6 +213,18 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 backContainerColor = animatedColor.value,
                 cardSize = listCardSize,
                 cardHeight = listCardHeight,
+                onLongPress = {
+                    // Копирование результатов в буфер обмена
+                    if (uiState.results.isNotEmpty()) {
+                        val clipboard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val text = uiState.results.joinToString(", ")
+                        clipboard.setPrimaryClip(ClipData.newPlainText("Random List", text))
+                        scope.launch {
+                            snackbarHostState.showSnackbar(ctx.getString(R.string.copied_to_clipboard))
+                        }
+                        if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
+                    }
+                },
                 frontContent = {
                     CardContentTheme {
                         ListResultsDisplay(

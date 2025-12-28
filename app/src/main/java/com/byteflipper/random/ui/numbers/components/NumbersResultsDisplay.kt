@@ -42,15 +42,29 @@ fun NumbersResultsDisplay(
         val lazyListState = rememberLazyListState()
         val textColor = getContrastColor(cardColor)
 
-        fun numberFontSizeFor(count: Int, size: Dp): Float {
-            val k = when {
-                count <= 10 -> 0.06f
-                count <= 25 -> 0.04f
-                count <= 50 -> 0.03f
+        // Вычисляем максимальную длину числа для адаптации размера
+        val maxDigits = results.maxOfOrNull { it.toString().length } ?: 1
+        
+        fun numberFontSizeFor(count: Int, size: Dp, maxLen: Int): Float {
+            // Базовый коэффициент зависит от количества элементов
+            val countK = when {
+                count == 1 -> 0.28f  // Одно число - очень крупно
+                count <= 3 -> 0.20f  // 2-3 числа - крупно
+                count <= 5 -> 0.14f  // 4-5 чисел - крупнее среднего
+                count <= 10 -> 0.09f
+                count <= 25 -> 0.05f
+                count <= 50 -> 0.035f
                 count <= 100 -> 0.025f
                 else -> 0.02f
             }
-            return (size.value * k).coerceIn(12f, 28f)
+            // Корректируем на длину числа: длинные числа требуют меньший шрифт
+            val lenAdjust = when {
+                maxLen <= 2 -> 1.0f  // 1-99
+                maxLen <= 4 -> 0.85f  // 100-9999
+                maxLen <= 6 -> 0.7f   // 10000-999999
+                else -> 0.55f
+            }
+            return (size.value * countK * lenAdjust).coerceIn(14f, 72f)
         }
 
         val maxHeight = (cardSize * 0.9f).coerceAtLeast(200.dp)
@@ -76,7 +90,7 @@ fun NumbersResultsDisplay(
                         .fillMaxWidth()
                         .heightIn(max = maxHeight)
                 ) {
-                    val fontSize = numberFontSizeFor(results.size, cardSize).sp
+                    val fontSize = numberFontSizeFor(results.size, cardSize, maxDigits).sp
 
                     val chunkSize = when {
                         results.size <= 20 -> results.size
