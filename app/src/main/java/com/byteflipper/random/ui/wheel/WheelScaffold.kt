@@ -1,0 +1,27 @@
+package com.byteflipper.random.ui.wheel
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WheelScaffold(
+    onBack: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    floatingActionButton: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit
+) {
+    Scaffold(
+        topBar = { WheelTopBar(onBack) },
+        contentWindowInsets = WindowInsets.systemBars,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        floatingActionButton = floatingActionButton,
+        content = content
+    )
+}

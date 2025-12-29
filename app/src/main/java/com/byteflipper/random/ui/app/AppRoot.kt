@@ -91,6 +91,7 @@ fun AppRoot() {
                             onOpenDice = { navController.navigate(AppRoutes.Dice) },
                             onOpenLot = { navController.navigate(AppRoutes.Lot) },
                             onOpenCoin = { navController.navigate(AppRoutes.Coin) },
+                            onOpenWheel = { navController.navigate("wheel") },
                             onOpenSettings = { navController.navigate(AppRoutes.Settings) },
                             onOpenAbout = { navController.navigate(AppRoutes.About) },
                             onAddNumbersPreset = { },
@@ -125,6 +126,13 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { CoinScreen(onBack = { navController.popBackStack() }) }
+                    composable(
+                        route = "wheel",
+                        enterTransition = NavTransitions.enter,
+                        exitTransition = NavTransitions.exit,
+                        popEnterTransition = NavTransitions.popEnter,
+                        popExitTransition = NavTransitions.popExit
+                    ) { com.byteflipper.random.ui.wheel.WheelScreen(onBack = { navController.popBackStack() }) }
                     composable(
                         route = AppRoutes.Settings,
                         enterTransition = NavTransitions.enter,

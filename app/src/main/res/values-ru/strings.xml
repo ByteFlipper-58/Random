@@ -30,6 +30,60 @@
     <string name="numbers">Числа</string>
     <string name="random">Случайное</string>
     <string name="menu">Меню</string>
+    <string name="wheel">Колесо фортуны</string>
+
+    <!-- Wheel screen -->
+    <string name="wheel_spin">Крутить</string>
+    <string name="wheel_tap_to_spin">Нажмите на колесо</string>
+    <string name="wheel_all_options_used">Все варианты исчерпаны</string>
+    <string name="wheel_min_items">Добавьте минимум 2 элемента</string>
+    <string name="wheel_items_count">%1$d элементов</string>
+    <string name="wheel_used_count">%1$d использовано</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">Редактирование</string>
+    <string name="wheel_items_limit">%1$d/16 элементов</string>
+    <string name="wheel_add_new_item">Добавить элемент…</string>
+    <string name="wheel_edit_item">Изменить элемент %1$d</string>
+    <string name="wheel_no_items">Пока пусто. Добавьте элементы, чтобы крутить колесо!</string>
+    <string name="wheel_presets">Пресеты</string>
+    <string name="wheel_templates">Шаблоны</string>
+    <string name="wheel_clear_all">Очистить</string>
+    <string name="wheel_clear_confirm_title">Очистить все элементы?</string>
+    <string name="wheel_clear_confirm_message">Элементы будут сброшены до значений по умолчанию. Это действие нельзя отменить.</string>
+    <string name="wheel_save_as_preset">Сохранить как пресет</string>
+    <string name="wheel_preset_name">Название пресета</string>
+    <string name="wheel_preset_items_count">%1$d элементов</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">Да / Нет</string>
+    <string name="wheel_template_days">Дни недели</string>
+    <string name="wheel_template_colors">Цвета</string>
+    <string name="wheel_yes">Да</string>
+    <string name="wheel_no">Нет</string>
+    <string name="wheel_monday">Понедельник</string>
+    <string name="wheel_tuesday">Вторник</string>
+    <string name="wheel_wednesday">Среда</string>
+    <string name="wheel_thursday">Четверг</string>
+    <string name="wheel_friday">Пятница</string>
+    <string name="wheel_saturday">Суббота</string>
+    <string name="wheel_sunday">Воскресенье</string>
+    <string name="wheel_red">Красный</string>
+    <string name="wheel_blue">Синий</string>
+    <string name="wheel_green">Зелёный</string>
+    <string name="wheel_yellow">Жёлтый</string>
+    <string name="wheel_orange">Оранжевый</string>
+    <string name="wheel_purple">Фиолетовый</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">Настройки колеса</string>
+    <string name="wheel_no_repeats">Без повторов</string>
+    <string name="wheel_no_repeats_desc">Исключать предыдущие результаты из следующих вращений</string>
+    <string name="wheel_spin_duration">Длительность вращения</string>
+    <string name="wheel_spin_duration_value">%1$d секунд</string>
+    <string name="wheel_reset_excluded">Сбросить исключённые</string>
+    <string name="wheel_excluded_count">%1$d из %2$d исключено</string>
+    <string name="wheel_load_preset">Загрузить из пресета</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Жеребий</string>

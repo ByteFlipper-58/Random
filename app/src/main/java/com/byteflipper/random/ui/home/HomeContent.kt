@@ -37,6 +37,7 @@ fun HomeContent(
     onOpenDice: () -> Unit,
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
+    onOpenWheel: () -> Unit,
     onRenamePreset: (ListPreset) -> Unit,
     onDeletePreset: (ListPreset) -> Unit
 ) {
@@ -87,6 +88,7 @@ fun HomeContent(
                                     MenuItemType.DICE -> painterResource(id = R.drawable.ifl_24px)
                                     MenuItemType.LOT -> painterResource(id = R.drawable.gavel_24px)
                                     MenuItemType.COIN -> painterResource(id = R.drawable.paid_24px)
+                                    MenuItemType.WHEEL -> painterResource(id = R.drawable.casino_24px)
                                 },
                                 title = when (item.type) {
                                     MenuItemType.NUMBERS -> stringResource(R.string.numbers)
@@ -94,6 +96,7 @@ fun HomeContent(
                                     MenuItemType.DICE -> stringResource(R.string.dice)
                                     MenuItemType.LOT -> stringResource(R.string.lot)
                                     MenuItemType.COIN -> stringResource(R.string.coin)
+                                    MenuItemType.WHEEL -> stringResource(R.string.wheel)
                                 },
                                 onClick = when (item.type) {
                                     MenuItemType.NUMBERS -> onOpenNumbers
@@ -101,6 +104,7 @@ fun HomeContent(
                                     MenuItemType.DICE -> onOpenDice
                                     MenuItemType.LOT -> onOpenLot
                                     MenuItemType.COIN -> onOpenCoin
+                                    MenuItemType.WHEEL -> onOpenWheel
                                 },
                                 onAddClick = onAdd,
                                 modifier = dragModifier

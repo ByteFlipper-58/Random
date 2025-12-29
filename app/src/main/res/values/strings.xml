@@ -30,6 +30,60 @@
     <string name="numbers">Numbers</string>
     <string name="random">Random</string>
     <string name="menu">Menu</string>
+    <string name="wheel">Wheel of Fortune</string>
+
+    <!-- Wheel screen -->
+    <string name="wheel_spin">Spin</string>
+    <string name="wheel_tap_to_spin">Tap the wheel to spin</string>
+    <string name="wheel_all_options_used">All options used up</string>
+    <string name="wheel_min_items">Add at least 2 items</string>
+    <string name="wheel_items_count">%1$d items</string>
+    <string name="wheel_used_count">%1$d used</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">Edit Items</string>
+    <string name="wheel_items_limit">%1$d/16 items</string>
+    <string name="wheel_add_new_item">Add new item…</string>
+    <string name="wheel_edit_item">Edit item %1$d</string>
+    <string name="wheel_no_items">No items yet. Add some items to spin the wheel!</string>
+    <string name="wheel_presets">Presets</string>
+    <string name="wheel_templates">Templates</string>
+    <string name="wheel_clear_all">Clear all</string>
+    <string name="wheel_clear_confirm_title">Clear all items?</string>
+    <string name="wheel_clear_confirm_message">This will reset to default items. This action cannot be undone.</string>
+    <string name="wheel_save_as_preset">Save as preset</string>
+    <string name="wheel_preset_name">Preset name</string>
+    <string name="wheel_preset_items_count">%1$d items</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">Yes / No</string>
+    <string name="wheel_template_days">Days</string>
+    <string name="wheel_template_colors">Colors</string>
+    <string name="wheel_yes">Yes</string>
+    <string name="wheel_no">No</string>
+    <string name="wheel_monday">Monday</string>
+    <string name="wheel_tuesday">Tuesday</string>
+    <string name="wheel_wednesday">Wednesday</string>
+    <string name="wheel_thursday">Thursday</string>
+    <string name="wheel_friday">Friday</string>
+    <string name="wheel_saturday">Saturday</string>
+    <string name="wheel_sunday">Sunday</string>
+    <string name="wheel_red">Red</string>
+    <string name="wheel_blue">Blue</string>
+    <string name="wheel_green">Green</string>
+    <string name="wheel_yellow">Yellow</string>
+    <string name="wheel_orange">Orange</string>
+    <string name="wheel_purple">Purple</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">Wheel Settings</string>
+    <string name="wheel_no_repeats">No repeats</string>
+    <string name="wheel_no_repeats_desc">Exclude previous results from next spins</string>
+    <string name="wheel_spin_duration">Spin duration</string>
+    <string name="wheel_spin_duration_value">%1$d seconds</string>
+    <string name="wheel_reset_excluded">Reset excluded items</string>
+    <string name="wheel_excluded_count">%1$d of %2$d excluded</string>
+    <string name="wheel_load_preset">Load from preset</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Lot</string>

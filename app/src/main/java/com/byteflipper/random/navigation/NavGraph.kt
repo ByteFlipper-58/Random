@@ -12,6 +12,7 @@ import com.byteflipper.random.ui.lists.ListScreen
 import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.dice.DiceScreen
+import com.byteflipper.random.ui.wheel.WheelScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
 import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
 import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
@@ -28,6 +29,7 @@ sealed class Route(val route: String) {
     data object Dice : Route("dice")
     data object Lot : Route("lot")
     data object Coin : Route("coin")
+    data object Wheel : Route("wheel")
     data object Settings : Route("settings")
     data object SettingsGeneral : Route("settings_general")
     data object SettingsAppearance : Route("settings_appearance")
@@ -52,6 +54,7 @@ fun AppNavGraph(navController: NavHostController, startDestination: String = Rou
                 onOpenDice = { navController.navigate(Route.Dice.route) },
                 onOpenLot = { navController.navigate(Route.Lot.route) },
                 onOpenCoin = { navController.navigate(Route.Coin.route) },
+                onOpenWheel = { navController.navigate(Route.Wheel.route) },
                 onOpenSettings = { navController.navigate(Route.Settings.route) },
                 onOpenAbout = { navController.navigate(Route.About.route) },
                 onAddNumbersPreset = { /* TODO: screen for number presets */ },
@@ -93,6 +96,15 @@ fun AppNavGraph(navController: NavHostController, startDestination: String = Rou
             popExitTransition = NavTransitions.popExit
         ) {
             CoinScreen(onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = Route.Wheel.route,
+            enterTransition = NavTransitions.enter,
+            exitTransition = NavTransitions.exit,
+            popEnterTransition = NavTransitions.popEnter,
+            popExitTransition = NavTransitions.popExit
+        ) {
+            WheelScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = Route.Settings.route,

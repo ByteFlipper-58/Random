@@ -80,7 +80,7 @@ sealed class HomeItem {
 }
 
 enum class MenuItemType {
-    NUMBERS, LIST, DICE, LOT, COIN
+    NUMBERS, LIST, DICE, LOT, COIN, WHEEL
 }
 
 private fun keyFor(item: HomeItem): String = when (item) {
@@ -97,6 +97,7 @@ fun HomeScreen(
     onOpenDice: () -> Unit,
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
+    onOpenWheel: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
     onAddNumbersPreset: () -> Unit,
@@ -123,7 +124,8 @@ fun HomeScreen(
             HomeItem.MenuItem(MenuItemType.LIST),
             HomeItem.MenuItem(MenuItemType.DICE),
             HomeItem.MenuItem(MenuItemType.LOT),
-            HomeItem.MenuItem(MenuItemType.COIN)
+            HomeItem.MenuItem(MenuItemType.COIN),
+            HomeItem.MenuItem(MenuItemType.WHEEL)
         )
         val presetItems = presets.map { HomeItem.PresetItem(it) }
         items = menuItems + presetItems
@@ -152,6 +154,7 @@ fun HomeScreen(
             onOpenDice = onOpenDice,
             onOpenLot = onOpenLot,
             onOpenCoin = onOpenCoin,
+            onOpenWheel = onOpenWheel,
             onRenamePreset = { renameTarget = it },
             onDeletePreset = { viewModel.onEvent(HomeUiEvent.DeletePreset(it)) }
         )
