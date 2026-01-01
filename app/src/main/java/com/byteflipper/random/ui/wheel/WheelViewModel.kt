@@ -60,6 +60,7 @@ class WheelViewModel @Inject constructor(
             is WheelUiEvent.Spin -> spin()
             is WheelUiEvent.SetSpinning -> setSpinning(event.spinning)
             is WheelUiEvent.SetResult -> setResult(event.index)
+            is WheelUiEvent.SetResultByRotation -> setResultByRotation(event.rotation)
             WheelUiEvent.Reset -> reset()
             WheelUiEvent.ToggleEditorSheet -> _uiState.update { it.copy(showEditorSheet = !it.showEditorSheet) }
             WheelUiEvent.ToggleSettingsSheet -> _uiState.update { it.copy(showSettingsSheet = !it.showSettingsSheet) }
@@ -109,13 +110,20 @@ class WheelViewModel @Inject constructor(
         val visibleItems = state.items.indices.filter { it !in state.excludedIndices }
         val visualIndex = visibleItems.indexOf(winnerIndex)
         
-        // Winner should be at top (0 degrees), wheel rotates clockwise
-        val winnerAngle = visualIndex * anglePerItem
-        // We want the winner to end up at 0 (top), so we rotate by (360 - winnerAngle)
-        val baseRotation = 360f - winnerAngle - anglePerItem / 2
+        // Calculate rotation to land on winner sector
+        // Formula in WheelScreen: sectorIndex = floor((360 - rotation) / anglePerItem)
+        // So to get visualIndex: (360 - rotation) / anglePerItem = visualIndex
+        // Therefore: rotation = 360 - visualIndex * anglePerItem
+        // Add random offset within sector (10% to 90% of sector to stay safely inside)
+        val sectorStartAngle = visualIndex * anglePerItem
+        val randomInSector = anglePerItem * (0.1f + Random.nextFloat() * 0.8f)
+        val adjustedAngle = sectorStartAngle + randomInSector
+        val baseRotation = ((360f - adjustedAngle) % 360f + 360f) % 360f
+        
         // Add multiple full rotations for effect
         val fullRotations = Random.nextInt(5, 10) * 360f
-        val targetRotation = state.targetRotation + fullRotations + baseRotation + Random.nextFloat() * (anglePerItem * 0.3f)
+        
+        val targetRotation = state.targetRotation + fullRotations + baseRotation
         
         _uiState.update { it.copy(targetRotation = targetRotation, isSpinning = true) }
         
@@ -140,6 +148,42 @@ class WheelViewModel @Inject constructor(
             it.copy(
                 lastResult = result, 
                 lastResultIndex = index, 
+                excludedIndices = newExcluded,
+                isSpinning = false
+            ) 
+        }
+    }
+
+    private fun setResultByRotation(rotation: Float) {
+        val state = _uiState.value
+        val visibleItems = state.items.filterIndexed { index, _ -> index !in state.excludedIndices }
+        
+        if (visibleItems.isEmpty()) return
+        
+        val itemCount = visibleItems.size
+        val anglePerItem = 360f / itemCount
+        
+        // Используем ту же формулу, что и в WheelScreen для определения сектора
+        val normalizedRotation = ((rotation % 360f) + 360f) % 360f
+        val adjustedRotation = ((360f - normalizedRotation) % 360f + 360f) % 360f
+        val sectorIndex = (adjustedRotation / anglePerItem).toInt() % itemCount
+        
+        val result = visibleItems.getOrNull(sectorIndex) ?: return
+        
+        // Находим оригинальный индекс в полном списке items
+        val originalIndex = state.items.indexOf(result)
+        if (originalIndex == -1) return
+        
+        val newExcluded = if (state.noRepeats) {
+            state.excludedIndices + originalIndex
+        } else {
+            state.excludedIndices
+        }
+        
+        _uiState.update { 
+            it.copy(
+                lastResult = result, 
+                lastResultIndex = originalIndex, 
                 excludedIndices = newExcluded,
                 isSpinning = false
             ) 
@@ -171,7 +215,9 @@ sealed interface WheelUiEvent {
     data object Spin : WheelUiEvent
     data class SetSpinning(val spinning: Boolean) : WheelUiEvent
     data class SetResult(val index: Int) : WheelUiEvent
+    data class SetResultByRotation(val rotation: Float) : WheelUiEvent
     data object Reset : WheelUiEvent
     data object ToggleEditorSheet : WheelUiEvent
     data object ToggleSettingsSheet : WheelUiEvent
 }
+

@@ -72,8 +72,15 @@ fun WheelScreen(onBack: () -> Unit) {
             
             val itemCount = visibleItems.size
             val anglePerItem = 360f / itemCount
+            // Нормализуем угол вращения в диапазон [0, 360)
             val normalizedRotation = ((rotationAnim.value % 360f) + 360f) % 360f
-            val sectorIndex = ((normalizedRotation + anglePerItem / 2) / anglePerItem).toInt() % itemCount
+            // Секторы рисуются начиная от -90° (вверху), указатель тоже сверху
+            // При rotation > 0 колесо вращается по часовой стрелке,
+            // поэтому секторы "уезжают" вправо от указателя
+            // Указатель указывает на сектор, который был справа от текущей позиции
+            // Формула: sectorIndex = floor((360 - rotation) / anglePerItem) % itemCount
+            val adjustedRotation = ((360f - normalizedRotation) % 360f + 360f) % 360f
+            val sectorIndex = (adjustedRotation / anglePerItem).toInt() % itemCount
             visibleItems.getOrNull(sectorIndex) ?: ""
         }
     }
@@ -103,7 +110,7 @@ fun WheelScreen(onBack: () -> Unit) {
             return
         }
         
-        val (winnerIndex, targetRotation) = viewModel.spin() ?: return
+        val (_, targetRotation) = viewModel.spin() ?: return
         
         view.playSoundEffect(SoundEffectConstants.CLICK)
         if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
@@ -113,7 +120,8 @@ fun WheelScreen(onBack: () -> Unit) {
             animationSpec = tween(durationMillis = uiState.spinDuration, easing = FastOutSlowInEasing)
         )
         
-        viewModel.onEvent(WheelUiEvent.SetResult(winnerIndex))
+        // Определяем результат по фактическому углу вращения после остановки
+        viewModel.onEvent(WheelUiEvent.SetResultByRotation(rotationAnim.value))
         
         if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
         
