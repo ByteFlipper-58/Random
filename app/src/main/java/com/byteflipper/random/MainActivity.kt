@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appUpdateManager: AppUpdateManager
     private var installStateUpdatedListener: InstallStateUpdatedListener? = null
     private val updateLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { /* no-op */ }
-    private lateinit var interstitialAdManager: InterstitialAdManager
+    @Inject
+    lateinit var interstitialAdManager: InterstitialAdManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
@@ -63,7 +64,6 @@ class MainActivity : AppCompatActivity() {
         setContent {
             RandomTheme { AppRoot() }
         }
-        interstitialAdManager = InterstitialAdManager(this)
         interstitialAdManager.preload()
 
         // In-App Update
@@ -105,8 +105,7 @@ class MainActivity : AppCompatActivity() {
             // Триггерим In-App Review ненавязчиво (не чаще, чем при старте)
             maybeLaunchInAppReview()
         }
-        // App Open Ads: сообщаем текущую Activity менеджеру
-        (application as? RandomApplication)?.appOpenAdManager?.setCurrentActivity(this)
+        // App Open Ads: автоматическое отслеживание через ActivityLifecycleCallbacks в AppOpenAdManager
 
         // UMP: запрос информации о согласии и показ формы при необходимости
         (application as? RandomApplication)?.consentManager?.requestConsent(

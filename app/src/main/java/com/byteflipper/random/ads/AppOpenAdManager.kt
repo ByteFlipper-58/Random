@@ -16,7 +16,7 @@ import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
-class AppOpenAdManager(private val application: Application) : DefaultLifecycleObserver {
+class AppOpenAdManager(private val application: Application) : DefaultLifecycleObserver, Application.ActivityLifecycleCallbacks {
 
     private var appOpenAd: AppOpenAd? = null
     private var isShowingAd = AtomicBoolean(false)
@@ -28,24 +28,28 @@ class AppOpenAdManager(private val application: Application) : DefaultLifecycleO
     private val adUnitId: String = "ca-app-pub-4346225518624754/9085813527"
 
     init {
+        // Следим за жизненным циклом процесса (для запуска при возврате из фона)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-    }
-
-    fun setCurrentActivity(activity: Activity?) {
-        currentActivityRef = if (activity == null) null else WeakReference(activity)
+        // Следим за активностями (для контекста показа)
+        application.registerActivityLifecycleCallbacks(this)
     }
 
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
-        // Показывать при возобновлении приложения
+        // При возврате приложения из фона показываем рекламу
         showAdIfAvailable()
     }
 
-    private fun loadAd() {
-        // Не загружаем, если нет согласия на запрос рекламы
+    /**
+     * Загружает рекламу.
+     * @param onAdLoadedCallback коллбэк, который будет вызван при успешной загрузке.
+     * Используется для сценария "Cold Start": загрузили -> сразу показали.
+     */
+    private fun loadAd(onAdLoadedCallback: (() -> Unit)? = null) {
         val app = application as? com.byteflipper.random.RandomApplication
         if (app?.consentManager?.canRequestAds() == false) return
-        if (isLoadingAd.get() || appOpenAd != null) return
+        if (isLoadingAd.get() || isAdAvailable()) return
+
         isLoadingAd.set(true)
         val request = AdRequest.Builder().build()
         AppOpenAd.load(
@@ -56,6 +60,7 @@ class AppOpenAdManager(private val application: Application) : DefaultLifecycleO
                 override fun onAdLoaded(ad: AppOpenAd) {
                     appOpenAd = ad
                     isLoadingAd.set(false)
+                    onAdLoadedCallback?.invoke()
                 }
 
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -65,38 +70,76 @@ class AppOpenAdManager(private val application: Application) : DefaultLifecycleO
         )
     }
 
+    private fun isAdAvailable(): Boolean {
+        return appOpenAd != null
+    }
+
     fun showAdIfAvailable() {
-        val app = application as? com.byteflipper.random.RandomApplication
-        if (app?.consentManager?.canRequestAds() == false) return
-        val activity = currentActivityRef?.get() ?: return loadAd()
-        if (isShowingAd.get()) return
-
-        if (appOpenAd == null) {
-            loadAd()
-            return
+        // Если реклама уже есть — показываем
+        if (isAdAvailable()) {
+            showAdInternal()
+        } else {
+            // Если рекламы нет — загружаем и просим показать сразу после загрузки
+            loadAd { showAdInternal() }
         }
+    }
 
-        isShowingAd.set(true)
-        appOpenAd?.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
+    private fun showAdInternal() {
+        val app = application as? com.byteflipper.random.RandomApplication
+        // Проверка согласия перед показом
+        if (app?.consentManager?.canRequestAds() == false) return
+        
+        // Без активности показывать нечего
+        val activity = currentActivityRef?.get() ?: return
+
+        if (isShowingAd.get()) return
+        // На всякий случай проверяем наличие (могло пропасть, пока грузилось, хотя вряд ли в single thread)
+        val ad = appOpenAd ?: return
+
+        ad.fullScreenContentCallback = object : com.google.android.gms.ads.FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
                 isShowingAd.set(false)
                 appOpenAd = null
-                // После закрытия — подгружаем следующую
-                Handler(Looper.getMainLooper()).post { loadAd() }
+                // После закрытия — подгружаем следующую (уже без немедленного показа)
+                loadAd()
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
                 isShowingAd.set(false)
                 appOpenAd = null
-                Handler(Looper.getMainLooper()).post { loadAd() }
+                loadAd()
             }
 
             override fun onAdShowedFullScreenContent() {
-                // no-op
+                isShowingAd.set(true)
             }
         }
+        isShowingAd.set(true)
+        ad.show(activity)
+    }
 
-        appOpenAd?.show(activity)
+    // --- ActivityLifecycleCallbacks Implementation ---
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: android.os.Bundle?) {}
+
+    override fun onActivityStarted(activity: Activity) {
+        currentActivityRef = WeakReference(activity)
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        currentActivityRef = WeakReference(activity)
+    }
+
+    override fun onActivityPaused(activity: Activity) {}
+
+    override fun onActivityStopped(activity: Activity) {}
+
+    override fun onActivitySaveInstanceState(activity: Activity, outState: android.os.Bundle) {}
+
+    override fun onActivityDestroyed(activity: Activity) {
+        if (currentActivityRef?.get() == activity) {
+            currentActivityRef = null
+        }
     }
 }
 

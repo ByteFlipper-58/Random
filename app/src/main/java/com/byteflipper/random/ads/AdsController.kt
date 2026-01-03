@@ -2,10 +2,14 @@ package com.byteflipper.random.ads
 
 import android.app.Activity
 import android.app.Application
+import com.byteflipper.random.BuildConfig
+import com.byteflipper.random.consent.ConsentManager
 
-class AdsController(application: Application) {
-    private val appContext = application
-    private val interstitialManager = InterstitialAdManager(application)
+class AdsController(
+    private val application: Application,
+    private val interstitialManager: InterstitialAdManager,
+    private val consentManager: ConsentManager
+) {
 
     private var numbersAndListsCount: Int = 0
     private var lotCount: Int = 0
@@ -13,12 +17,12 @@ class AdsController(application: Application) {
     private var diceRollCount: Int = 0
 
     init {
+        // Preload вызывается также и в MainActivity, но не помешает убедиться
         interstitialManager.preload()
     }
 
     fun onNumbersOrListsGenerated(activity: Activity) {
-        val app = appContext as? com.byteflipper.random.RandomApplication
-        if (app?.consentManager?.canRequestAds() == false) return
+        if (!consentManager.canRequestAds()) return
         numbersAndListsCount += 1
         if (numbersAndListsCount % 8 == 0) {
             interstitialManager.showIfAvailable(activity)
@@ -28,8 +32,7 @@ class AdsController(application: Application) {
     }
 
     fun onLotGenerated(activity: Activity) {
-        val app = appContext as? com.byteflipper.random.RandomApplication
-        if (app?.consentManager?.canRequestAds() == false) return
+        if (!consentManager.canRequestAds()) return
         lotCount += 1
         if (lotCount % 6 == 0) {
             interstitialManager.showIfAvailable(activity)
@@ -39,10 +42,9 @@ class AdsController(application: Application) {
     }
 
     fun onCoinTossed(activity: Activity) {
-        val app = appContext as? com.byteflipper.random.RandomApplication
-        if (app?.consentManager?.canRequestAds() == false) return
+        if (!consentManager.canRequestAds()) return
         coinCount += 1
-        if (coinCount % 10 == 0) {
+        if (coinCount % 8 == 0) {
             interstitialManager.showIfAvailable(activity)
         } else {
             interstitialManager.preload()
@@ -50,10 +52,9 @@ class AdsController(application: Application) {
     }
 
     fun onDiceRolled(activity: Activity) {
-        val app = appContext as? com.byteflipper.random.RandomApplication
-        if (app?.consentManager?.canRequestAds() == false) return
+        if (!consentManager.canRequestAds()) return
         diceRollCount += 1
-        if (diceRollCount % 8 == 0) {
+        if (diceRollCount % 6 == 0) {
             interstitialManager.showIfAvailable(activity)
         } else {
             interstitialManager.preload()
