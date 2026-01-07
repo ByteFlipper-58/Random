@@ -58,6 +58,7 @@ import com.byteflipper.random.ui.numbers.components.pickStableColor
 import com.byteflipper.random.ui.theme.CardContentTheme
 import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
+import com.byteflipper.random.ui.components.ShakeEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,6 +157,41 @@ fun NumbersScreen(onBack: () -> Unit) {
         scale.join()
     }
 
+    // Shake-to-generate integration
+    fun handleGenerate() {
+        val result = validateInputs() ?: return
+        val delayMs = viewModel.getEffectiveDelayMs()
+        viewModel.onEvent(NumbersUiEvent.RandomizeCardColor)
+        if (!flipCardController.isVisible()) {
+            flipCardController.open()
+            viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(true))
+        }
+        flipCardController.spinAndReveal(
+            effectiveDelayMs = delayMs,
+            onReveal = { targetIsFront ->
+                val newNumbers = viewModel.generate()
+                if (targetIsFront) viewModel.onEvent(
+                    NumbersUiEvent.SetFrontValues(newNumbers)
+                ) else viewModel.onEvent(NumbersUiEvent.SetBackValues(newNumbers))
+            },
+            onSpinCompleted = {
+                viewModel.notifyHapticPressIfEnabled()
+                (context.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
+                    context.findActivity()?.let { act ->
+                        ctrl.onNumbersOrListsGenerated(act)
+                    }
+                }
+            }
+        )
+    }
+
+    ShakeEffect(
+        enabled = settings.shakeToGenerateEnabled,
+        hapticsEnabled = settings.hapticsEnabled,
+        hapticsIntensity = settings.hapticsIntensity,
+        onShake = { handleGenerate() }
+    )
+
     // Диалог настроек
     GeneratorConfigDialog(
         visible = uiState.showConfigDialog,
@@ -195,36 +231,7 @@ fun NumbersScreen(onBack: () -> Unit) {
         floatingActionButton = {
             NumbersFabControls(
                 onConfigClick = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(true)) },
-                onGenerateClick = {
-                    val result = validateInputs() ?: return@NumbersFabControls
-                    val delayMs = viewModel.getEffectiveDelayMs()
-                    // цвет для каждого нового спина
-                    viewModel.onEvent(NumbersUiEvent.RandomizeCardColor)
-                    if (!flipCardController.isVisible()) {
-                        flipCardController.open()
-                        viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(true))
-                    }
-                    flipCardController.spinAndReveal(
-                        effectiveDelayMs = delayMs,
-                        onReveal = { targetIsFront ->
-                            val newNumbers = viewModel.generate()
-                            if (targetIsFront) viewModel.onEvent(
-                                NumbersUiEvent.SetFrontValues(
-                                    newNumbers
-                                )
-                            ) else viewModel.onEvent(NumbersUiEvent.SetBackValues(newNumbers))
-                        },
-                        onSpinCompleted = {
-                            viewModel.notifyHapticPressIfEnabled()
-                            // Реклама: каждая 8-я генерация чисел
-                            (context.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
-                                context.findActivity()?.let { act ->
-                                    ctrl.onNumbersOrListsGenerated(act)
-                                }
-                            }
-                        }
-                    )
-                },
+                onGenerateClick = { handleGenerate() },
                 onFabPositioned = { center, size ->
                     fabCenterInRoot = center
                     fabSize = size

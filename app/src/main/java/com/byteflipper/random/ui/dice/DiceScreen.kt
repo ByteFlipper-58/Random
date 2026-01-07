@@ -42,6 +42,7 @@ import com.byteflipper.random.ui.dice.components.DiceFabControls
 import com.byteflipper.random.ui.dice.components.DiceOverlay
 import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
+import com.byteflipper.random.ui.components.ShakeEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,6 +152,14 @@ fun DiceScreen(onBack: () -> Unit) {
             }
         }
     }
+
+    // Shake-to-generate integration
+    ShakeEffect(
+        enabled = settings.shakeToGenerateEnabled && !isRolling,
+        hapticsEnabled = settings.hapticsEnabled,
+        hapticsIntensity = settings.hapticsIntensity,
+        onShake = { rollAll(settings.hapticsEnabled) }
+    )
 
     DiceScaffold(
         onBack = onBack,

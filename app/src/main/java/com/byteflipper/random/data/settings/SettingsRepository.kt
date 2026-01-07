@@ -86,6 +86,7 @@ data class Settings(
     val appLanguage: AppLanguage = AppLanguage.System,
     val hapticsEnabled: Boolean = true,
     val hapticsIntensity: HapticsIntensity = HapticsIntensity.Medium,
+    val shakeToGenerateEnabled: Boolean = true,
     val setupCompleted: Boolean = false
 )
 
@@ -101,6 +102,7 @@ class SettingsRepository @Inject constructor(
         val appLanguage: Preferences.Key<Int> = intPreferencesKey("app_language")
         val hapticsEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("haptics_enabled")
         val hapticsIntensity: Preferences.Key<Int> = intPreferencesKey("haptics_intensity")
+        val shakeToGenerateEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("shake_to_generate_enabled")
         val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
 
         // Default list storage
@@ -116,6 +118,7 @@ class SettingsRepository @Inject constructor(
             appLanguage = AppLanguage.fromValue(prefs[Keys.appLanguage]),
             hapticsEnabled = prefs[Keys.hapticsEnabled] ?: true,
             hapticsIntensity = HapticsIntensity.fromValue(prefs[Keys.hapticsIntensity]),
+            shakeToGenerateEnabled = prefs[Keys.shakeToGenerateEnabled] ?: true,
             setupCompleted = prefs[Keys.setupCompleted] ?: false
         )
     }
@@ -159,6 +162,12 @@ class SettingsRepository @Inject constructor(
     suspend fun setSetupCompleted(completed: Boolean) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.setupCompleted] = completed
+        }
+    }
+
+    suspend fun setShakeToGenerateEnabled(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.shakeToGenerateEnabled] = enabled
         }
     }
 

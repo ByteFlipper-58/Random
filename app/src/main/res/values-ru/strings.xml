@@ -199,6 +199,10 @@
     <string name="vibration_high">Высокая</string>
     <string name="vibration_switch_description_on">Включает тактильный отклик по всему приложению</string>
     <string name="vibration_switch_description_off">Отключает весь тактильный отклик в приложении</string>
+    <string name="shake_to_generate">Встряхивание для генерации</string>
+    <string name="shake_to_generate_description">Встряхните устройство для генерации случайных значений</string>
+    <string name="shake_to_generate_description_on">Встряхните устройство на экранах Чисел, Костей или Списков</string>
+    <string name="shake_to_generate_description_off">Генерация встряхиванием отключена</string>
 
     <!-- About screen -->
     <string name="about_app">О приложении</string>

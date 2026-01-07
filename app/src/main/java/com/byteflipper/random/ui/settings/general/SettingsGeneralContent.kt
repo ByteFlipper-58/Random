@@ -32,7 +32,8 @@ fun SettingsGeneralContent(
     state: Settings,
     onSetLanguage: (AppLanguage) -> Unit,
     onSetHapticsEnabled: (Boolean) -> Unit,
-    onSetHapticsIntensity: (HapticsIntensity) -> Unit
+    onSetHapticsIntensity: (HapticsIntensity) -> Unit,
+    onSetShakeToGenerateEnabled: (Boolean) -> Unit
 ) {
     val hapticsManager = LocalHapticsManager.current
 
@@ -144,6 +145,26 @@ fun SettingsGeneralContent(
                 }
             }
         }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(vertical = 8.dp),
+            thickness = DividerDefaults.Thickness,
+            color = DividerDefaults.color
+        )
+
+        PreferenceCategory(
+            title = stringResource(R.string.shake_to_generate),
+            description = stringResource(R.string.shake_to_generate_description)
+        )
+
+        SwitchPreference(
+            title = stringResource(R.string.shake_to_generate),
+            descriptionOn = stringResource(R.string.shake_to_generate_description_on),
+            descriptionOff = stringResource(R.string.shake_to_generate_description_off),
+            checked = state.shakeToGenerateEnabled,
+            icon = painterResource(id = R.drawable.vibration_24px),
+            onCheckedChange = onSetShakeToGenerateEnabled
+        )
     }
 }
 

@@ -41,6 +41,7 @@ class SettingsViewModel @Inject constructor(
             is SettingsUiEvent.SetAppLanguage -> viewModelScope.launch { settingsRepository.setAppLanguage(event.language) }
             is SettingsUiEvent.SetHapticsEnabled -> viewModelScope.launch { settingsRepository.setHapticsEnabled(event.enabled) }
             is SettingsUiEvent.SetHapticsIntensity -> viewModelScope.launch { settingsRepository.setHapticsIntensity(event.intensity) }
+            is SettingsUiEvent.SetShakeToGenerateEnabled -> viewModelScope.launch { settingsRepository.setShakeToGenerateEnabled(event.enabled) }
         }
     }
 }
@@ -52,6 +53,7 @@ sealed interface SettingsUiEvent {
     data class SetAppLanguage(val language: AppLanguage) : SettingsUiEvent
     data class SetHapticsEnabled(val enabled: Boolean) : SettingsUiEvent
     data class SetHapticsIntensity(val intensity: HapticsIntensity) : SettingsUiEvent
+    data class SetShakeToGenerateEnabled(val enabled: Boolean) : SettingsUiEvent
 }
 
 sealed interface SettingsUiEffect

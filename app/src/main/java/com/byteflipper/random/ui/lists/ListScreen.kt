@@ -53,6 +53,7 @@ import kotlin.random.Random
 import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
 import androidx.compose.ui.platform.LocalContext
+import com.byteflipper.random.ui.components.ShakeEffect
 
 
 private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
@@ -137,6 +138,14 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             }
         }
     }
+
+    // Shake-to-generate integration
+    ShakeEffect(
+        enabled = settings.shakeToGenerateEnabled,
+        hapticsEnabled = settings.hapticsEnabled,
+        hapticsIntensity = settings.hapticsIntensity,
+        onShake = { handleGenerate() }
+    )
 
     val topTitle = if (presetId == null) stringResource(R.string.list) else (uiState.preset?.name ?: stringResource(R.string.list))
     val topSave = if (presetId == null) ({ viewModel.updateSaveName(listString); viewModel.toggleSaveDialog() }) else null

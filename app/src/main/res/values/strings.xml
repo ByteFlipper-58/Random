@@ -199,6 +199,10 @@
     <string name="vibration_high">High</string>
     <string name="vibration_switch_description_on">Provides haptic feedback across the app</string>
     <string name="vibration_switch_description_off">Disables all haptic feedback in the app</string>
+    <string name="shake_to_generate">Shake to generate</string>
+    <string name="shake_to_generate_description">Shake device to generate random values</string>
+    <string name="shake_to_generate_description_on">Shake device to generate on Numbers, Dice, and List screens</string>
+    <string name="shake_to_generate_description_off">Shake to generate is disabled</string>
 
     <!-- About screen -->
     <string name="about_app">About App</string>

@@ -23,7 +23,8 @@ fun SettingsGeneralScreen(onBack: () -> Unit) {
             state = settings,
             onSetLanguage = { viewModel.onEvent(SettingsUiEvent.SetAppLanguage(it)) },
             onSetHapticsEnabled = { viewModel.onEvent(SettingsUiEvent.SetHapticsEnabled(it)) },
-            onSetHapticsIntensity = { viewModel.onEvent(SettingsUiEvent.SetHapticsIntensity(it)) }
+            onSetHapticsIntensity = { viewModel.onEvent(SettingsUiEvent.SetHapticsIntensity(it)) },
+            onSetShakeToGenerateEnabled = { viewModel.onEvent(SettingsUiEvent.SetShakeToGenerateEnabled(it)) }
         )
     }
 }
