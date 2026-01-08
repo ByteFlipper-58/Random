@@ -13,3 +13,28 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Android generic
+*.apk
+*.aab
+*.dex
+*.class
+
+# Gradle
+.gradle/
+build/
+
+# Android Studio
+.idea/
+!.idea/codeStyles
+!.idea/copyright
+!.idea/scopes/
+!.idea/vcs.xml
+
+# Local configuration
+local.properties
+/local.properties
+
+# OS specific
+.DS_Store
+Thumbs.db

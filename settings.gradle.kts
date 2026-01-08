@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Random"
 include(":app")
+include(":confetti")

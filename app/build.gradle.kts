@@ -49,6 +49,9 @@ android {
 }
 
 dependencies {
+    // Confetti module
+    implementation(project(":confetti"))
+
     // AndroidX и Compose
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

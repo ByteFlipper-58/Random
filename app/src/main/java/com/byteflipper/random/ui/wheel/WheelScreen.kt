@@ -21,8 +21,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -42,6 +44,8 @@ import com.byteflipper.random.ui.wheel.components.WheelEditorSheet
 import com.byteflipper.random.ui.wheel.components.WheelFabControls
 import com.byteflipper.random.ui.wheel.components.WheelSettingsSheet
 import com.byteflipper.random.utils.findActivity
+import com.byteflipper.confetti.ConfettiEffect
+import com.byteflipper.confetti.ConfettiMode
 import kotlinx.coroutines.launch
 import androidx.compose.ui.res.stringResource
 
@@ -56,6 +60,9 @@ fun WheelScreen(onBack: () -> Unit) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val presets by viewModel.presets.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Confetti state
+    var showConfetti by remember { mutableStateOf(false) }
 
     val rotationAnim = remember { Animatable(0f) }
 
@@ -124,6 +131,9 @@ fun WheelScreen(onBack: () -> Unit) {
         viewModel.onEvent(WheelUiEvent.SetResultByRotation(rotationAnim.value))
         
         if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
+        
+        // Запускаем конфетти после успешного вращения
+        showConfetti = true
         
         val ctx = view.context
         (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
@@ -258,5 +268,14 @@ fun WheelScreen(onBack: () -> Unit) {
         excludedCount = uiState.excludedIndices.size,
         totalCount = uiState.items.size,
         onReset = { viewModel.onEvent(WheelUiEvent.Reset) }
+    )
+
+    // Confetti Effect
+    ConfettiEffect(
+        trigger = showConfetti,
+        mode = ConfettiMode.SIDE_CANNONS,
+        particleCount = 300,
+        durationMs = 3500L,
+        onComplete = { showConfetti = false }
     )
 }
