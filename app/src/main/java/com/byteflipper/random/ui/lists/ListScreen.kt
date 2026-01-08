@@ -78,6 +78,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
     var fabCenterInRoot by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
     var fabSize by remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
+    var isGenerating by remember { androidx.compose.runtime.mutableStateOf(false) }
 
     val flipState = rememberFlipCardState()
     val flipCtrl = FlipCardControls(flipState)
@@ -115,9 +116,13 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             viewModel.onEvent(ListUiEvent.SetOverlayVisible(true))
         }
 
+
+        
+        isGenerating = true
         flipCtrl.spinAndReveal(
             effectiveDelayMs = delayMs,
             onReveal = { _ ->
+                isGenerating = false
                 val results = viewModel.generateAndUpdateResults()
             },
             onSpinCompleted = {
@@ -159,6 +164,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         snackbarHostState = snackbarHostState,
         floatingActionButton = {
             ListFabControls(
+                size = settings.fabSize,
                 onConfigClick = { viewModel.toggleConfigDialog() },
                 onGenerateClick = { handleGenerate() },
                 onFabPositioned = { center, size ->
@@ -196,20 +202,49 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             }
 
             val configuration = LocalConfiguration.current
-            val minScreenSideDp = min(configuration.screenWidthDp, configuration.screenHeightDp)
-            val maxCardSide = (minScreenSideDp - 64).coerceAtLeast(0).dp
-            val listCardSize = 320.dp.coerceAtMost(maxCardSide)
+            val screenWidthDp = configuration.screenWidthDp.dp
+            val screenHeightDp = configuration.screenHeightDp.dp
+            
+            // Limit card to screen size with some margins
+            val maxCardWidth = (screenWidthDp - 32.dp).coerceAtLeast(200.dp)
+            val maxCardHeight = (screenHeightDp - 64.dp).coerceAtLeast(300.dp)
+            
+            val effectiveCount = if (isGenerating) 1 else uiState.results.size
 
-            val resultsCount = uiState.results.size
-            val heightScale = when {
-                resultsCount <= 5 -> 1.0f
-                resultsCount <= 10 -> 1.2f
-                resultsCount <= 20 -> 1.4f
-                resultsCount <= 40 -> 1.6f
-                else -> 1.8f
+            // Use same base size logic as input numbers, or similar.
+            // Since we don't have computeCardBaseSizeDp imported yet, let's replicate or import. 
+            // Better to use a simpler logic for lists or just a fixed base. 
+            // In NumbersScreen: base = 280 * scale. 
+            
+            val baseScale = when {
+                 effectiveCount <= 10 -> 1.0
+                 effectiveCount <= 25 -> 1.15
+                 effectiveCount <= 50 -> 1.3
+                 else -> 1.5
             }
-            val minHeight = 300.dp.coerceAtMost(maxCardSide)
-            val listCardHeight = (listCardSize * heightScale).coerceIn(minHeight, maxCardSide)
+            val basePx = (280 * baseScale).toInt()
+            val dynamicMin = 240.coerceAtMost(maxCardWidth.value.toInt())
+            val targetCardSize = basePx.coerceIn(dynamicMin, maxCardWidth.value.toInt()).dp
+            
+            val heightScale = when {
+                effectiveCount <= 5 -> 1.0f
+                effectiveCount <= 10 -> 1.2f
+                effectiveCount <= 20 -> 1.4f
+                effectiveCount <= 40 -> 1.6f
+                effectiveCount <= 75 -> 1.8f
+                else -> 2.2f
+            }
+            val minHeight = 300.dp.coerceAtMost(maxCardHeight)
+            val targetCardHeight = (targetCardSize * heightScale).coerceIn(minHeight, maxCardHeight)
+
+            val animatedCardSize by androidx.compose.animation.core.animateDpAsState(
+                targetValue = targetCardSize,
+                animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.8f, stiffness = androidx.compose.animation.core.Spring.StiffnessLow)
+            )
+            val animatedCardHeight by androidx.compose.animation.core.animateDpAsState(
+                targetValue = targetCardHeight,
+                animationSpec = androidx.compose.animation.core.spring(dampingRatio = 0.8f, stiffness = androidx.compose.animation.core.Spring.StiffnessLow)
+            )
 
             FlipCardOverlay(
                 state = flipState,
@@ -220,8 +255,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                 },
                 frontContainerColor = animatedColor.value,
                 backContainerColor = animatedColor.value,
-                cardSize = listCardSize,
-                cardHeight = listCardHeight,
+                cardSize = animatedCardSize,
+                cardHeight = animatedCardHeight,
                 onLongPress = {
                     // Копирование результатов в буфер обмена
                     if (uiState.results.isNotEmpty()) {
@@ -239,7 +274,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                         ListResultsDisplay(
                             results = uiState.results,
                             cardColor = animatedColor.value,
-                            cardSize = listCardHeight
+                            cardSize = animatedCardHeight
                         )
                     }
                 },
@@ -248,7 +283,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                         ListResultsDisplay(
                             results = uiState.results,
                             cardColor = animatedColor.value,
-                            cardSize = listCardHeight
+                            cardSize = animatedCardHeight
                         )
                     }
                 }

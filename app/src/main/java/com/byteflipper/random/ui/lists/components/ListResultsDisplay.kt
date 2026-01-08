@@ -96,13 +96,15 @@ fun ListResultsDisplay(
                         val line = lineItems.joinToString(", ")
                         // Адаптивный размер шрифта в зависимости от количества и длины текста
                         val baseFontSize = when {
-                            results.size == 1 -> 48f  // Один элемент - очень крупно
-                            results.size <= 3 -> 36f  // 2-3 элемента - крупно
-                            results.size <= 5 -> 28f  // 4-5 элементов - крупнее среднего
-                            results.size <= 10 -> 22f
-                            results.size <= 25 -> 16f
-                            results.size <= 50 -> 14f
-                            else -> 12f
+                            results.size == 1 -> 77f  // Один элемент - очень крупно (48 * 1.6)
+                            results.size <= 3 -> 58f  // 2-3 элемента - крупно (36 * 1.6)
+                            results.size <= 5 -> 45f  // 4-5 элементов - крупнее среднего (28 * 1.6)
+                            results.size <= 10 -> 38f  // (24 * 1.6)
+                            results.size <= 20 -> 32f  // (20 * 1.6)
+                            results.size <= 35 -> 29f  // (18 * 1.6)
+                            results.size <= 50 -> 24f  // (16 * 1.6)
+                            results.size <= 100 -> 18f
+                            else -> 14f  // (14 * 1.6)
                         }
                         // Корректируем на длину текста
                         val lenAdjust = when {

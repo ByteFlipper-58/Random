@@ -77,6 +77,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     // Позиции FAB
     var fabCenterInRoot by remember { mutableStateOf(Offset.Zero) }
     var fabSize by remember { mutableStateOf(IntSize.Zero) }
+    var isGenerating by remember { mutableStateOf(false) }
 
     // Пульс FAB
     val fabPulseProgress = remember { Animatable(0f) }
@@ -121,7 +122,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     // Сброс usedNumbers на изменения диапазона/режима
     LaunchedEffect(uiState.fromText, uiState.toText, uiState.allowRepetitions) {
         if (uiState.allowRepetitions) {
-            viewModel.resetUsedNumbers()
+            viewModel.resetUsedNumbers(silent = true)
         } else {
             val from = uiState.fromText.trim().toIntOrNull()
             val to = uiState.toText.trim().toIntOrNull()
@@ -166,13 +167,19 @@ fun NumbersScreen(onBack: () -> Unit) {
             flipCardController.open()
             viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(true))
         }
+        isGenerating = true
         flipCardController.spinAndReveal(
             effectiveDelayMs = delayMs,
             onReveal = { targetIsFront ->
+                isGenerating = false
                 val newNumbers = viewModel.generate()
-                if (targetIsFront) viewModel.onEvent(
-                    NumbersUiEvent.SetFrontValues(newNumbers)
-                ) else viewModel.onEvent(NumbersUiEvent.SetBackValues(newNumbers))
+                if (targetIsFront) {
+                    viewModel.onEvent(NumbersUiEvent.SetFrontValues(newNumbers))
+                    viewModel.onEvent(NumbersUiEvent.SetBackValues(emptyList()))
+                } else {
+                    viewModel.onEvent(NumbersUiEvent.SetBackValues(newNumbers))
+                    viewModel.onEvent(NumbersUiEvent.SetFrontValues(emptyList()))
+                }
             },
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
@@ -230,6 +237,7 @@ fun NumbersScreen(onBack: () -> Unit) {
         snackbarHostState = snackbarHostState,
         floatingActionButton = {
             NumbersFabControls(
+                size = settings.fabSize,
                 onConfigClick = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(true)) },
                 onGenerateClick = { handleGenerate() },
                 onFabPositioned = { center, size ->
@@ -259,16 +267,32 @@ fun NumbersScreen(onBack: () -> Unit) {
 
             val resultsCountForSizing = max(uiState.frontValues.size, uiState.backValues.size)
             val configuration = LocalConfiguration.current
-            val minScreenSideDp = min(configuration.screenWidthDp, configuration.screenHeightDp)
-            val maxCardSideDp = (minScreenSideDp - 64).coerceAtLeast(0).dp
+            val screenWidthDp = configuration.screenWidthDp.dp
+            val screenHeightDp = configuration.screenHeightDp.dp
+            
+            // Limit card to screen size with some margins
+            val maxCardWidth = (screenWidthDp - 32.dp).coerceAtLeast(200.dp)
+            val maxCardHeight = (screenHeightDp - 64.dp).coerceAtLeast(300.dp)
 
-            val basePx = computeCardBaseSizeDp(resultsCountForSizing)
-            val dynamicMin = 240.coerceAtMost(maxCardSideDp.value.toInt())
-            val dynamicCardSize = basePx.coerceIn(dynamicMin, maxCardSideDp.value.toInt()).dp
-            val heightScale = computeHeightScale(resultsCountForSizing)
-            val minHeight = 300.dp.coerceAtMost(maxCardSideDp)
-            val contentTargetHeight =
-                (dynamicCardSize * heightScale).coerceIn(minHeight, maxCardSideDp)
+            // If generating, shrink to base size
+            val effectiveCount = if (isGenerating) 1 else resultsCountForSizing
+
+            val basePx = computeCardBaseSizeDp(effectiveCount)
+            val dynamicMin = 240.coerceAtMost(maxCardWidth.value.toInt())
+            val targetCardSize = basePx.coerceIn(dynamicMin, maxCardWidth.value.toInt()).dp
+            
+            val heightScale = computeHeightScale(effectiveCount)
+            val minHeight = 300.dp.coerceAtMost(maxCardHeight)
+            val targetContentHeight = (targetCardSize * heightScale).coerceIn(minHeight, maxCardHeight)
+
+            val animatedCardSize by androidx.compose.animation.core.animateDpAsState(
+                targetValue = targetCardSize,
+                animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow)
+            )
+            val animatedCardHeight by androidx.compose.animation.core.animateDpAsState(
+                targetValue = targetContentHeight,
+                animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow)
+            )
 
             val rainbowColors = getRainbowColors()
             val animatedColor =
@@ -292,8 +316,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                     viewModel.onEvent(NumbersUiEvent.ClearResults)
                     viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(false))
                 },
-                cardSize = dynamicCardSize,
-                cardHeight = contentTargetHeight,
+                cardSize = animatedCardSize,
+                cardHeight = animatedCardHeight,
                 frontContainerColor = animatedColor.value,
                 backContainerColor = animatedColor.value,
                 onLongPress = {
@@ -314,7 +338,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                         NumbersResultsDisplay(
                             results = uiState.frontValues,
                             cardColor = animatedColor.value,
-                            cardSize = contentTargetHeight
+                            cardSize = animatedCardHeight
                         )
                     }
                 },
@@ -323,7 +347,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                         NumbersResultsDisplay(
                             results = uiState.backValues,
                             cardColor = animatedColor.value,
-                            cardSize = contentTargetHeight
+                            cardSize = animatedCardHeight
                         )
                     }
                 }

@@ -119,9 +119,11 @@ class NumbersViewModel @Inject constructor(
         _uiState.update { it.copy(useDelay = useDelay) }
     }
 
-    fun resetUsedNumbers() {
+    fun resetUsedNumbers(silent: Boolean = false) {
         _uiState.update { it.copy(usedNumbers = emptySet(), showResetDialog = false) }
-        emitEffect(NumbersUiEffect.ShowSnackbar(R.string.history_cleared))
+        if (!silent) {
+            emitEffect(NumbersUiEffect.ShowSnackbar(R.string.history_cleared))
+        }
     }
 
     fun clearResults() {

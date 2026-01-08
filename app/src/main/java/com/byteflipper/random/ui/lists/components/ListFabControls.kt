@@ -24,6 +24,7 @@ import com.byteflipper.random.ui.components.SizedFab
 
 @Composable
 fun ListFabControls(
+    size: com.byteflipper.random.data.settings.FabSizeSetting,
     onConfigClick: () -> Unit,
     onGenerateClick: () -> Unit,
     onFabPositioned: (Offset, IntSize) -> Unit,
@@ -57,7 +58,7 @@ fun ListFabControls(
             }
         ) {
             SizedFab(
-                size = com.byteflipper.random.data.settings.FabSizeSetting.Medium,
+                size = size,
                 onClick = onGenerateClick,
                 containerColor = containerColor,
                 contentColor = contentColor

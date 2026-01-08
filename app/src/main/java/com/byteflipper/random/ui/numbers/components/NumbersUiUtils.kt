@@ -18,8 +18,9 @@ fun computeHeightScale(count: Int): Float = when {
     count <= 10 -> 1.0f
     count <= 25 -> 1.2f
     count <= 50 -> 1.4f
-    count <= 100 -> 1.6f
-    else -> 1.8f
+    count <= 75 -> 1.6f
+    count <= 100 -> 1.8f
+    else -> 2.2f
 }
 
 fun pickStableColor(seed: Long?, palette: List<Color>): Color {

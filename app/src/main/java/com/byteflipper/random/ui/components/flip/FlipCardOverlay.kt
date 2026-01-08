@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
@@ -27,12 +28,17 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import kotlin.math.PI
 import kotlin.math.hypot
 import kotlin.math.max
-import kotlin.math.sin
+import androidx.compose.ui.input.pointer.PointerInputScope
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.input.pointer.pointerInput
 import kotlinx.coroutines.launch
+import kotlin.math.sin
 
 @Composable
 fun FlipCardOverlay(
@@ -67,19 +73,37 @@ fun FlipCardOverlay(
         val scrimSurfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
 
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .pointerInput(state.isVisible, state.isClosing, state.isSpinning) {
-                    // Закрываем только по тапу на фон; жесты скролла не перехватываем
-                    detectTapGestures(onTap = {
-                        if (state.isVisible && !state.isClosing && !state.isSpinning) {
-                            startCloseInternal(state, scope, anchorInRoot, onClosed)
-                        }
-                    })
-                },
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
+            // 1. Scrim Visuals
             FlipCardScrim(state = state, anchorInRoot = anchorInRoot, scrimSurfaceColor = scrimSurfaceColor)
+
+            // 2. Scrim Touch Handler (Invisible layer catching taps outside card)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(state.isVisible, state.isClosing, state.isSpinning) {
+                         detectTapOutside(
+                             onTapOutside = {
+                                 if (state.isVisible && !state.isClosing && !state.isSpinning) {
+                                     startCloseInternal(state, scope, anchorInRoot, onClosed)
+                                 }
+                             },
+                             shouldIgnore = { offset ->
+                                 // Ignore touches inside card bounds.
+                                 // Also ignore if bounds are not yet established (empty).
+                                 // If empty, we assume Card is not ready, so we don't consume Down?
+                                 // Or if empty, we assume Card is full screen? No.
+                                 // Safest: If empty, card is not visible?
+                                 // If !isEmpty and contains -> Ignore.
+                                 !state.cardBoundsInRoot.isEmpty && state.cardBoundsInRoot.contains(offset)
+                             }
+                         )
+                    }
+            )
+
+            // 3. Card Content (Sits on top, blocks touches to Scrim Handler)
             FlipCardContent(
                 state = state,
                 cardSize = cardSize,
@@ -156,15 +180,13 @@ private fun FlipCardContent(
                     .height(cardHeight) else Modifier.size(cardSize)
             )
             .pointerInput(onLongPress) {
-                // Поглощаем тапы внутри карточки + обрабатываем долгое нажатие для копирования
                 detectTapGestures(
-                    onTap = { /* consume */ },
                     onLongPress = { onLongPress?.invoke() }
                 )
             }
             .onGloballyPositioned { coords ->
-                val bounds = coords.boundsInRoot()
-                state.cardCenterInRoot = bounds.center
+                state.cardBoundsInRoot = coords.boundsInRoot()
+                state.cardCenterInRoot = state.cardBoundsInRoot.center
             }
             .graphicsLayer {
                 cameraDistance = FlipCardDefaults.CameraDistanceMultiplier * density
@@ -219,6 +241,29 @@ private fun FlipCardContent(
             ) {
                 frontContent()
             }
+        }
+    }
+}
+
+private suspend fun PointerInputScope.detectTapOutside(
+    onTapOutside: () -> Unit,
+    shouldIgnore: (androidx.compose.ui.geometry.Offset) -> Boolean
+) {
+    awaitEachGesture {
+        val down = awaitFirstDown()
+        if (shouldIgnore(down.position)) {
+            // Touch inside ignore area (Card). 
+            // Do NOT consume. Allow pass-through.
+            return@awaitEachGesture
+        }
+        
+        // Touch outside (Scrim). Consume to handle potential tap.
+        down.consume()
+        
+        val up = waitForUpOrCancellation()
+        if (up != null) {
+            up.consume()
+            onTapOutside()
         }
     }
 }

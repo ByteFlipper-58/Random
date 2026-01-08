@@ -38,6 +38,7 @@ class FlipCardState internal constructor() {
     var overlayTopLeftInRoot by mutableStateOf(Offset.Zero)
     var overlaySize by mutableStateOf(IntSize.Zero)
     var cardCenterInRoot by mutableStateOf(Offset.Zero)
+    var cardBoundsInRoot by mutableStateOf(androidx.compose.ui.geometry.Rect.Zero)
 
     // Background jobs
     var closeJob: Job? = null

@@ -25,6 +25,7 @@ import com.byteflipper.random.ui.components.SizedFab
 
 @Composable
 fun NumbersFabControls(
+    size: FabSizeSetting,
     onConfigClick: () -> Unit,
     onGenerateClick: () -> Unit,
     onFabPositioned: (Offset, IntSize) -> Unit,
@@ -58,7 +59,7 @@ fun NumbersFabControls(
             }
         ) {
             SizedFab(
-                size = FabSizeSetting.Medium,
+                size = size,
                 onClick = onGenerateClick,
                 containerColor = containerColor,
                 contentColor = contentColor
