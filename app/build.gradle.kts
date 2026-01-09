@@ -68,10 +68,10 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.browser)
-    implementation("net.kibotu:androidx-splashscreen-compose:1.0.0")
+    implementation(libs.splashscreen)
 
-	implementation("com.google.android.gms:play-services-ads:24.6.0")
-	implementation("androidx.lifecycle:lifecycle-process:2.9.4")
+	implementation(libs.play.services.ads)
+	implementation(libs.androidx.lifecycle.process)
 
     // Firebase
     implementation(libs.firebase.analytics)
@@ -84,22 +84,22 @@ dependencies {
     implementation(libs.reorderable)
     implementation(libs.play.app.update.ktx)
     implementation(libs.play.review.ktx)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+    implementation(libs.kotlinx.coroutines.play.services)
 
 	// UMP (User Messaging Platform) — форма согласия пользователей
-	implementation("com.google.android.ump:user-messaging-platform:2.2.0")
+	implementation(libs.ump)
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.56")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
-    ksp("com.google.dagger:hilt-compiler:2.56")
+    ksp(libs.hilt.compiler)
 
     // Room annotation processor
     ksp(libs.androidx.room.compiler)
 
-    implementation("com.github.racra:smooth-corner-rect-android-compose:v1.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5")
+    implementation(libs.smooth.corner.rect)
+    implementation(libs.kotlinx.collections.immutable)
 
     // Tests
     testImplementation(libs.junit)
