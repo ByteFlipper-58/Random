@@ -23,7 +23,8 @@ data class CoinUiState(
 @HiltViewModel
 class CoinViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val tossCoin: TossCoinUseCase
+    private val tossCoin: TossCoinUseCase,
+    private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel() {
 
     val settings = settingsRepository.settingsFlow.stateIn(
@@ -56,6 +57,10 @@ class CoinViewModel @Inject constructor(
 
     fun setOverlayVisible(visible: Boolean) {
         _uiState.value = _uiState.value.copy(isOverlayVisible = visible)
+    }
+
+    fun checkAd(activity: android.app.Activity) {
+        adsController.onCoinTossed(activity)
     }
 }
 

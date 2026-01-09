@@ -19,8 +19,11 @@ object AdsModule {
 
     @Provides
     @Singleton
-    fun provideAppOpenAdManager(application: Application): AppOpenAdManager {
-        return AppOpenAdManager(application)
+    fun provideAppOpenAdManager(
+        application: Application,
+        consentManager: ConsentManager
+    ): AppOpenAdManager {
+        return AppOpenAdManager(application, consentManager)
     }
 
     @Provides
@@ -32,11 +35,10 @@ object AdsModule {
     @Provides
     @Singleton
     fun provideAdsController(
-        @ApplicationContext context: Context,
         interstitialAdManager: InterstitialAdManager,
         consentManager: ConsentManager
     ): AdsController {
-        return AdsController(context as Application, interstitialAdManager, consentManager)
+        return AdsController(interstitialAdManager, consentManager)
     }
 
     @Provides

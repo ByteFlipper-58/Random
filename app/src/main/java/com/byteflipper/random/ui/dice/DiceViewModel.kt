@@ -24,7 +24,8 @@ data class DiceUiState(
 @HiltViewModel
 class DiceViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val rollDice: RollDiceUseCase
+    private val rollDice: RollDiceUseCase,
+    private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel() {
 
     val settings = settingsRepository.settingsFlow.stateIn(
@@ -77,6 +78,9 @@ class DiceViewModel @Inject constructor(
         newList[index] = value
         _uiState.value = _uiState.value.copy(values = newList)
         return value
+    }
+    fun checkAd(activity: android.app.Activity) {
+        adsController.onDiceRolled(activity)
     }
 }
 

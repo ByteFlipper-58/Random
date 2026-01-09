@@ -52,7 +52,8 @@ sealed interface LotUiEvent {
 class LotViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val validateInputs: ValidateLotInputsUseCase,
-    private val generateMarked: GenerateMarkedIndicesUseCase
+    private val generateMarked: GenerateMarkedIndicesUseCase,
+    private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel() {
 
     val settings = settingsRepository.settingsFlow.stateIn(
@@ -170,5 +171,9 @@ class LotViewModel @Inject constructor(
 
     private fun emitEffect(effect: LotUiEffect) {
         viewModelScope.launch { _effects.emit(effect) }
+    }
+
+    fun checkAd(activity: android.app.Activity) {
+        adsController.onLotGenerated(activity)
     }
 }

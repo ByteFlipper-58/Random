@@ -56,7 +56,6 @@ import com.byteflipper.random.ui.numbers.components.computeCardBaseSizeDp
 import com.byteflipper.random.ui.numbers.components.computeHeightScale
 import com.byteflipper.random.ui.numbers.components.pickStableColor
 import com.byteflipper.random.ui.theme.CardContentTheme
-import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
 import com.byteflipper.random.ui.components.ShakeEffect
 
@@ -183,10 +182,8 @@ fun NumbersScreen(onBack: () -> Unit) {
             },
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
-                (context.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
-                    context.findActivity()?.let { act ->
-                        ctrl.onNumbersOrListsGenerated(act)
-                    }
+                context.findActivity()?.let { act ->
+                    viewModel.checkAd(act)
                 }
             }
         )

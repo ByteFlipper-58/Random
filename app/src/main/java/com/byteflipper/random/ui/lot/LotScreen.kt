@@ -27,7 +27,6 @@ import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.lot.components.LotFab
 import com.byteflipper.random.ui.lot.components.LotOverlay
 import com.byteflipper.random.ui.theme.getRainbowColors
-import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
 import com.byteflipper.random.ui.lot.components.LotFabMode as FabMode
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,10 +80,9 @@ fun LotScreen(onBack: () -> Unit) {
                     if (cards.isEmpty()) {
                         viewModel.onEvent(LotUiEvent.GenerateRequested(rainbowColors))
                         // Реклама: каждая 6-я генерация жребия
+                        // Реклама: каждая 6-я генерация жребия
                         val ctx = context
-                        (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
-                            ctx.findActivity()?.let { act -> ctrl.onLotGenerated(act) }
-                        }
+                        ctx.findActivity()?.let { act -> viewModel.checkAd(act) }
                     } else {
                         when (fabMode) {
                             FabMode.RevealAll -> viewModel.onEvent(LotUiEvent.RevealAll)

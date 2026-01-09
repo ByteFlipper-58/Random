@@ -50,7 +50,6 @@ import com.byteflipper.random.ui.lists.components.ListSortingMode
 import com.byteflipper.random.ui.theme.CardContentTheme
 import kotlin.math.min
 import kotlin.random.Random
-import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
 import androidx.compose.ui.platform.LocalContext
 import com.byteflipper.random.ui.components.ShakeEffect
@@ -128,9 +127,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
                 // Реклама: каждая 8-я генерация списка
-                (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
-                    ctx.findActivity()?.let { act -> ctrl.onNumbersOrListsGenerated(act) }
-                }
+                // Реклама: каждая 8-я генерация списка
+                ctx.findActivity()?.let { act -> viewModel.checkAd(act) }
             }
         )
     }

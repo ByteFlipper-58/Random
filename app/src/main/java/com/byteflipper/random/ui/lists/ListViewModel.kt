@@ -76,7 +76,8 @@ class ListViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val savedStateHandle: SavedStateHandle,
     private val generateListResults: GenerateListResultsUseCase,
-    private val sortListResults: SortListResultsUseCase
+    private val sortListResults: SortListResultsUseCase,
+    private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel() {
 
     private val presetId: Long? = savedStateHandle.get<Long?>("id")
@@ -339,6 +340,10 @@ class ListViewModel @Inject constructor(
 
     private fun emitEffect(effect: ListUiEffect) {
         viewModelScope.launch { _effects.emit(effect) }
+    }
+
+    fun checkAd(activity: android.app.Activity) {
+        adsController.onNumbersOrListsGenerated(activity)
     }
 }
 

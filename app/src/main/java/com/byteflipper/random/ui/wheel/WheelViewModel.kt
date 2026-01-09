@@ -32,7 +32,8 @@ data class WheelUiState(
 @HiltViewModel
 class WheelViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
-    private val listPresetRepository: ListPresetRepository
+    private val listPresetRepository: ListPresetRepository,
+    private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel() {
 
     val settings = settingsRepository.settingsFlow.stateIn(
@@ -204,6 +205,10 @@ class WheelViewModel @Inject constructor(
             )
             listPresetRepository.upsert(preset)
         }
+    }
+
+    fun checkAd(activity: android.app.Activity) {
+        adsController.onCoinTossed(activity)
     }
 }
 

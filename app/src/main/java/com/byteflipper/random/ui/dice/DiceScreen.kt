@@ -40,7 +40,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.byteflipper.random.ui.dice.components.DiceFabControls
 import com.byteflipper.random.ui.dice.components.DiceOverlay
-import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.utils.findActivity
 import com.byteflipper.random.ui.components.ShakeEffect
 
@@ -147,9 +146,7 @@ fun DiceScreen(onBack: () -> Unit) {
             isRolling = false
             // Реклама: каждые 8 общих бросков костей
             val ctx = view.context
-            (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
-                ctx.findActivity()?.let { act -> ctrl.onDiceRolled(act) }
-            }
+            ctx.findActivity()?.let { act -> viewModel.checkAd(act) }
         }
     }
 

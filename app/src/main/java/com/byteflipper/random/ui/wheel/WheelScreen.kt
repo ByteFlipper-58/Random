@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
-import com.byteflipper.random.RandomApplication
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.wheel.components.FortuneWheel
 import com.byteflipper.random.ui.wheel.components.WheelEditorSheet
@@ -136,9 +135,7 @@ fun WheelScreen(onBack: () -> Unit) {
         showConfetti = true
         
         val ctx = view.context
-        (ctx.applicationContext as? RandomApplication)?.adsController?.let { ctrl ->
-            ctx.findActivity()?.let { act -> ctrl.onCoinTossed(act) }
-        }
+        ctx.findActivity()?.let { act -> viewModel.checkAd(act) }
     }
 
     WheelScaffold(

@@ -1,12 +1,10 @@
 package com.byteflipper.random.ads
 
 import android.app.Activity
-import android.app.Application
 import com.byteflipper.random.BuildConfig
 import com.byteflipper.random.consent.ConsentManager
 
 class AdsController(
-    private val application: Application,
     private val interstitialManager: InterstitialAdManager,
     private val consentManager: ConsentManager
 ) {
@@ -15,11 +13,6 @@ class AdsController(
     private var lotCount: Int = 0
     private var coinCount: Int = 0
     private var diceRollCount: Int = 0
-
-    init {
-        // Preload вызывается также и в MainActivity, но не помешает убедиться
-        interstitialManager.preload()
-    }
 
     fun onNumbersOrListsGenerated(activity: Activity) {
         if (!consentManager.canRequestAds()) return

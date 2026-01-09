@@ -37,6 +37,7 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.tasks.await
 import com.byteflipper.random.ads.AppOpenAdManager
 import com.byteflipper.random.ads.InterstitialAdManager
+import com.byteflipper.random.consent.ConsentManager
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -51,6 +52,10 @@ class MainActivity : AppCompatActivity() {
     private val updateLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { /* no-op */ }
     @Inject
     lateinit var interstitialAdManager: InterstitialAdManager
+    @Inject
+    lateinit var appOpenAdManager: AppOpenAdManager
+    @Inject
+    lateinit var consentManager: ConsentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
@@ -108,19 +113,19 @@ class MainActivity : AppCompatActivity() {
         // App Open Ads: автоматическое отслеживание через ActivityLifecycleCallbacks в AppOpenAdManager
 
         // UMP: запрос информации о согласии и показ формы при необходимости
-        (application as? RandomApplication)?.consentManager?.requestConsent(
+        consentManager.requestConsent(
             activity = this,
             onReadyForAds = { canRequest ->
                 if (canRequest) {
                     // Разрешено запрашивать рекламу: загружаем App Open и межстраничные
-                    (application as? RandomApplication)?.appOpenAdManager?.showAdIfAvailable()
+                    appOpenAdManager.showAdIfAvailable()
                     interstitialAdManager.preload()
                 }
             },
             onError = { _ ->
                 // При ошибке — пробуем продолжить, если можно запрашивать рекламу
-                if ((application as? RandomApplication)?.consentManager?.canRequestAds() == true) {
-                    (application as? RandomApplication)?.appOpenAdManager?.showAdIfAvailable()
+                if (consentManager.canRequestAds()) {
+                    appOpenAdManager.showAdIfAvailable()
                     interstitialAdManager.preload()
                 }
             }

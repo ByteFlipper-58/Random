@@ -61,7 +61,8 @@ sealed interface NumbersUiEvent {
 class NumbersViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val validateNumberInputs: ValidateNumberInputsUseCase,
-    private val generateNumbers: GenerateNumbersUseCase
+    private val generateNumbers: GenerateNumbersUseCase,
+    private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(NumbersUiState())
@@ -206,6 +207,10 @@ class NumbersViewModel @Inject constructor(
 
     private fun emitEffect(effect: NumbersUiEffect) {
         viewModelScope.launch { _effects.emit(effect) }
+    }
+
+    fun checkAd(activity: android.app.Activity) {
+        adsController.onNumbersOrListsGenerated(activity)
     }
 }
 

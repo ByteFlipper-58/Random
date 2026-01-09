@@ -16,7 +16,10 @@ import com.google.android.gms.ads.appopen.AppOpenAd.AppOpenAdLoadCallback
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicBoolean
 
-class AppOpenAdManager(private val application: Application) : DefaultLifecycleObserver, Application.ActivityLifecycleCallbacks {
+class AppOpenAdManager(
+    private val application: Application,
+    private val consentManager: com.byteflipper.random.consent.ConsentManager
+) : DefaultLifecycleObserver, Application.ActivityLifecycleCallbacks {
 
     private var appOpenAd: AppOpenAd? = null
     private var isShowingAd = AtomicBoolean(false)
@@ -46,8 +49,7 @@ class AppOpenAdManager(private val application: Application) : DefaultLifecycleO
      * Используется для сценария "Cold Start": загрузили -> сразу показали.
      */
     private fun loadAd(onAdLoadedCallback: (() -> Unit)? = null) {
-        val app = application as? com.byteflipper.random.RandomApplication
-        if (app?.consentManager?.canRequestAds() == false) return
+        if (!consentManager.canRequestAds()) return
         if (isLoadingAd.get() || isAdAvailable()) return
 
         isLoadingAd.set(true)
@@ -85,9 +87,8 @@ class AppOpenAdManager(private val application: Application) : DefaultLifecycleO
     }
 
     private fun showAdInternal() {
-        val app = application as? com.byteflipper.random.RandomApplication
         // Проверка согласия перед показом
-        if (app?.consentManager?.canRequestAds() == false) return
+        if (!consentManager.canRequestAds()) return
         
         // Без активности показывать нечего
         val activity = currentActivityRef?.get() ?: return
