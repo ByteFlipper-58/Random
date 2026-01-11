@@ -4,15 +4,18 @@
     <style name="Theme.Random" parent="Theme.AppCompat.NoActionBar">
         <item name="android:forceDarkAllowed" tools:ignore="NewApi">false</item>
         <item name="android:windowContentTransitions">false</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowBackground">@color/splash_bg_dark</item>
     </style>
 
-    <style name="App.Starting" parent="Theme.SplashScreen">
-        <item name="android:forceDarkAllowed" tools:ignore="NewApi">false</item>
+    <style name="Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_bg_dark</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
-
-        <!-- После сплэша -->
         <item name="postSplashScreenTheme">@style/Theme.Random</item>
     </style>
 </resources>

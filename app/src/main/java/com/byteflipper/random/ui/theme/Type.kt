@@ -3,7 +3,7 @@ package com.byteflipper.random.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.PlatformTextStyle
+
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -32,7 +32,7 @@ val MontserratFamily = FontFamily(
     GoogleFontTypeface(googleFont = montserrat, fontProvider = provider, weight = FontWeight.Light),
 )
 
-private val NoPad = PlatformTextStyle(includeFontPadding = false)
+
 
 val ExpTitleTypography = Typography(
     displayLarge = TextStyle(
@@ -42,7 +42,7 @@ val ExpTitleTypography = Typography(
         textGeometricTransform = TextGeometricTransform(scaleX = 1.5f),
         letterSpacing = (-0.02).em,
         lineHeight = 0.95.em,
-        platformStyle = NoPad
+
     ),
     displayMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -51,7 +51,7 @@ val ExpTitleTypography = Typography(
         //textGeometricTransform = TextGeometricTransform(scaleX = 1f),
         letterSpacing = (-0.02).em,
         lineHeight = 0.95.em,
-        platformStyle = NoPad
+
     ),
     titleMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -60,7 +60,7 @@ val ExpTitleTypography = Typography(
         textGeometricTransform = TextGeometricTransform(scaleX = 1.3f),
         letterSpacing = (-0.02).em,
         lineHeight = 0.95.em,
-        platformStyle = NoPad
+
     )
 )
 
@@ -80,7 +80,7 @@ val Typography = Typography(
         letterSpacing = (-0.02).em,
         lineHeight = 1.0.em,
         textGeometricTransform = TextGeometricTransform(scaleX = 1.15f),
-        platformStyle = NoPad
+
     ),
     displayMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -88,7 +88,7 @@ val Typography = Typography(
         fontSize = 48.sp,
         letterSpacing = (-0.01).em,
         lineHeight = 1.05.em,
-        platformStyle = NoPad
+
     ),
     displaySmall = TextStyle(
         fontFamily = MontserratFamily,
@@ -96,7 +96,7 @@ val Typography = Typography(
         fontSize = 40.sp,
         letterSpacing = 0.em,
         lineHeight = 1.05.em,
-        platformStyle = NoPad
+
     ),
     headlineLarge = TextStyle(
         fontFamily = MontserratFamily,
@@ -104,7 +104,7 @@ val Typography = Typography(
         fontSize = 32.sp,
         letterSpacing = (-0.01).em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     headlineMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -112,7 +112,7 @@ val Typography = Typography(
         fontSize = 28.sp,
         letterSpacing = 0.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     headlineSmall = TextStyle(
         fontFamily = MontserratFamily,
@@ -120,7 +120,7 @@ val Typography = Typography(
         fontSize = 24.sp,
         letterSpacing = 0.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     titleLarge = TextStyle(
         fontFamily = MontserratFamily,
@@ -128,7 +128,7 @@ val Typography = Typography(
         fontSize = 22.sp,
         letterSpacing = (-0.01).em,
         lineHeight = 1.15.em,
-        platformStyle = NoPad
+
     ),
     titleMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -136,7 +136,7 @@ val Typography = Typography(
         fontSize = 16.sp,
         letterSpacing = (-0.005).em,
         lineHeight = 1.2.em,
-        platformStyle = NoPad
+
     ),
     titleSmall = TextStyle(
         fontFamily = MontserratFamily,
@@ -144,7 +144,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.em,
         lineHeight = 1.2.em,
-        platformStyle = NoPad
+
     ),
     bodyLarge = TextStyle(
         fontFamily = MontserratFamily,
@@ -152,7 +152,7 @@ val Typography = Typography(
         fontSize = 16.sp,
         letterSpacing = 0.sp,
         lineHeight = 1.35.em,
-        platformStyle = NoPad
+
     ),
     bodyMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -160,7 +160,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.sp,
         lineHeight = 1.35.em,
-        platformStyle = NoPad
+
     ),
     bodySmall = TextStyle(
         fontFamily = MontserratFamily,
@@ -168,7 +168,7 @@ val Typography = Typography(
         fontSize = 12.sp,
         letterSpacing = 0.sp,
         lineHeight = 1.35.em,
-        platformStyle = NoPad
+
     ),
     labelLarge = TextStyle(
         fontFamily = MontserratFamily,
@@ -176,7 +176,7 @@ val Typography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.1.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     labelMedium = TextStyle(
         fontFamily = MontserratFamily,
@@ -184,7 +184,7 @@ val Typography = Typography(
         fontSize = 12.sp,
         letterSpacing = 0.05.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     labelSmall = TextStyle(
         fontFamily = MontserratFamily,
@@ -192,7 +192,7 @@ val Typography = Typography(
         fontSize = 11.sp,
         letterSpacing = 0.05.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
 )
 
@@ -204,7 +204,7 @@ val CardTypography = Typography(
         fontSize = 44.sp,
         letterSpacing = 0.em,
         lineHeight = 1.0.em,
-        platformStyle = NoPad
+
     ),
     displayMedium = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -212,7 +212,7 @@ val CardTypography = Typography(
         fontSize = 36.sp,
         letterSpacing = 0.em,
         lineHeight = 1.0.em,
-        platformStyle = NoPad
+
     ),
     displaySmall = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -220,7 +220,7 @@ val CardTypography = Typography(
         fontSize = 30.sp,
         letterSpacing = 0.em,
         lineHeight = 1.0.em,
-        platformStyle = NoPad
+
     ),
     headlineLarge = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -228,7 +228,7 @@ val CardTypography = Typography(
         fontSize = 22.sp,
         letterSpacing = 0.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     headlineMedium = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -236,7 +236,7 @@ val CardTypography = Typography(
         fontSize = 20.sp,
         letterSpacing = 0.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     headlineSmall = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -244,7 +244,7 @@ val CardTypography = Typography(
         fontSize = 18.sp,
         letterSpacing = 0.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     titleLarge = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -252,7 +252,7 @@ val CardTypography = Typography(
         fontSize = 18.sp,
         letterSpacing = 0.em,
         lineHeight = 1.15.em,
-        platformStyle = NoPad
+
     ),
     titleMedium = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -260,7 +260,7 @@ val CardTypography = Typography(
         fontSize = 16.sp,
         letterSpacing = 0.em,
         lineHeight = 1.15.em,
-        platformStyle = NoPad
+
     ),
     titleSmall = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -268,7 +268,7 @@ val CardTypography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.em,
         lineHeight = 1.15.em,
-        platformStyle = NoPad
+
     ),
     bodyLarge = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -276,7 +276,7 @@ val CardTypography = Typography(
         fontSize = 14.sp,
         letterSpacing = 0.sp,
         lineHeight = 1.25.em,
-        platformStyle = NoPad
+
     ),
     bodyMedium = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -284,7 +284,7 @@ val CardTypography = Typography(
         fontSize = 13.sp,
         letterSpacing = 0.sp,
         lineHeight = 1.25.em,
-        platformStyle = NoPad
+
     ),
     bodySmall = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -292,7 +292,7 @@ val CardTypography = Typography(
         fontSize = 12.sp,
         letterSpacing = 0.sp,
         lineHeight = 1.25.em,
-        platformStyle = NoPad
+
     ),
     labelLarge = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -300,7 +300,7 @@ val CardTypography = Typography(
         fontSize = 12.sp,
         letterSpacing = 0.05.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     labelMedium = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -308,7 +308,7 @@ val CardTypography = Typography(
         fontSize = 11.sp,
         letterSpacing = 0.05.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
     labelSmall = TextStyle(
         fontFamily = GoogleSansRounded,
@@ -316,7 +316,7 @@ val CardTypography = Typography(
         fontSize = 10.sp,
         letterSpacing = 0.05.em,
         lineHeight = 1.1.em,
-        platformStyle = NoPad
+
     ),
 )
 

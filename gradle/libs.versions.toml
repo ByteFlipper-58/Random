@@ -75,7 +75,7 @@ play-billing = { group = "com.android.billingclient", name = "billing", version.
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 reorderable = { group = "sh.calvin.reorderable", name = "reorderable", version.ref = "reorderable" }
 smooth-corner-rect = { group = "com.github.racra", name = "smooth-corner-rect-android-compose", version.ref = "smoothCornerRect" }
-splashscreen = { group = "net.kibotu", name = "androidx-splashscreen-compose", version.ref = "splashscreen" }
+splashscreen = { group = "androidx.core", name = "core-splashscreen", version = "1.2.0" }
 ump = { group = "com.google.android.ump", name = "user-messaging-platform", version.ref = "ump" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "playAppUpdate" }

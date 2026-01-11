@@ -29,6 +29,7 @@ import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
 import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
 import com.byteflipper.random.ui.theme.RandomTheme
+import com.byteflipper.random.ui.theme.model.Theme
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.components.SystemHapticsManager
 import com.byteflipper.random.ui.numbers.NumbersScreen
@@ -59,6 +60,9 @@ fun AppRoot() {
         initialValue = initialSettings ?: Settings()
     )
 
+    // Ensure we don't render anything until settings are loaded to prevent flash
+    if (initialSettings == null) return
+
 
     val darkTheme = when (settings.themeMode) {
         ThemeMode.System -> isSystemInDarkTheme()
@@ -66,7 +70,10 @@ fun AppRoot() {
         ThemeMode.Dark -> true
     }
 
-    RandomTheme(darkTheme = darkTheme, dynamicColor = settings.dynamicColors) {
+    RandomTheme(
+        theme = if (settings.dynamicColors) Theme.DYNAMIC else Theme.BLUE,
+        darkTheme = darkTheme
+    ) {
         val hapticsManager = remember { SystemHapticsManager(context) }
         androidx.compose.runtime.CompositionLocalProvider(LocalHapticsManager provides hapticsManager) {
             Surface(
