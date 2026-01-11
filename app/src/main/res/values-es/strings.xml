@@ -1,0 +1,261 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">Randify</string>
+
+    <!-- Common -->
+    <string name="add">Añadir</string>
+    <string name="back">Atrás</string>
+    <string name="cancel">Cancelar</string>
+    <string name="close">Cerrar</string>
+    <string name="delete">Eliminar</string>
+    <string name="disabled">Deshabilitado</string>
+    <string name="edit">Editar</string>
+    <string name="enabled">Habilitado</string>
+    <string name="loading">Cargando…</string>
+    <string name="rename">Renombrar</string>
+    <string name="reset">Restablecer</string>
+    <string name="result">Resultado</string>
+    <string name="results">Resultados:</string>
+    <string name="save">Guardar</string>
+    <string name="settings">Configuración</string>
+    <string name="title">Título</string>
+    <string name="copied_to_clipboard">Copiado al portapapeles</string>
+
+    <!-- Main screen -->
+    <string name="coin">Moneda</string>
+    <string name="dice">Dados</string>
+    <string name="list">Lista</string>
+    <string name="lot">Sorteo</string>
+    <string name="numbers">Números</string>
+    <string name="random">Aleatorio</string>
+    <string name="menu">Menú</string>
+    <string name="wheel">Ruleta de la Fortuna</string>
+
+    <!-- Wheel screen -->
+    <string name="wheel_spin">Girar</string>
+    <string name="wheel_tap_to_spin">Toca la ruleta para girar</string>
+    <string name="wheel_all_options_used">Todas las opciones usadas</string>
+    <string name="wheel_min_items">Añade al menos 2 elementos</string>
+    <string name="wheel_items_count">%1$d elementos</string>
+    <string name="wheel_used_count">%1$d usados</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">Editar elementos</string>
+    <string name="wheel_items_limit">%1$d/16 elementos</string>
+    <string name="wheel_add_new_item">Añadir nuevo elemento…</string>
+    <string name="wheel_edit_item">Editar elemento %1$d</string>
+    <string name="wheel_no_items">No hay elementos aún. ¡Añade algunos para girar!</string>
+    <string name="wheel_presets">Preajustes</string>
+    <string name="wheel_templates">Plantillas</string>
+    <string name="wheel_clear_all">Borrar todo</string>
+    <string name="wheel_clear_confirm_title">¿Borrar todos los elementos?</string>
+    <string name="wheel_clear_confirm_message">Los elementos se restablecerán a los predeterminados. Esta acción no se puede deshacer.</string>
+    <string name="wheel_save_as_preset">Guardar como preajuste</string>
+    <string name="wheel_preset_name">Nombre del preajuste</string>
+    <string name="wheel_preset_items_count">%1$d elementos</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">Sí / No</string>
+    <string name="wheel_template_days">Días de la semana</string>
+    <string name="wheel_template_colors">Colores</string>
+    <string name="wheel_yes">Sí</string>
+    <string name="wheel_no">No</string>
+    <string name="wheel_monday">Lunes</string>
+    <string name="wheel_tuesday">Martes</string>
+    <string name="wheel_wednesday">Miércoles</string>
+    <string name="wheel_thursday">Jueves</string>
+    <string name="wheel_friday">Viernes</string>
+    <string name="wheel_saturday">Sábado</string>
+    <string name="wheel_sunday">Domingo</string>
+    <string name="wheel_red">Rojo</string>
+    <string name="wheel_blue">Azul</string>
+    <string name="wheel_green">Verde</string>
+    <string name="wheel_yellow">Amarillo</string>
+    <string name="wheel_orange">Naranja</string>
+    <string name="wheel_purple">Morado</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">Configuración de la ruleta</string>
+    <string name="wheel_no_repeats">Sin repeticiones</string>
+    <string name="wheel_no_repeats_desc">Excluir resultados anteriores de los siguientes giros</string>
+    <string name="wheel_spin_duration">Duración del giro</string>
+    <string name="wheel_spin_duration_value">%1$d segundos</string>
+    <string name="wheel_reset_excluded">Restablecer excluidos</string>
+    <string name="wheel_excluded_count">%1$d de %2$d excluidos</string>
+    <string name="wheel_load_preset">Cargar desde preajuste</string>
+
+    <!-- Lot screen -->
+    <string name="lot_title">Sorteo</string>
+    <string name="marked_fields_label">Campos marcados</string>
+    <string name="marked_more_than_total">Marcados más que el total</string>
+    <string name="minimum_1_marked">Mínimo 1 marcado</string>
+    <string name="minimum_3_fields">Mínimo 3 campos</string>
+    <string name="reshuffle">Rebarajar</string>
+    <string name="show_all">Mostrar todo</string>
+    <string name="total_fields_label">Total de campos</string>
+    <string name="vibration_off">Vibración: desactivada</string>
+    <string name="vibration_on">Vibración: activada</string>
+
+    <!-- List screen -->
+    <string name="all_options_used">Todas las opciones usadas</string>
+    <string name="item_1">Elemento 1</string>
+    <string name="item_2">Elemento 2</string>
+    <string name="item_3">Elemento 3</string>
+    <string name="list_empty">La lista está vacía</string>
+    <string name="list_name">Nombre de la lista</string>
+    <string name="my_list">Mi lista</string>
+    <string name="new_list">Nueva lista</string>
+    <string name="new_name">Nuevo nombre</string>
+    <string name="preset_actions">Acciones predefinidas</string>
+    <string name="rename_list">Renombrar lista</string>
+    <string name="save_settings">Guardar configuración</string>
+    <string name="share_preset">Compartir preajuste</string>
+    <string name="use_preset">Usar preajuste</string>
+
+    <!-- Numbers screen -->
+    <string name="all_numbers_used">Todos los números usados</string>
+    <string name="count_must_be_positive">La cantidad debe ser mayor que 0</string>
+    <string name="enter_valid_numbers">Introduce números válidos en `DESDE` y `HASTA`</string>
+    <string name="from">DESDE</string>
+    <string name="history_cleared">Historial de números borrado</string>
+    <string name="number">Número</string>
+    <string name="only_available_numbers">Solo %1$d números no usados disponibles</string>
+    <string name="reset_history">Restablecer historial</string>
+    <string name="to">HASTA</string>
+    <string name="used_count">Usados</string>
+
+    <!-- Dice / Coin -->
+    <string name="dice_count">Cantidad de dados</string>
+    <string name="heads">Cara</string>
+    <string name="roll_dice">Lanzar</string>
+    <string name="sum">Suma</string>
+    <string name="tails">Cruz</string>
+
+    <!-- Generator settings -->
+    <string name="allow_repetitions">Permitir repeticiones</string>
+    <string name="custom_delay_enabled">Retraso personalizado entre resultados</string>
+    <string name="customize_generation">Personalizar generación</string>
+    <string name="generator_settings">Configuración del generador</string>
+    <string name="repetitions_description">Permitir repetición de valores</string>
+    <string name="result_count">Número de resultados</string>
+    <string name="result_count_description">Selecciona la cantidad de resultados</string>
+    <string name="sorting_description">Orden de visualización</string>
+    <string name="swipe_hint">Desliza hacia arriba para voltear</string>
+
+    <!-- Sorting -->
+    <string name="alphabetical_az">Alfabético (A–Z)</string>
+    <string name="alphabetical_za">Alfabético inverso (Z–A)</string>
+    <string name="ascending">Ascendente</string>
+    <string name="descending">Descendente</string>
+    <string name="random_order">Orden aleatorio</string>
+    <string name="sorting">Ordenación</string>
+
+    <!-- Dialogs -->
+    <string name="delay">Retraso</string>
+    <string name="expandable_section_collapse">Contraer</string>
+    <string name="expandable_section_expand">Expandir</string>
+    <string name="fixed_delay_1_second">Retraso fijo: 1 segundo</string>
+    <string name="open_after_save">Abrir después de guardar</string>
+    <string name="seconds">seg</string>
+    <string name="seconds_short">s</string>
+    <string name="use_delay">Usar retraso</string>
+
+    <!-- Settings screen -->
+    <string name="android_12_required">Requiere Android 12+</string>
+    <string name="appearance">Apariencia</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="dynamic_colors">Colores dinámicos</string>
+    <string name="dynamic_colors_description">Adaptar paleta al fondo (Material You)</string>
+    <string name="fab_size">Tamaño del FAB</string>
+    <string name="fab_size_description">Tamaño del botón principal</string>
+    <string name="fab_size_large">L (Grande)</string>
+    <string name="fab_size_large_desc">Tamaño grande</string>
+    <string name="fab_size_medium">M (Mediano)</string>
+    <string name="fab_size_medium_desc">Tamaño estándar</string>
+    <string name="fab_size_small">S (Pequeño)</string>
+    <string name="fab_size_small_desc">Tamaño compacto</string>
+    <string name="general">General</string>
+    <string name="language">Idioma</string>
+    <string name="language_description">Elige el idioma de la app</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_ukrainian">Ukrainian</string>
+    <string name="language_belarusian">Belarusian</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_kazakh">Kazakh</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_french">Francés</string>
+    <string name="language_system">System</string>
+    <string name="light_theme">Claro</string>
+    <string name="settings_appearance_subtitle">Tema, colores dinámicos, tamaño FAB</string>
+    <string name="settings_general_subtitle">Idioma y vibración</string>
+    <string name="system_theme">Sistema</string>
+    <string name="theme">Tema</string>
+    <string name="theme_description">Elige el tema de la app</string>
+    <string name="use_wallpaper_colors">Usar colores del fondo (Android 12+)</string>
+    <string name="vibration">Vibración</string>
+    <string name="vibration_description">Respuesta háptica al interactuar</string>
+    <string name="vibration_intensity">Intensidad de vibración</string>
+    <string name="vibration_low">Baja</string>
+    <string name="vibration_medium">Media</string>
+    <string name="vibration_high">Alta</string>
+    <string name="vibration_switch_description_on">Activa la respuesta háptica en la app</string>
+    <string name="vibration_switch_description_off">Desactiva toda la respuesta háptica</string>
+    <string name="shake_to_generate">Agitar para generar</string>
+    <string name="shake_to_generate_description">Agita el dispositivo para generar valores</string>
+    <string name="shake_to_generate_description_on">Agita para generar en Números, Dados y Listas</string>
+    <string name="shake_to_generate_description_off">Agitar para generar está desactivado</string>
+
+    <!-- About screen -->
+    <string name="about_app">Sobre la app</string>
+    <string name="app_icon">Icono de la app</string>
+    <string name="bug_report_subtitle">Describe el problema y envíanoslo</string>
+    <string name="bug_report_title">Reportar error</string>
+    <string name="connect_with_us_category_title">Conecta con nosotros</string>
+    <string name="contact_us">Contáctanos</string>
+    <string name="development_category_title">Desarrollo</string>
+    <string name="discord_subtitle">Nuestro servidor de Discord</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="error_no_browser_found">No se encontró navegador</string>
+    <string name="github_subtitle">Nuestro repositorio en Github</string>
+    <string name="github_title">Github</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="made_with_love">Hecho con ❤️ por ByteFlipper</string>
+    <string name="other_apps_subtitle">Nuestras otras apps</string>
+    <string name="other_apps_title">Otras apps</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="rate_the_app_subtitle">Califica la app en Google Play</string>
+    <string name="rate_the_app_title">Calificar app</string>
+    <string name="source_code_subtitle">Código fuente en GitHub</string>
+    <string name="source_code_title">Código fuente</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
+    <string name="support_feedback_category_title">Soporte y comentarios</string>
+    <string name="telegram_subtitle">Nuestro canal de Telegram</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="version">Versión</string>
+    <string name="vk_subtitle">Nuestra comunidad en VK</string>
+    <string name="vk_title">VK</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="website_subtitle">Nuestra web</string>
+    <string name="website_title">Web de ByteFlipper</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
+    <string name="youtube_subtitle">Nuestro canal de YouTube</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
+
+    <!-- Setup screen -->
+    <string name="setup_enable_notifications">Activar notificaciones</string>
+    <string name="setup_finish_description">Estás listo para confiar en el azar 🎲</string>
+    <string name="setup_finish_title">¡Todo listo!</string>
+    <string name="setup_notifications_description">Activa las notificaciones para recibir alertas sobre actualizaciones y eventos importantes.</string>
+    <string name="setup_notifications_title">Notificaciones</string>
+    <string name="setup_permission_error">Por favor, concede todos los permisos necesarios.</string>
+    <string name="setup_permission_granted">Permiso concedido</string>
+    <string name="setup_welcome_description">Preparemos la app para ti.</string>
+    <string name="setup_welcome_title">Bienvenido a Randify</string>
+
+</resources>

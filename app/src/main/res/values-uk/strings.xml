@@ -20,6 +20,7 @@
     <string name="save">Зберегти</string>
     <string name="settings">Налаштування</string>
     <string name="title">Назва</string>
+    <string name="copied_to_clipboard">Скопійовано в буфер обміну</string>
 
     <!-- Main screen -->
     <string name="coin">Монета</string>
@@ -28,6 +29,61 @@
     <string name="lot">Жереб</string>
     <string name="numbers">Числа</string>
     <string name="random">Випадкове</string>
+    <string name="menu">Меню</string>
+    <string name="wheel">Колесо фортуни</string>
+
+    <!-- Wheel screen -->
+    <string name="wheel_spin">Крутити</string>
+    <string name="wheel_tap_to_spin">Натисніть на колесо</string>
+    <string name="wheel_all_options_used">Усі варіанти використані</string>
+    <string name="wheel_min_items">Додайте мінімум 2 елементи</string>
+    <string name="wheel_items_count">%1$d елементів</string>
+    <string name="wheel_used_count">%1$d використано</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">Редагування</string>
+    <string name="wheel_items_limit">%1$d/16 елементів</string>
+    <string name="wheel_add_new_item">Додати елемент…</string>
+    <string name="wheel_edit_item">Змінити елемент %1$d</string>
+    <string name="wheel_no_items">Поки що порожньо. Додайте елементи, щоб крутити колесо!</string>
+    <string name="wheel_presets">Пресет</string>
+    <string name="wheel_templates">Шаблони</string>
+    <string name="wheel_clear_all">Очистити</string>
+    <string name="wheel_clear_confirm_title">Очистити всі елементи?</string>
+    <string name="wheel_clear_confirm_message">Елементи будуть скинуті до значень за замовчуванням. Цю дію не можна скасувати.</string>
+    <string name="wheel_save_as_preset">Зберегти як пресет</string>
+    <string name="wheel_preset_name">Назва пресета</string>
+    <string name="wheel_preset_items_count">%1$d елементів</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">Так / Ні</string>
+    <string name="wheel_template_days">Дні тижня</string>
+    <string name="wheel_template_colors">Кольори</string>
+    <string name="wheel_yes">Так</string>
+    <string name="wheel_no">Ні</string>
+    <string name="wheel_monday">Понеділок</string>
+    <string name="wheel_tuesday">Вівторок</string>
+    <string name="wheel_wednesday">Середа</string>
+    <string name="wheel_thursday">Четвер</string>
+    <string name="wheel_friday">П\'ятниця</string>
+    <string name="wheel_saturday">Субота</string>
+    <string name="wheel_sunday">Неділя</string>
+    <string name="wheel_red">Червоний</string>
+    <string name="wheel_blue">Синій</string>
+    <string name="wheel_green">Зелений</string>
+    <string name="wheel_yellow">Жовтий</string>
+    <string name="wheel_orange">Помаранчевий</string>
+    <string name="wheel_purple">Фіолетовий</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">Налаштування колеса</string>
+    <string name="wheel_no_repeats">Без повторів</string>
+    <string name="wheel_no_repeats_desc">Виключати попередні результати з наступних обертань</string>
+    <string name="wheel_spin_duration">Тривалість обертання</string>
+    <string name="wheel_spin_duration_value">%1$d секунд</string>
+    <string name="wheel_reset_excluded">Скинути виключені</string>
+    <string name="wheel_excluded_count">Виключено: %1$d з %2$d</string>
+    <string name="wheel_load_preset">Завантажити з пресета</string>
 
     <!-- Lot screen -->
     <string name="lot_title">Жереб</string>
@@ -127,6 +183,10 @@
     <string name="language_ukrainian">Українська</string>
     <string name="language_belarusian">Білоруська</string>
     <string name="language_polish">Польська</string>
+    <string name="language_kazakh">Казахська</string>
+    <string name="language_hindi">Хінді</string>
+    <string name="language_spanish">Іспанська</string>
+    <string name="language_french">Французька</string>
     <string name="language_system">Системна</string>
     <string name="light_theme">Світла</string>
     <string name="settings_appearance_subtitle">Тема, динамічні кольори, розмір FAB</string>
@@ -137,6 +197,16 @@
     <string name="use_wallpaper_colors">Використовувати кольори шпалер (Android 12+)</string>
     <string name="vibration">Вібрація</string>
     <string name="vibration_description">Тактильний відгук при взаємодії</string>
+    <string name="vibration_intensity">Інтенсивність вібрації</string>
+    <string name="vibration_low">Низька</string>
+    <string name="vibration_medium">Середня</string>
+    <string name="vibration_high">Висока</string>
+    <string name="vibration_switch_description_on">Вмикає тактильний відгук у всьому додатку</string>
+    <string name="vibration_switch_description_off">Вимикає весь тактильний відгук у додатку</string>
+    <string name="shake_to_generate">Струсити для генерації</string>
+    <string name="shake_to_generate_description">Струсіть пристрій для генерації випадкових значень</string>
+    <string name="shake_to_generate_description_on">Струсіть пристрій на екранах Чисел, Кубиків або Списків</string>
+    <string name="shake_to_generate_description_off">Генерація струшуванням вимкнена</string>
 
     <!-- About screen -->
     <string name="about_app">Про програму</string>

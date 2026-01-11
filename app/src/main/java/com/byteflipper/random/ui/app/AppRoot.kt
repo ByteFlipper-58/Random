@@ -55,6 +55,7 @@ object AppRoutes {
 fun AppRoot() {
     val viewModel: AppViewModel = hiltViewModel()
     val context = LocalContext.current
+    val navController = rememberNavController()
     val initialSettings: Settings? by viewModel.initialSettings.collectAsStateWithLifecycle()
     val settings: Settings by viewModel.settingsFlow.collectAsStateWithLifecycle(
         initialValue = initialSettings ?: Settings()
@@ -80,7 +81,7 @@ fun AppRoot() {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                val navController = rememberNavController()
+
                 val startDestination = if (settings.setupCompleted) AppRoutes.Home else AppRoutes.Setup
                 NavHost(navController = navController, startDestination = startDestination) {
                     composable(AppRoutes.Setup) {

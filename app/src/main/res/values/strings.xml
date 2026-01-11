@@ -183,6 +183,10 @@
     <string name="language_ukrainian">Ukrainian</string>
     <string name="language_belarusian">Belarusian</string>
     <string name="language_polish">Polish</string>
+    <string name="language_kazakh">Kazakh</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_french">French</string>
     <string name="language_system">System</string>
     <string name="light_theme">Light</string>
     <string name="settings_appearance_subtitle">Theme, dynamic colors, FAB size</string>

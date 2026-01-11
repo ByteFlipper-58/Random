@@ -51,7 +51,11 @@ enum class AppLanguage(val value: Int, val localeTag: String) {
     Russian(2, "ru"),
     Ukrainian(3, "uk"),
     Belarusian(4, "be"),
-    Polish(5, "pl");
+    Polish(5, "pl"),
+    Kazakh(6, "kk"),
+    Hindi(7, "hi"),
+    Spanish(8, "es"),
+    French(9, "fr");
 
     companion object {
         fun fromValue(value: Int?): AppLanguage = when (value) {
@@ -60,6 +64,10 @@ enum class AppLanguage(val value: Int, val localeTag: String) {
             3 -> Ukrainian
             4 -> Belarusian
             5 -> Polish
+            6 -> Kazakh
+            7 -> Hindi
+            8 -> Spanish
+            9 -> French
             else -> System
         }
     }

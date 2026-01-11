@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -17,8 +18,12 @@ object NavTransitions {
     val enter: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
         slideInHorizontally(
             initialOffsetX = { it },
-            animationSpec = tween(300)
-        ) + fadeIn(animationSpec = tween(300))
+            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+        ) + scaleIn(
+            initialScale = 0.9f,
+            transformOrigin = TransformOrigin(0.5f, 0.5f),
+            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+        ) + fadeIn(animationSpec = tween(400))
     }
 
     val exit: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {

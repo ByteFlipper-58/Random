@@ -20,6 +20,7 @@
     <string name="save">Zapisz</string>
     <string name="settings">Ustawienia</string>
     <string name="title">Tytuł</string>
+    <string name="copied_to_clipboard">Skopiowano do schowka</string>
 
     <!-- Main screen -->
     <string name="coin">Moneta</string>
@@ -28,7 +29,62 @@
     <string name="lot">Los</string>
     <string name="numbers">Liczby</string>
     <string name="random">Losowe</string>
+    <string name="menu">Menu</string>
+    <string name="wheel">Koło fortuny</string>
 
+    <!-- Wheel screen -->
+    <string name="wheel_spin">Zakręć</string>
+    <string name="wheel_tap_to_spin">Dotknij koła, aby zakręcić</string>
+    <string name="wheel_all_options_used">Wszystkie opcje wykorzystane</string>
+    <string name="wheel_min_items">Dodaj co najmniej 2 elementy</string>
+    <string name="wheel_items_count">%1$d elementów</string>
+    <string name="wheel_used_count">Użyto %1$d</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">Edytuj elementy</string>
+    <string name="wheel_items_limit">%1$d/16 elementów</string>
+    <string name="wheel_add_new_item">Dodaj nowy element…</string>
+    <string name="wheel_edit_item">Edytuj element %1$d</string>
+    <string name="wheel_no_items">Jeszcze nic tu nie ma. Dodaj elementy, aby zakręcić kołem!</string>
+    <string name="wheel_presets">Presety</string>
+    <string name="wheel_templates">Szablony</string>
+    <string name="wheel_clear_all">Wyczyść</string>
+    <string name="wheel_clear_confirm_title">Wyczyścić wszystkie elementy?</string>
+    <string name="wheel_clear_confirm_message">Elementy zostaną zresetowane do domyślnych. Tej operacji nie można cofnąć.</string>
+    <string name="wheel_save_as_preset">Zapisz jako preset</string>
+    <string name="wheel_preset_name">Nazwa presetu</string>
+    <string name="wheel_preset_items_count">%1$d elementów</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">Tak / Nie</string>
+    <string name="wheel_template_days">Dni tygodnia</string>
+    <string name="wheel_template_colors">Kolory</string>
+    <string name="wheel_yes">Tak</string>
+    <string name="wheel_no">Nie</string>
+    <string name="wheel_monday">Poniedziałek</string>
+    <string name="wheel_tuesday">Wtorek</string>
+    <string name="wheel_wednesday">Środa</string>
+    <string name="wheel_thursday">Czwartek</string>
+    <string name="wheel_friday">Piątek</string>
+    <string name="wheel_saturday">Sobota</string>
+    <string name="wheel_sunday">Niedziela</string>
+    <string name="wheel_red">Czerwony</string>
+    <string name="wheel_blue">Niebieski</string>
+    <string name="wheel_green">Zielony</string>
+    <string name="wheel_yellow">Żółty</string>
+    <string name="wheel_orange">Pomarańczowy</string>
+    <string name="wheel_purple">Fioletowy</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">Ustawienia koła</string>
+    <string name="wheel_no_repeats">Bez powtórzeń</string>
+    <string name="wheel_no_repeats_desc">Wyklucz poprzednie wyniki z kolejnych obrotów</string>
+    <string name="wheel_spin_duration">Czas obrotu</string>
+    <string name="wheel_spin_duration_value">%1$d sekund</string>
+    <string name="wheel_reset_excluded">Resetuj wykluczone</string>
+    <string name="wheel_excluded_count">Wykluczono %1$d z %2$d</string>
+    <string name="wheel_load_preset">Wczytaj z presetu</string>
+    
     <!-- Lot screen -->
     <string name="lot_title">Los</string>
     <string name="marked_fields_label">Zaznaczone pola</string>
@@ -127,6 +183,10 @@
     <string name="language_ukrainian">Ukraiński</string>
     <string name="language_belarusian">Białoruski</string>
     <string name="language_polish">Polski</string>
+    <string name="language_kazakh">Kazachski</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_spanish">Hiszpański</string>
+    <string name="language_french">Francuski</string>
     <string name="language_system">Systemowy</string>
     <string name="light_theme">Jasny</string>
     <string name="settings_appearance_subtitle">Motyw, kolory dynamiczne, rozmiar FAB</string>
@@ -143,6 +203,10 @@
     <string name="vibration_high">Wysoka</string>
     <string name="vibration_switch_description_on">Włącza wibracje w całej aplikacji</string>
     <string name="vibration_switch_description_off">Wyłącza wszystkie wibracje w aplikacji</string>
+    <string name="shake_to_generate">Potrząśnij, aby wygenerować</string>
+    <string name="shake_to_generate_description">Potrząśnij urządzeniem, aby wygenerować losowe wartości</string>
+    <string name="shake_to_generate_description_on">Potrząśnij urządzeniem na ekranach Liczb, Kostek lub List</string>
+    <string name="shake_to_generate_description_off">Generowanie potrząśnięciem jest wyłączone</string>
 
     <!-- About screen -->
     <string name="about_app">O aplikacji</string>

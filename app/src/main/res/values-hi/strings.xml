@@ -1,0 +1,261 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">Randify</string>
+
+    <!-- Common -->
+    <string name="add">जोड़ें</string>
+    <string name="back">पीछे</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="close">बंद करें</string>
+    <string name="delete">हटाएं</string>
+    <string name="disabled">अक्षम</string>
+    <string name="edit">संपादित करें</string>
+    <string name="enabled">सक्षम</string>
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="rename">नाम बदलें</string>
+    <string name="reset">रीसेट</string>
+    <string name="result">परिणाम</string>
+    <string name="results">परिणाम:</string>
+    <string name="save">सहेजें</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="title">शीर्षक</string>
+    <string name="copied_to_clipboard">क्लिपबोर्ड पर कॉपी किया गया</string>
+
+    <!-- Main screen -->
+    <string name="coin">सिक्का</string>
+    <string name="dice">पासा</string>
+    <string name="list">सूची</string>
+    <string name="lot">लॉट</string>
+    <string name="numbers">संख्याएं</string>
+    <string name="random">यादृच्छिक</string>
+    <string name="menu">मेनू</string>
+    <string name="wheel">भाग्य का पहिया</string>
+
+    <!-- Wheel screen -->
+    <string name="wheel_spin">घुमाएं</string>
+    <string name="wheel_tap_to_spin">घुमाने के लिए पहिये पर टैप करें</string>
+    <string name="wheel_all_options_used">सभी विकल्प उपयोग किए गए</string>
+    <string name="wheel_min_items">कम से कम 2 आइटम जोड़ें</string>
+    <string name="wheel_items_count">%1$d आइटम</string>
+    <string name="wheel_used_count">%1$d उपयोग किया गया</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">आइटम संपादित करें</string>
+    <string name="wheel_items_limit">%1$d/16 आइटम</string>
+    <string name="wheel_add_new_item">नया आइटम जोड़ें…</string>
+    <string name="wheel_edit_item">आइटम %1$d संपादित करें</string>
+    <string name="wheel_no_items">अभी कोई आइटम नहीं है। पहिया घुमाने के लिए कुछ आइटम जोड़ें!</string>
+    <string name="wheel_presets">प्रीसेट</string>
+    <string name="wheel_templates">टेम्पलेट</string>
+    <string name="wheel_clear_all">सभी साफ़ करें</string>
+    <string name="wheel_clear_confirm_title">सभी आइटम साफ़ करें?</string>
+    <string name="wheel_clear_confirm_message">आइटम डिफ़ॉल्ट पर रीसेट हो जाएंगे। इस क्रिया को पूर्ववत नहीं किया जा सकता है।</string>
+    <string name="wheel_save_as_preset">प्रीसेट के रूप में सहेजें</string>
+    <string name="wheel_preset_name">प्रीसेट नाम</string>
+    <string name="wheel_preset_items_count">%1$d आइटम</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">हां / नहीं</string>
+    <string name="wheel_template_days">सप्ताह के दिन</string>
+    <string name="wheel_template_colors">रंग</string>
+    <string name="wheel_yes">हां</string>
+    <string name="wheel_no">नहीं</string>
+    <string name="wheel_monday">सोमवार</string>
+    <string name="wheel_tuesday">मंगलवार</string>
+    <string name="wheel_wednesday">बुधवार</string>
+    <string name="wheel_thursday">गुरुवार</string>
+    <string name="wheel_friday">शुक्रवार</string>
+    <string name="wheel_saturday">शनिवार</string>
+    <string name="wheel_sunday">रविवार</string>
+    <string name="wheel_red">लाल</string>
+    <string name="wheel_blue">नीला</string>
+    <string name="wheel_green">हरा</string>
+    <string name="wheel_yellow">पीला</string>
+    <string name="wheel_orange">नारंगी</string>
+    <string name="wheel_purple">बैंगनी</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">पहिया सेटिंग्स</string>
+    <string name="wheel_no_repeats">कोई दोहराव नहीं</string>
+    <string name="wheel_no_repeats_desc">अगले स्पिन से पिछले परिणामों को बाहर निकालें</string>
+    <string name="wheel_spin_duration">स्पिन की अवधि</string>
+    <string name="wheel_spin_duration_value">%1$d सेकंड</string>
+    <string name="wheel_reset_excluded">बाहर निकाले गए आइटम रीसेट करें</string>
+    <string name="wheel_excluded_count">%1$d / %2$d बाहर निकाला गया</string>
+    <string name="wheel_load_preset">प्रीसेट से लोड करें</string>
+
+    <!-- Lot screen -->
+    <string name="lot_title">लॉट</string>
+    <string name="marked_fields_label">चिह्नित फ़ील्ड</string>
+    <string name="marked_more_than_total">कुल से अधिक चिह्नित</string>
+    <string name="minimum_1_marked">कम से कम 1 चिह्नित</string>
+    <string name="minimum_3_fields">कम से कम 3 फ़ील्ड</string>
+    <string name="reshuffle">फिर से मिलाएं</string>
+    <string name="show_all">सभी दिखाएं</string>
+    <string name="total_fields_label">कुल फ़ील्ड</string>
+    <string name="vibration_off">कंपन: बंद</string>
+    <string name="vibration_on">कंपन: चालू</string>
+
+    <!-- List screen -->
+    <string name="all_options_used">सभी विकल्प उपयोग किए गए</string>
+    <string name="item_1">आइटम 1</string>
+    <string name="item_2">आइटम 2</string>
+    <string name="item_3">आइटम 3</string>
+    <string name="list_empty">सूची खाली है</string>
+    <string name="list_name">सूची का नाम</string>
+    <string name="my_list">मेरी सूची</string>
+    <string name="new_list">नई सूची</string>
+    <string name="new_name">नया नाम</string>
+    <string name="preset_actions">प्रीसेट क्रियाएं</string>
+    <string name="rename_list">सूची का नाम बदलें</string>
+    <string name="save_settings">सेटिंग्स सहेजें</string>
+    <string name="share_preset">प्रीसेट साझा करें</string>
+    <string name="use_preset">प्रीसेट का उपयोग करें</string>
+
+    <!-- Numbers screen -->
+    <string name="all_numbers_used">सभी नंबर उपयोग किए गए</string>
+    <string name="count_must_be_positive">गिनती 0 से अधिक होनी चाहिए</string>
+    <string name="enter_valid_numbers">`से` और `तक` में मान्य नंबर दर्ज करें</string>
+    <string name="from">से</string>
+    <string name="history_cleared">उपयोग किए गए नंबरों का इतिहास साफ़ किया गया</string>
+    <string name="number">नंबर</string>
+    <string name="only_available_numbers">केवल %1$d अप्रयुक्त नंबर उपलब्ध</string>
+    <string name="reset_history">इतिहास रीसेट करें</string>
+    <string name="to">तक</string>
+    <string name="used_count">उपयोग किया गया</string>
+
+    <!-- Dice / Coin -->
+    <string name="dice_count">पासे की गिनती</string>
+    <string name="heads">चित</string>
+    <string name="roll_dice">फेंकें</string>
+    <string name="sum">योग</string>
+    <string name="tails">पट</string>
+
+    <!-- Generator settings -->
+    <string name="allow_repetitions">दोहराव की अनुमति दें</string>
+    <string name="custom_delay_enabled">परिणामों के बीच कस्टम विलंब</string>
+    <string name="customize_generation">जनरेशन कस्टमाइज़ करें</string>
+    <string name="generator_settings">जनरेटर सेटिंग्स</string>
+    <string name="repetitions_description">मान दोहराव की अनुमति दें</string>
+    <string name="result_count">परिणामों की संख्या</string>
+    <string name="result_count_description">उत्पन्न परिणामों की संख्या चुनें</string>
+    <string name="sorting_description">परिणाम प्रदर्शन क्रम</string>
+    <string name="swipe_hint">पलटने के लिए ऊपर स्वाइप करें</string>
+
+    <!-- Sorting -->
+    <string name="alphabetical_az">वर्णानुक्रम (A–Z)</string>
+    <string name="alphabetical_za">उल्टा वर्णानुक्रम (Z–A)</string>
+    <string name="ascending">आरोही</string>
+    <string name="descending">अवरोही</string>
+    <string name="random_order">यादृच्छिक क्रम</string>
+    <string name="sorting">छांटना</string>
+
+    <!-- Dialogs -->
+    <string name="delay">विलंब</string>
+    <string name="expandable_section_collapse">सिकोड़ें</string>
+    <string name="expandable_section_expand">विस्तार करें</string>
+    <string name="fixed_delay_1_second">निश्चित विलंब: 1 सेकंड</string>
+    <string name="open_after_save">सहेजने के बाद खोलें</string>
+    <string name="seconds">सेकंड</string>
+    <string name="seconds_short">से</string>
+    <string name="use_delay">विलंब का उपयोग करें</string>
+
+    <!-- Settings screen -->
+    <string name="android_12_required">Android 12+ आवश्यक</string>
+    <string name="appearance">उपस्थिति</string>
+    <string name="dark_theme">डार्क</string>
+    <string name="dynamic_colors">गतिशील रंग</string>
+    <string name="dynamic_colors_description">वॉलपेपर के लिए पैलेट अनुकूलित करें (Material You)</string>
+    <string name="fab_size">FAB आकार</string>
+    <string name="fab_size_description">स्क्रीन पर मुख्य बटन का आकार</string>
+    <string name="fab_size_large">L (बड़ा)</string>
+    <string name="fab_size_large_desc">बड़ा आकार</string>
+    <string name="fab_size_medium">M (मध्यम)</string>
+    <string name="fab_size_medium_desc">मानक आकार</string>
+    <string name="fab_size_small">S (छोटा)</string>
+    <string name="fab_size_small_desc">कॉम्पैक्ट आकार</string>
+    <string name="general">सामान्य</string>
+    <string name="language">भाषा</string>
+    <string name="language_description">ऐप की भाषा चुनें</string>
+    <string name="language_english">English</string>
+    <string name="language_russian">Russian</string>
+    <string name="language_ukrainian">Ukrainian</string>
+    <string name="language_belarusian">Belarusian</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_kazakh">Kazakh</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_french">French</string>
+    <string name="language_system">System</string>
+    <string name="light_theme">लाइट</string>
+    <string name="settings_appearance_subtitle">थीम, गतिशील रंग, FAB आकार</string>
+    <string name="settings_general_subtitle">भाषा और कंपन</string>
+    <string name="system_theme">सिस्टम</string>
+    <string name="theme">थीम</string>
+    <string name="theme_description">ऐप की थीम चुनें</string>
+    <string name="use_wallpaper_colors">वॉलपेपर रंगों का उपयोग करें (Android 12+)</string>
+    <string name="vibration">कंपन</string>
+    <string name="vibration_description">इंटरैक्शन पर हैप्टिक फीडबैक</string>
+    <string name="vibration_intensity">कंपन तीव्रता</string>
+    <string name="vibration_low">कम</string>
+    <string name="vibration_medium">मध्यम</string>
+    <string name="vibration_high">उच्च</string>
+    <string name="vibration_switch_description_on">पूरे ऐप में हैप्टिक फीडबैक सक्षम करता है</string>
+    <string name="vibration_switch_description_off">ऐप में सभी हैप्टिक फीडबैक को अक्षम करता है</string>
+    <string name="shake_to_generate">उत्पन्न करने के लिए हिलाएं</string>
+    <string name="shake_to_generate_description">यादृच्छिक मान उत्पन्न करने के लिए डिवाइस को हिलाएं</string>
+    <string name="shake_to_generate_description_on">संख्या, पासा, या सूची स्क्रीन पर उत्पन्न करने के लिए डिवाइस को हिलाएं</string>
+    <string name="shake_to_generate_description_off">हिलाकर उत्पन्न करना अक्षम है</string>
+
+    <!-- About screen -->
+    <string name="about_app">ऐप के बारे में</string>
+    <string name="app_icon">ऐप आइकन</string>
+    <string name="bug_report_subtitle">कृपया समस्या का वर्णन करें और हमें भेजें</string>
+    <string name="bug_report_title">बग रिपोर्ट</string>
+    <string name="connect_with_us_category_title">हमारे साथ जुड़ें</string>
+    <string name="contact_us">संपर्क करें</string>
+    <string name="development_category_title">विकास</string>
+    <string name="discord_subtitle">हमारा Discord सर्वर</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="error_no_browser_found">URL खोलने के लिए कोई ब्राउज़र नहीं मिला</string>
+    <string name="github_subtitle">हमारा Github रिपॉजिटरी</string>
+    <string name="github_title">Github</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="made_with_love">ByteFlipper द्वारा ❤️ के साथ बनाया गया</string>
+    <string name="other_apps_subtitle">हमारे अन्य ऐप्स</string>
+    <string name="other_apps_title">अन्य ऐप्स</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="rate_the_app_subtitle">Google Play पर ऐप को रेट करें</string>
+    <string name="rate_the_app_title">ऐप को रेट करें</string>
+    <string name="source_code_subtitle">GitHub पर एप्लिकेशन का स्रोत कोड</string>
+    <string name="source_code_title">स्रोत कोड</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
+    <string name="support_feedback_category_title">समर्थन और प्रतिक्रिया</string>
+    <string name="telegram_subtitle">हमारा Telegram चैनल</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="version">संस्करण</string>
+    <string name="vk_subtitle">VK पर हमारा समुदाय</string>
+    <string name="vk_title">VK</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="website_subtitle">हमारी वेबसाइट</string>
+    <string name="website_title">ByteFlipper वेबसाइट</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
+    <string name="youtube_subtitle">हमारा YouTube चैनल</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
+
+    <!-- Setup screen -->
+    <string name="setup_enable_notifications">नोटिफिकेशन सक्षम करें</string>
+    <string name="setup_finish_description">आप यादृच्छिकता पर भरोसा करने के लिए तैयार हैं 🎲</string>
+    <string name="setup_finish_title">सब तैयार!</string>
+    <string name="setup_notifications_description">नए अपडेट और अन्य महत्वपूर्ण घटनाओं के बारे में अलर्ट प्राप्त करने के लिए नोटिफिकेशन सक्षम करें।</string>
+    <string name="setup_notifications_title">नोटिफिकेशन</string>
+    <string name="setup_permission_error">कृपया सभी आवश्यक अनुमतियाँ प्रदान करें।</string>
+    <string name="setup_permission_granted">अनुमति प्रदान की गई</string>
+    <string name="setup_welcome_description">आइए आपके लिए ऐप तैयार करें।</string>
+    <string name="setup_welcome_title">Randify में आपका स्वागत है</string>
+
+</resources>

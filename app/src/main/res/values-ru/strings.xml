@@ -183,6 +183,10 @@
     <string name="language_ukrainian">Украинский</string>
     <string name="language_belarusian">Белорусский</string>
     <string name="language_polish">Польский</string>
+    <string name="language_kazakh">Казахский</string>
+    <string name="language_hindi">Хинди</string>
+    <string name="language_spanish">Испанский</string>
+    <string name="language_french">Французский</string>
     <string name="language_system">Системный</string>
     <string name="light_theme">Светлая</string>
     <string name="settings_appearance_subtitle">Тема, динамические цвета, размер FAB</string>

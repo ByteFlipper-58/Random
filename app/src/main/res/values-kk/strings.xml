@@ -1,0 +1,261 @@
+<resources>
+
+    <!-- App -->
+    <string name="app_name">Randify</string>
+
+    <!-- Common -->
+    <string name="add">Қосу</string>
+    <string name="back">Артқа</string>
+    <string name="cancel">Болдырмау</string>
+    <string name="close">Жабу</string>
+    <string name="delete">Жою</string>
+    <string name="disabled">Өшірулі</string>
+    <string name="edit">Өңдеу</string>
+    <string name="enabled">Қосулы</string>
+    <string name="loading">Жүктелуде…</string>
+    <string name="rename">Атын өзгерту</string>
+    <string name="reset">Қайтару</string>
+    <string name="result">Нәтиже</string>
+    <string name="results">Нәтижелер:</string>
+    <string name="save">Сақтау</string>
+    <string name="settings">Параметрлер</string>
+    <string name="title">Тақырып</string>
+    <string name="copied_to_clipboard">Алмасу буферіне көшірілді</string>
+
+    <!-- Main screen -->
+    <string name="coin">Тиын</string>
+    <string name="dice">Сүйектер</string>
+    <string name="list">Тізім</string>
+    <string name="lot">Жеребе</string>
+    <string name="numbers">Сандар</string>
+    <string name="random">Кездейсоқ</string>
+    <string name="menu">Мәзір</string>
+    <string name="wheel">Фортуна дөңгелегі</string>
+
+    <!-- Wheel screen -->
+    <string name="wheel_spin">Айналдыру</string>
+    <string name="wheel_tap_to_spin">Айналдыру үшін басыңыз</string>
+    <string name="wheel_all_options_used">Барлық нұсқалар қолданылды</string>
+    <string name="wheel_min_items">Ең аз 2 элемент қосыңыз</string>
+    <string name="wheel_items_count">%1$d элемент</string>
+    <string name="wheel_used_count">%1$d қолданылды</string>
+    
+    <!-- Wheel Editor -->
+    <string name="wheel_edit_items">Өңдеу</string>
+    <string name="wheel_items_limit">%1$d/16 элемент</string>
+    <string name="wheel_add_new_item">Элемент қосу…</string>
+    <string name="wheel_edit_item">%1$d элементін өңдеу</string>
+    <string name="wheel_no_items">Әзірше бос. Дөңгелекті айналдыру үшін элементтер қосыңыз!</string>
+    <string name="wheel_presets">Алдын ала орнатулар</string>
+    <string name="wheel_templates">Үлгілер</string>
+    <string name="wheel_clear_all">Тазалау</string>
+    <string name="wheel_clear_confirm_title">Барлық элементтерді тазалау керек пе?</string>
+    <string name="wheel_clear_confirm_message">Элементтер әдепкі мәндерге қайтарылады. Бұл әрекетті болдырмау мүмкін емес.</string>
+    <string name="wheel_save_as_preset">Алдын ала орнату ретінде сақтау</string>
+    <string name="wheel_preset_name">Алдын ала орнату атауы</string>
+    <string name="wheel_preset_items_count">%1$d элемент</string>
+    
+    <!-- Wheel Templates -->
+    <string name="wheel_template_yes_no">Иә / Жоқ</string>
+    <string name="wheel_template_days">Апта күндері</string>
+    <string name="wheel_template_colors">Түстер</string>
+    <string name="wheel_yes">Иә</string>
+    <string name="wheel_no">Жоқ</string>
+    <string name="wheel_monday">Дүйсенбі</string>
+    <string name="wheel_tuesday">Сейсенбі</string>
+    <string name="wheel_wednesday">Сәрсенбі</string>
+    <string name="wheel_thursday">Бейсенбі</string>
+    <string name="wheel_friday">Жұма</string>
+    <string name="wheel_saturday">Сенбі</string>
+    <string name="wheel_sunday">Жексенбі</string>
+    <string name="wheel_red">Қызыл</string>
+    <string name="wheel_blue">Көк</string>
+    <string name="wheel_green">Жасыл</string>
+    <string name="wheel_yellow">Сары</string>
+    <string name="wheel_orange">Қызғылт сары</string>
+    <string name="wheel_purple">Күлгін</string>
+    
+    <!-- Wheel Settings -->
+    <string name="wheel_settings">Дөңгелек параметрлері</string>
+    <string name="wheel_no_repeats">Қайталаусыз</string>
+    <string name="wheel_no_repeats_desc">Келесі айналымдардан алдыңғы нәтижелерді алып тастау</string>
+    <string name="wheel_spin_duration">Айналу ұзақтығы</string>
+    <string name="wheel_spin_duration_value">%1$d секунд</string>
+    <string name="wheel_reset_excluded">Алып тасталғандарды қайтару</string>
+    <string name="wheel_excluded_count">%1$d / %2$d алынып тасталды</string>
+    <string name="wheel_load_preset">Алдын ала орнатудан жүктеу</string>
+
+    <!-- Lot screen -->
+    <string name="lot_title">Жеребе</string>
+    <string name="marked_fields_label">Белгіленген өрістер</string>
+    <string name="marked_more_than_total">Барлығынан көп белгіленді</string>
+    <string name="minimum_1_marked">Ең кемі 1 белгіленген болуы керек</string>
+    <string name="minimum_3_fields">Ең кемі 3 өріс болуы керек</string>
+    <string name="reshuffle">Араластыру</string>
+    <string name="show_all">Барлығын көрсету</string>
+    <string name="total_fields_label">Барлық өрістер</string>
+    <string name="vibration_off">Діріл: өшірулі</string>
+    <string name="vibration_on">Діріл: қосулы</string>
+
+    <!-- List screen -->
+    <string name="all_options_used">Барлық нұсқалар қолданылды</string>
+    <string name="item_1">1-элемент</string>
+    <string name="item_2">2-элемент</string>
+    <string name="item_3">3-элемент</string>
+    <string name="list_empty">Тізім бос</string>
+    <string name="list_name">Тізім атауы</string>
+    <string name="my_list">Менің тізімім</string>
+    <string name="new_list">Жаңа тізім</string>
+    <string name="new_name">Жаңа атау</string>
+    <string name="preset_actions">Дайын әрекеттер</string>
+    <string name="rename_list">Тізім атын өзгерту</string>
+    <string name="save_settings">Параметрлерді сақтау</string>
+    <string name="share_preset">Алдын ала орнатумен бөлісу</string>
+    <string name="use_preset">Алдын ала орнатуды қолдану</string>
+
+    <!-- Numbers screen -->
+    <string name="all_numbers_used">Барлық сандар қолданылды</string>
+    <string name="count_must_be_positive">Сан 0-ден үлкен болуы керек</string>
+    <string name="enter_valid_numbers">`ДАН` және `ДЕЙІН` өрістеріне дұрыс сандар енгізіңіз</string>
+    <string name="from">ДАН</string>
+    <string name="history_cleared">Қолданылған сандар тарихы тазартылды</string>
+    <string name="number">Сан</string>
+    <string name="only_available_numbers">Тек %1$d қолданылмаған сан қолжетімді</string>
+    <string name="reset_history">Тарихты тазалау</string>
+    <string name="to">ДЕЙІН</string>
+    <string name="used_count">Қолданылды</string>
+
+    <!-- Dice / Coin -->
+    <string name="dice_count">Сүйектер саны</string>
+    <string name="heads">Елтаңба</string>
+    <string name="roll_dice">Лақтыру</string>
+    <string name="sum">Қосынды</string>
+    <string name="tails">Сан</string>
+
+    <!-- Generator settings -->
+    <string name="allow_repetitions">Қайталауға рұқсат ету</string>
+    <string name="custom_delay_enabled">Нәтижелер арасындағы өз кідірісіңіз</string>
+    <string name="customize_generation">Генерацияны баптау</string>
+    <string name="generator_settings">Генератор параметрлері</string>
+    <string name="repetitions_description">Мәндердің қайталануына рұқсат ету</string>
+    <string name="result_count">Нәтижелер саны</string>
+    <string name="result_count_description">Генерацияланатын нәтижелер санын таңдаңыз</string>
+    <string name="sorting_description">Нәтижелерді көрсету реті</string>
+    <string name="swipe_hint">Аударып қою үшін жоғары сырғытыңыз</string>
+
+    <!-- Sorting -->
+    <string name="alphabetical_az">Алфавит бойынша (А–Я)</string>
+    <string name="alphabetical_za">Кері ретпен (Я–А)</string>
+    <string name="ascending">Өсу ретімен</string>
+    <string name="descending">Кему ретімен</string>
+    <string name="random_order">Кездейсоқ ретпен</string>
+    <string name="sorting">Сұрыптау</string>
+
+    <!-- Dialogs -->
+    <string name="delay">Кідіріс</string>
+    <string name="expandable_section_collapse">Жию</string>
+    <string name="expandable_section_expand">Жайю</string>
+    <string name="fixed_delay_1_second">Тұрақты кідіріс: 1 секунд</string>
+    <string name="open_after_save">Сақтағаннан кейін ашу</string>
+    <string name="seconds">сек</string>
+    <string name="seconds_short">с</string>
+    <string name="use_delay">Кідірісті қолдану</string>
+
+    <!-- Settings screen -->
+    <string name="android_12_required">Android 12+ қажет</string>
+    <string name="appearance">Сыртқы келбет</string>
+    <string name="dark_theme">Қараңғы</string>
+    <string name="dynamic_colors">Динамикалық түстер</string>
+    <string name="dynamic_colors_description">Тұсқағазға бейімделу (Material You)</string>
+    <string name="fab_size">FAB өлшемі</string>
+    <string name="fab_size_description">Экрандардағы негізгі түйменің өлшемі</string>
+    <string name="fab_size_large">L (Үлкен)</string>
+    <string name="fab_size_large_desc">Үлкейтілген өлшем</string>
+    <string name="fab_size_medium">M (Орташа)</string>
+    <string name="fab_size_medium_desc">Стандартты өлшем</string>
+    <string name="fab_size_small">S (Кіші)</string>
+    <string name="fab_size_small_desc">Шағын өлшем</string>
+    <string name="general">Жалпы</string>
+    <string name="language">Тіл</string>
+    <string name="language_description">Қолданба тілін таңдаңыз</string>
+    <string name="language_english">Ағылшын</string>
+    <string name="language_russian">Орыс</string>
+    <string name="language_ukrainian">Украин</string>
+    <string name="language_belarusian">Белорус</string>
+    <string name="language_polish">Поляк</string>
+    <string name="language_kazakh">Қазақ</string>
+    <string name="language_hindi">Хинди</string>
+    <string name="language_spanish">Испан</string>
+    <string name="language_french">Француз</string>
+    <string name="language_system">Жүйелік</string>
+    <string name="light_theme">Жарық</string>
+    <string name="settings_appearance_subtitle">Тақырып, динамикалық түстер, FAB өлшемі</string>
+    <string name="settings_general_subtitle">Тіл және діріл</string>
+    <string name="system_theme">Жүйелік</string>
+    <string name="theme">Тақырып</string>
+    <string name="theme_description">Қолданба тақырыбын таңдаңыз</string>
+    <string name="use_wallpaper_colors">Тұсқағаз түстерін қолдану (Android 12+)</string>
+    <string name="vibration">Діріл</string>
+    <string name="vibration_description">Басқан кездегі жауап</string>
+    <string name="vibration_intensity">Діріл күші</string>
+    <string name="vibration_low">Төмен</string>
+    <string name="vibration_medium">Орташа</string>
+    <string name="vibration_high">Жоғары</string>
+    <string name="vibration_switch_description_on">Қолданбадағы тактильді жауапты қосады</string>
+    <string name="vibration_switch_description_off">Қолданбадағы барлық тактильді жауапты өшіреді</string>
+    <string name="shake_to_generate">Генерациялау үшін сілку</string>
+    <string name="shake_to_generate_description">Кездейсоқ мәндерді генерациялау үшін құрылғыны сілкіңіз</string>
+    <string name="shake_to_generate_description_on">Сандар, Сүйектер немесе Тізімдер экранында құрылғыны сілкіңіз</string>
+    <string name="shake_to_generate_description_off">Сілку арқылы генерациялау өшірулі</string>
+
+    <!-- About screen -->
+    <string name="about_app">Қолданба туралы</string>
+    <string name="app_icon">Қолданба белгішесі</string>
+    <string name="bug_report_subtitle">Мәселені сипаттап, бізге жіберіңіз</string>
+    <string name="bug_report_title">Қате туралы хабарлау</string>
+    <string name="connect_with_us_category_title">Бізбен байланыс</string>
+    <string name="contact_us">Кері байланыс</string>
+    <string name="development_category_title">Әзірлеу</string>
+    <string name="discord_subtitle">Біздің Discord сервер</string>
+    <string name="discord_title">Discord</string>
+    <string name="discord_url" translatable="false">https://discord.gg/byteflipper</string>
+    <string name="error_no_browser_found">Сілтемені ашу үшін браузер табылмады</string>
+    <string name="github_subtitle">Біздің Github репозиторий</string>
+    <string name="github_title">Github</string>
+    <string name="github_url" translatable="false">https://github.com/ByteFlipper-58/</string>
+    <string name="made_with_love">ByteFlipper-де ❤️-пен жасалған</string>
+    <string name="other_apps_subtitle">Біздің басқа қолданбалар</string>
+    <string name="other_apps_title">Басқа қолданбалар</string>
+    <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="rate_the_app_subtitle">Google Play-де бағалаңыз</string>
+    <string name="rate_the_app_title">Қолданбаны бағалау</string>
+    <string name="source_code_subtitle">GitHub-тағы бастапқы код</string>
+    <string name="source_code_title">Бастапқы код</string>
+    <string name="source_code_url" translatable="false">https://github.com/ByteFlipper-58/random</string>
+    <string name="support_feedback_category_title">Қолдау және пікірлер</string>
+    <string name="telegram_subtitle">Біздің Telegram арна</string>
+    <string name="telegram_title">Telegram</string>
+    <string name="telegram_url" translatable="false">https://t.me/byte_flipper</string>
+    <string name="version">Нұсқа</string>
+    <string name="vk_subtitle">Біздің ВКонтакте тобы</string>
+    <string name="vk_title">ВКонтакте</string>
+    <string name="vk_url" translatable="false">https://vk.com/byteflipper</string>
+    <string name="website_subtitle">Біздің сайт</string>
+    <string name="website_title">ByteFlipper сайты</string>
+    <string name="website_url" translatable="false">https://byteflipper.com/</string>
+    <string name="youtube_subtitle">Біздің YouTube арна</string>
+    <string name="youtube_title">YouTube</string>
+    <string name="youtube_url" translatable="false">https://www.youtube.com/</string>
+
+    <!-- Setup screen -->
+    <string name="setup_enable_notifications">Хабарландыруларды қосу</string>
+    <string name="setup_finish_description">Енді сіз кездейсоқтыққа сене аласыз 🎲</string>
+    <string name="setup_finish_title">Дайын!</string>
+    <string name="setup_notifications_description">Жаңартулар мен маңызды оқиғалар туралы хабардар болу үшін хабарландыруларды қосыңыз.</string>
+    <string name="setup_notifications_title">Хабарландырулар</string>
+    <string name="setup_permission_error">Қажетті рұқсаттардың барлығын беріңіз.</string>
+    <string name="setup_permission_granted">Рұқсат берілді</string>
+    <string name="setup_welcome_description">Қолданбаны сіз үшін дайындайық.</string>
+    <string name="setup_welcome_title">Randify-ке қош келдіңіз</string>
+
+</resources>

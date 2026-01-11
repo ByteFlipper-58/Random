@@ -54,6 +54,10 @@ fun SettingsGeneralContent(
             AppLanguage.Ukrainian -> "uk"
             AppLanguage.Belarusian -> "be"
             AppLanguage.Polish -> "pl"
+            AppLanguage.Kazakh -> "kk"
+            AppLanguage.Hindi -> "hi"
+            AppLanguage.Spanish -> "es"
+            AppLanguage.French -> "fr"
         }
 
         val langItems = listOf(
@@ -62,7 +66,11 @@ fun SettingsGeneralContent(
             "ru" to stringResource(R.string.language_russian),
             "uk" to stringResource(R.string.language_ukrainian),
             "be" to stringResource(R.string.language_belarusian),
-            "pl" to stringResource(R.string.language_polish)
+            "pl" to stringResource(R.string.language_polish),
+            "kk" to stringResource(R.string.language_kazakh),
+            "hi" to stringResource(R.string.language_hindi),
+            "es" to stringResource(R.string.language_spanish),
+            "fr" to stringResource(R.string.language_french)
         )
 
         FlowRow(
@@ -81,6 +89,10 @@ fun SettingsGeneralContent(
                             "uk" -> AppLanguage.Ukrainian
                             "be" -> AppLanguage.Belarusian
                             "pl" -> AppLanguage.Polish
+                            "kk" -> AppLanguage.Kazakh
+                            "hi" -> AppLanguage.Hindi
+                            "es" -> AppLanguage.Spanish
+                            "fr" -> AppLanguage.French
                             else -> AppLanguage.System
                         }
                         onSetLanguage(language)
