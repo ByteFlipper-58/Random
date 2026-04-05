@@ -29,7 +29,13 @@ fun AboutContent(
 ) {
     val scrollState = rememberScrollState()
     val primaryColorArgb = MaterialTheme.colorScheme.primary.toArgb()
-    val otherAppsUrl = stringResource(R.string.app_name)
+    val rateTheAppUrl = stringResource(R.string.play_store_url)
+    val otherAppsUrl = stringResource(R.string.other_apps_url)
+    val websiteUrl = stringResource(R.string.website_url)
+    val vkUrl = stringResource(R.string.vk_url)
+    val telegramUrl = stringResource(R.string.telegram_url)
+    val githubUrl = stringResource(R.string.github_url)
+    val sourceCodeUrl = stringResource(R.string.source_code_url)
 
     Column(
         modifier = modifier
@@ -41,7 +47,7 @@ fun AboutContent(
     ) {
         HeroAppCard(
             title = stringResource(R.string.app_name),
-            subtitle = "Ваш надежный помощник для случайного выбора",
+            subtitle = stringResource(R.string.about_hero_subtitle),
             appName = stringResource(R.string.app_name),
             developerName = "ByteFlipper",
             appIcon = painterResource(id = R.drawable.logo)
@@ -58,7 +64,7 @@ fun AboutContent(
                     title = stringResource(R.string.rate_the_app_title),
                     subtitle = stringResource(R.string.rate_the_app_subtitle),
                     icon = painterResource(R.drawable.rate_review_24px),
-                    onClick = { onOpenUrl("https://play.google.com/store/apps/details?id=com.byteflipper.random") }
+                    onClick = { onOpenUrl(rateTheAppUrl) }
                 )
 
                 AnimatedActionItem(
@@ -82,21 +88,21 @@ fun AboutContent(
                     title = stringResource(R.string.website_title),
                     subtitle = stringResource(R.string.website_subtitle),
                     icon = painterResource(R.drawable.web_24px),
-                    onClick = { onOpenUrl("https://byteflipper.web.app") }
+                    onClick = { onOpenUrl(websiteUrl) }
                 )
 
                 AnimatedActionItem(
                     title = stringResource(R.string.vk_title),
                     subtitle = stringResource(R.string.vk_subtitle),
                     icon = painterResource(R.drawable.vk_24),
-                    onClick = { onOpenUrl("https://vk.com/byteflipper") }
+                    onClick = { onOpenUrl(vkUrl) }
                 )
 
                 AnimatedActionItem(
                     title = stringResource(R.string.telegram_title),
                     subtitle = stringResource(R.string.telegram_subtitle),
                     icon = painterResource(R.drawable.telegram_24),
-                    onClick = { onOpenUrl("https://t.me/byteflipper") },
+                    onClick = { onOpenUrl(telegramUrl) },
                     showDivider = false
                 )
             }
@@ -113,14 +119,14 @@ fun AboutContent(
                     title = stringResource(R.string.github_title),
                     subtitle = stringResource(R.string.github_subtitle),
                     icon = painterResource(R.drawable.github_24),
-                    onClick = { onOpenUrl("https://github.com/ByteFlipper-58") }
+                    onClick = { onOpenUrl(githubUrl) }
                 )
 
                 AnimatedActionItem(
                     title = stringResource(R.string.source_code_title),
                     subtitle = stringResource(R.string.source_code_subtitle),
                     icon = painterResource(R.drawable.code_24px),
-                    onClick = { onOpenUrl("https://github.com/ByteFlipper-58/random") },
+                    onClick = { onOpenUrl(sourceCodeUrl) },
                     showDivider = false
                 )
             }

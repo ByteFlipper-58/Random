@@ -210,6 +210,7 @@
 
     <!-- About screen -->
     <string name="about_app">О приложении</string>
+    <string name="about_hero_subtitle">Ваш надежный помощник для случайного выбора</string>
     <string name="app_icon">Иконка приложения</string>
     <string name="bug_report_subtitle">Опишите проблему и отправьте нам</string>
     <string name="bug_report_title">Сообщить об ошибке</string>
@@ -227,6 +228,7 @@
     <string name="other_apps_subtitle">Наши другие приложения</string>
     <string name="other_apps_title">Другие приложения</string>
     <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="play_store_url" translatable="false">https://play.google.com/store/apps/details?id=com.byteflipper.random</string>
     <string name="rate_the_app_subtitle">Оцените приложение в Google Play</string>
     <string name="rate_the_app_title">Оценить приложение</string>
     <string name="source_code_subtitle">Исходный код приложения на GitHub</string>

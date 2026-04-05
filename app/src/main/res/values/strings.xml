@@ -210,6 +210,7 @@
 
     <!-- About screen -->
     <string name="about_app">About App</string>
+    <string name="about_hero_subtitle">Your trusted assistant for random choices</string>
     <string name="app_icon">App icon</string>
     <string name="bug_report_subtitle">Please describe the problem and send it to us</string>
     <string name="bug_report_title">Bug Report</string>
@@ -227,6 +228,7 @@
     <string name="other_apps_subtitle">Our Other Apps</string>
     <string name="other_apps_title">Other Apps</string>
     <string name="other_apps_url" translatable="false">https://play.google.com/store/apps/dev?id=8551876312630719902</string>
+    <string name="play_store_url" translatable="false">https://play.google.com/store/apps/details?id=com.byteflipper.random</string>
     <string name="rate_the_app_subtitle">Rate the app on Google Play</string>
     <string name="rate_the_app_title">Rate the app</string>
     <string name="source_code_subtitle">Source code of the application on GitHub</string>

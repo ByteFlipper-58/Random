@@ -145,13 +145,13 @@ class MainActivity : AppCompatActivity() {
             activity = this,
             onReadyForAds = { canRequest ->
                 if (canRequest) {
-                    appOpenAdManager.showAdIfAvailable()
+                    appOpenAdManager.preload()
                     interstitialAdManager.preload()
                 }
             },
             onError = { _ ->
                 if (consentManager.canRequestAds()) {
-                    appOpenAdManager.showAdIfAvailable()
+                    appOpenAdManager.preload()
                     interstitialAdManager.preload()
                 }
             }

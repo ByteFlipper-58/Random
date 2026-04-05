@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -45,6 +44,7 @@ object AppRoutes {
     const val Dice: String = "dice"
     const val Lot: String = "lot"
     const val Coin: String = "coin"
+    const val Wheel: String = "wheel"
     const val Settings: String = "settings"
     const val SettingsGeneral: String = "settings_general"
     const val SettingsAppearance: String = "settings_appearance"
@@ -99,11 +99,9 @@ fun AppRoot() {
                             onOpenDice = { navController.navigate(AppRoutes.Dice) },
                             onOpenLot = { navController.navigate(AppRoutes.Lot) },
                             onOpenCoin = { navController.navigate(AppRoutes.Coin) },
-                            onOpenWheel = { navController.navigate("wheel") },
+                            onOpenWheel = { navController.navigate(AppRoutes.Wheel) },
                             onOpenSettings = { navController.navigate(AppRoutes.Settings) },
-                            onOpenAbout = { navController.navigate(AppRoutes.About) },
-                            onAddNumbersPreset = { },
-                            onAddListPreset = { navController.navigate("add_list_preset") }
+                            onOpenAbout = { navController.navigate(AppRoutes.About) }
                         )
                     }
                     composable(
@@ -135,7 +133,7 @@ fun AppRoot() {
                         popExitTransition = NavTransitions.popExit
                     ) { CoinScreen(onBack = { navController.popBackStack() }) }
                     composable(
-                        route = "wheel",
+                        route = AppRoutes.Wheel,
                         enterTransition = NavTransitions.enter,
                         exitTransition = NavTransitions.exit,
                         popEnterTransition = NavTransitions.popEnter,

@@ -100,8 +100,6 @@ fun HomeScreen(
     onOpenWheel: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
-    onAddNumbersPreset: () -> Unit,
-    onAddListPreset: () -> Unit, // оставлен для совместимости
 ) {
  
     val viewModel: HomeViewModel = hiltViewModel()
