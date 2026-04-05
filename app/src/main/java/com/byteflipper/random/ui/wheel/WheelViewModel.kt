@@ -208,7 +208,7 @@ class WheelViewModel @Inject constructor(
     }
 
     fun checkAd(activity: android.app.Activity) {
-        adsController.onCoinTossed(activity)
+        adsController.onWheelSpun(activity)
     }
 }
 

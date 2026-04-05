@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.byteflipper.random.utils.Constants
@@ -98,6 +99,14 @@ data class Settings(
     val setupCompleted: Boolean = false
 )
 
+data class ReviewPromptState(
+    val firstSeenAtMs: Long = 0L,
+    val sessionCount: Int = 0,
+    val successfulActionCount: Int = 0,
+    val lastReviewRequestAtMs: Long = 0L,
+    val lastReviewRequestVersionCode: Int = 0
+)
+
 @Singleton
 class SettingsRepository @Inject constructor(
     @ApplicationContext private val appContext: Context
@@ -112,6 +121,11 @@ class SettingsRepository @Inject constructor(
         val hapticsIntensity: Preferences.Key<Int> = intPreferencesKey("haptics_intensity")
         val shakeToGenerateEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("shake_to_generate_enabled")
         val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
+        val reviewFirstSeenAtMs: Preferences.Key<Long> = longPreferencesKey("review_first_seen_at_ms")
+        val reviewSessionCount: Preferences.Key<Int> = intPreferencesKey("review_session_count")
+        val reviewSuccessfulActionCount: Preferences.Key<Int> = intPreferencesKey("review_successful_action_count")
+        val reviewLastRequestAtMs: Preferences.Key<Long> = longPreferencesKey("review_last_request_at_ms")
+        val reviewLastRequestVersionCode: Preferences.Key<Int> = intPreferencesKey("review_last_request_version_code")
 
         // Default list storage
         val defaultListName: Preferences.Key<String> = stringPreferencesKey(Constants.DEFAULT_LIST_NAME_KEY)
@@ -176,6 +190,59 @@ class SettingsRepository @Inject constructor(
     suspend fun setShakeToGenerateEnabled(enabled: Boolean) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.shakeToGenerateEnabled] = enabled
+        }
+    }
+
+    suspend fun recordReviewSessionStart(startedAtMs: Long): ReviewPromptState {
+        var updatedState = ReviewPromptState()
+        appContext.dataStore.edit { prefs ->
+            val firstSeenAtMs = prefs[Keys.reviewFirstSeenAtMs] ?: startedAtMs
+            val sessionCount = (prefs[Keys.reviewSessionCount] ?: 0) + 1
+            val successfulActionCount = prefs[Keys.reviewSuccessfulActionCount] ?: 0
+            val lastReviewRequestAtMs = prefs[Keys.reviewLastRequestAtMs] ?: 0L
+            val lastReviewRequestVersionCode = prefs[Keys.reviewLastRequestVersionCode] ?: 0
+
+            prefs[Keys.reviewFirstSeenAtMs] = firstSeenAtMs
+            prefs[Keys.reviewSessionCount] = sessionCount
+
+            updatedState = ReviewPromptState(
+                firstSeenAtMs = firstSeenAtMs,
+                sessionCount = sessionCount,
+                successfulActionCount = successfulActionCount,
+                lastReviewRequestAtMs = lastReviewRequestAtMs,
+                lastReviewRequestVersionCode = lastReviewRequestVersionCode
+            )
+        }
+        return updatedState
+    }
+
+    suspend fun recordReviewSuccessfulAction(actionAtMs: Long): ReviewPromptState {
+        var updatedState = ReviewPromptState()
+        appContext.dataStore.edit { prefs ->
+            val firstSeenAtMs = prefs[Keys.reviewFirstSeenAtMs] ?: actionAtMs
+            val sessionCount = prefs[Keys.reviewSessionCount] ?: 0
+            val successfulActionCount = (prefs[Keys.reviewSuccessfulActionCount] ?: 0) + 1
+            val lastReviewRequestAtMs = prefs[Keys.reviewLastRequestAtMs] ?: 0L
+            val lastReviewRequestVersionCode = prefs[Keys.reviewLastRequestVersionCode] ?: 0
+
+            prefs[Keys.reviewFirstSeenAtMs] = firstSeenAtMs
+            prefs[Keys.reviewSuccessfulActionCount] = successfulActionCount
+
+            updatedState = ReviewPromptState(
+                firstSeenAtMs = firstSeenAtMs,
+                sessionCount = sessionCount,
+                successfulActionCount = successfulActionCount,
+                lastReviewRequestAtMs = lastReviewRequestAtMs,
+                lastReviewRequestVersionCode = lastReviewRequestVersionCode
+            )
+        }
+        return updatedState
+    }
+
+    suspend fun markReviewPromptRequested(requestedAtMs: Long, requestedVersionCode: Int) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.reviewLastRequestAtMs] = requestedAtMs
+            prefs[Keys.reviewLastRequestVersionCode] = requestedVersionCode
         }
     }
 

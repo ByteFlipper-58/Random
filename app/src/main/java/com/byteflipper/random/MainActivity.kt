@@ -16,6 +16,7 @@ import com.byteflipper.random.ads.InterstitialAdManager
 import com.byteflipper.random.consent.ConsentManager
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.ThemeMode
+import com.byteflipper.random.review.InAppReviewManager
 import com.byteflipper.random.ui.app.AppRoot
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
@@ -24,13 +25,11 @@ import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -48,10 +47,17 @@ class MainActivity : AppCompatActivity() {
     lateinit var appOpenAdManager: AppOpenAdManager
     @Inject
     lateinit var consentManager: ConsentManager
+    @Inject
+    lateinit var inAppReviewManager: InAppReviewManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            lifecycleScope.launch {
+                inAppReviewManager.onSessionStarted()
+            }
+        }
         // Keep splash screen visible until settings are loaded
         var keepSplashOnScreen = true
         splashScreen.setKeepOnScreenCondition { keepSplashOnScreen }
@@ -84,9 +90,6 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(nightMode)
             
             keepSplashOnScreen = false
-
-            // Trigger In-App Review after splash
-            maybeLaunchInAppReview()
         }
 
         enableEdgeToEdge()
@@ -188,13 +191,5 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         installStateUpdatedListener?.let { appUpdateManager.unregisterListener(it) }
         super.onStop()
-    }
-
-    private suspend fun maybeLaunchInAppReview() {
-        runCatching {
-            val reviewManager = ReviewManagerFactory.create(this)
-            val reviewInfo = reviewManager.requestReviewFlow().await()
-            reviewManager.launchReviewFlow(this, reviewInfo).await()
-        }
     }
 }

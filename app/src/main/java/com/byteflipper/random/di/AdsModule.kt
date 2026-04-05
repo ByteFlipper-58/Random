@@ -7,6 +7,7 @@ import com.byteflipper.random.ads.AdsInitializer
 import com.byteflipper.random.ads.AppOpenAdManager
 import com.byteflipper.random.ads.InterstitialAdManager
 import com.byteflipper.random.consent.ConsentManager
+import com.byteflipper.random.review.InAppReviewManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,9 +43,10 @@ object AdsModule {
     @Singleton
     fun provideAdsController(
         interstitialAdManager: InterstitialAdManager,
-        consentManager: ConsentManager
+        consentManager: ConsentManager,
+        inAppReviewManager: InAppReviewManager
     ): AdsController {
-        return AdsController(interstitialAdManager, consentManager)
+        return AdsController(interstitialAdManager, consentManager, inAppReviewManager)
     }
 
     @Provides
