@@ -291,16 +291,25 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    fun saveAsNewPreset(onPresetCreated: (Long) -> Unit) {
-        val state = _uiState.value
-        val name = state.saveName.trim()
+    fun saveAsNewPreset(
+        name: String,
+        openAfterSave: Boolean,
+        onPresetCreated: (Long) -> Unit
+    ) {
+        val trimmedName = name.trim()
         val items = getBaseItems()
 
-        if (name.isNotEmpty() && items.isNotEmpty()) {
+        if (trimmedName.isNotEmpty() && items.isNotEmpty()) {
             viewModelScope.launch {
-                val newId = listPresetRepository.upsert(ListPreset(name = name, items = items))
-                _uiState.update { it.copy(showSaveDialog = false) }
-                if (state.openAfterSave) {
+                val newId = listPresetRepository.upsert(ListPreset(name = trimmedName, items = items))
+                _uiState.update {
+                    it.copy(
+                        showSaveDialog = false,
+                        saveName = trimmedName,
+                        openAfterSave = openAfterSave
+                    )
+                }
+                if (openAfterSave) {
                     onPresetCreated(newId)
                 }
             }

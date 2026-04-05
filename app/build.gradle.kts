@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.androidx.room)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
@@ -17,7 +18,7 @@ android {
         applicationId = "com.byteflipper.random"
         minSdk = 26
         targetSdk = 36
-        versionCode = 11
+        versionCode = 15
         versionName = "v1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -51,6 +52,10 @@ android {
         generateLocaleConfig = true
         localeFilters += listOf("en", "ru", "uk", "be", "pl", "kk", "hi", "es", "fr")
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {

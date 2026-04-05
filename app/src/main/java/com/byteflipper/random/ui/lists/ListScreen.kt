@@ -82,11 +82,20 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     var fabCenterInRoot by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
     var fabSize by remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
     var isGenerating by remember { androidx.compose.runtime.mutableStateOf(false) }
+    var pendingOpenPresetId by remember { androidx.compose.runtime.mutableStateOf<Long?>(null) }
 
     val flipState = rememberFlipCardState()
     val flipCtrl = FlipCardControls(flipState)
 
     val ctx = LocalContext.current
+
+    LaunchedEffect(uiState.showSaveDialog, pendingOpenPresetId) {
+        val presetToOpen = pendingOpenPresetId
+        if (!uiState.showSaveDialog && presetToOpen != null) {
+            pendingOpenPresetId = null
+            onOpenListById(presetToOpen)
+        }
+    }
 
     fun handleGenerate() {
         val base = viewModel.getBaseItems()
@@ -349,12 +358,11 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     presetCount = presets.size,
                     onDismiss = { viewModel.onEvent(ListUiEvent.ToggleSaveDialog) },
                     onConfirm = { name, shouldOpenAfterSave ->
-                        viewModel.onEvent(ListUiEvent.UpdateSaveName(name))
-                        viewModel.onEvent(ListUiEvent.UpdateOpenAfterSave(shouldOpenAfterSave))
-                        viewModel.saveAsNewPreset { newId ->
-                            if (shouldOpenAfterSave) {
-                                onOpenListById(newId)
-                            }
+                        viewModel.saveAsNewPreset(
+                            name = name,
+                            openAfterSave = shouldOpenAfterSave
+                        ) { newId ->
+                            pendingOpenPresetId = newId
                         }
                     }
                 )

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,6 +29,7 @@ fun HomeMenuBottomSheet(
     if (!visible) return
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
@@ -71,8 +74,11 @@ fun HomeMenuBottomSheet(
                 // О приложении - Filled Button
                 FilledTonalButton(
                     onClick = {
-                        onDismissRequest()
-                        onOpenAbout()
+                        scope.launch {
+                            sheetState.hide()
+                            onDismissRequest()
+                            onOpenAbout()
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -93,8 +99,11 @@ fun HomeMenuBottomSheet(
                 // Настройки - Filled Button
                 FilledTonalButton(
                     onClick = {
-                        onDismissRequest()
-                        onOpenSettings()
+                        scope.launch {
+                            sheetState.hide()
+                            onDismissRequest()
+                            onOpenSettings()
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()

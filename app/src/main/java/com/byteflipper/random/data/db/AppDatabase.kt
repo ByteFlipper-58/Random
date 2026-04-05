@@ -9,7 +9,7 @@ import com.byteflipper.random.data.preset.ListPresetDao
 @Database(
     entities = [ListPreset::class],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

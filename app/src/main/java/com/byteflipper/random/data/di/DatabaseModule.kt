@@ -3,7 +3,7 @@ package com.byteflipper.random.data.di
 import android.content.Context
 import androidx.room.Room
 import com.byteflipper.random.data.db.AppDatabase
-import com.byteflipper.random.data.db.Converters
+import com.byteflipper.random.data.db.AppMigrations
 import com.byteflipper.random.data.preset.ListPresetDao
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.data.settings.SettingsRepository
@@ -27,7 +27,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             DATABASE_NAME
         )
-            .fallbackToDestructiveMigration(true)
+            .addMigrations(*AppMigrations.ALL)
             .build()
     }
 

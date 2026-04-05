@@ -84,6 +84,7 @@ play-review-ktx = { group = "com.google.android.play", name = "review-ktx", vers
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 hilt-android-plugin = { id = "com.google.dagger.hilt.android.plugin", version.ref = "hilt" }
