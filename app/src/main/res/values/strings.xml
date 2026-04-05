@@ -252,6 +252,7 @@
     <string name="setup_finish_description">You\'re ready to trust randomness 🎲</string>
     <string name="setup_finish_title">All Set!</string>
     <string name="setup_notifications_description">Enable notifications to receive push alerts about new updates and other important events.</string>
+    <string name="setup_notifications_optional">Optional. You can continue without this and enable notifications later in system settings.</string>
     <string name="setup_notifications_title">Notifications</string>
     <string name="setup_permission_error">Please grant all required permissions.</string>
     <string name="setup_permission_granted">Permission Granted</string>

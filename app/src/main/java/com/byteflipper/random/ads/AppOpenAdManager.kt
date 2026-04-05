@@ -2,8 +2,6 @@ package com.byteflipper.random.ads
 
 import android.app.Activity
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -18,7 +16,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class AppOpenAdManager(
     private val application: Application,
-    private val consentManager: com.byteflipper.random.consent.ConsentManager
+    private val consentManager: com.byteflipper.random.consent.ConsentManager,
+    private val adsInitializer: AdsInitializer
 ) : DefaultLifecycleObserver, Application.ActivityLifecycleCallbacks {
 
     private var appOpenAd: AppOpenAd? = null
@@ -52,24 +51,30 @@ class AppOpenAdManager(
         if (!consentManager.canRequestAds()) return
         if (isLoadingAd.get() || isAdAvailable()) return
 
-        isLoadingAd.set(true)
-        val request = AdRequest.Builder().build()
-        AppOpenAd.load(
-            application,
-            if (BuildConfig.DEBUG) testAdUnitId else adUnitId,
-            request,
-            object : AppOpenAdLoadCallback() {
-                override fun onAdLoaded(ad: AppOpenAd) {
-                    appOpenAd = ad
-                    isLoadingAd.set(false)
-                    onAdLoadedCallback?.invoke()
-                }
-
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                    isLoadingAd.set(false)
-                }
+        adsInitializer.initializeIfNeeded {
+            if (!consentManager.canRequestAds() || isLoadingAd.get() || isAdAvailable()) {
+                return@initializeIfNeeded
             }
-        )
+
+            isLoadingAd.set(true)
+            val request = AdRequest.Builder().build()
+            AppOpenAd.load(
+                application,
+                if (BuildConfig.DEBUG) testAdUnitId else adUnitId,
+                request,
+                object : AppOpenAdLoadCallback() {
+                    override fun onAdLoaded(ad: AppOpenAd) {
+                        appOpenAd = ad
+                        isLoadingAd.set(false)
+                        onAdLoadedCallback?.invoke()
+                    }
+
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        isLoadingAd.set(false)
+                    }
+                }
+            )
+        }
     }
 
     private fun isAdAvailable(): Boolean {

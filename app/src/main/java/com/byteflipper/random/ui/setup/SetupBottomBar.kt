@@ -26,7 +26,6 @@ import com.byteflipper.random.ui.theme.Dimens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -50,11 +49,9 @@ import racra.compose.smooth_corner_rect_library.AbsoluteSmoothCornerShape
 @Composable
 fun SetupBottomBar(
     modifier: Modifier = Modifier,
-    animated: Boolean = false,
     pagerState: PagerState,
     onNextClicked: () -> Unit,
-    onFinishClicked: () -> Unit,
-    isFinishButtonEnabled: Boolean
+    onFinishClicked: () -> Unit
 ) {
     val morphAnimationSpec = tween<Float>(durationMillis = 600, easing = FastOutSlowInEasing)
     val rotationAnimationSpec = tween<Float>(durationMillis = 900, easing = FastOutSlowInEasing)
@@ -136,16 +133,6 @@ fun SetupBottomBar(
                 }
 
                 val isLastPage = pagerState.currentPage == pagerState.pageCount - 1
-                val containerColor = if (isLastPage && !isFinishButtonEnabled) {
-                    MaterialTheme.colorScheme.surfaceContainerHighest
-                } else {
-                    MaterialTheme.colorScheme.primaryContainer
-                }
-                val contentColor = if (isLastPage && !isFinishButtonEnabled) {
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.58f)
-                } else {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                }
 
                 FloatingActionButton (
                     onClick = if (isLastPage) onFinishClicked else onNextClicked,
@@ -160,8 +147,8 @@ fun SetupBottomBar(
                         smoothnessAsPercentBR = 60,
                     ),
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
-                    containerColor = containerColor,
-                    contentColor = contentColor,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     modifier = Modifier
                         .rotate(animatedRotation)
                         .padding(end = 0.dp)
@@ -186,11 +173,7 @@ fun SetupBottomBar(
                         if (isNextPage) {
                             Icon(Icons.Rounded.ArrowForward, contentDescription = "Next")
                         } else {
-                            if (isFinishButtonEnabled) {
-                                Icon(Icons.Rounded.Check, contentDescription = "Finish")
-                            } else {
-                                Icon(Icons.Rounded.Close, contentDescription = "Finish")
-                            }
+                            Icon(Icons.Rounded.Check, contentDescription = "Finish")
                         }
                     }
                 }

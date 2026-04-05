@@ -12,12 +12,12 @@
   </p>
 </div>
 
-![Android 9+](https://img.shields.io/badge/Android-9%2B-3DDC84?logo=android&logoColor=white)
+![Android 8+](https://img.shields.io/badge/Android-8%2B-3DDC84?logo=android&logoColor=white)
 ![Made with Kotlin](https://img.shields.io/badge/Made%20with-Kotlin-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-4285F4)
 ![Material 3](https://img.shields.io/badge/Material%203-Design-FF6F00)
 ![Privacy friendly](https://img.shields.io/badge/Privacy-friendly-00BFA5)
-![Offline](https://img.shields.io/badge/Works-Offline-795548)
+![Offline](https://img.shields.io/badge/Core%20features-Offline-795548)
 ![GPLv3](https://img.shields.io/badge/License-GPLv3-black)
 
 ## 🚀 Что умеет
@@ -56,8 +56,10 @@
 
 ## 🔐 Приватность и удобство
 
-- 🔐 **Нет аккаунтов**, трекинга и аналитики
-- 📵 **Работает офлайн**, интернет не требуется
+- 🔐 **Аккаунт не нужен**, поведенческая аналитика не используется
+- 🎯 **Реклама показывается только после consent** через Google UMP
+- 🛠 **Отчёты о сбоях** отправляются через Firebase Crashlytics
+- 📵 **Основные генераторы работают офлайн**, но для рекламы, проверки обновлений и внешних ссылок нужен интернет
 - 💾 **Данные и настройки** хранятся локально на вашем устройстве
 - 🌓 **Поддержка тёмной темы** и динамических цветов (Material You)
 - 🎨 **Современный Material 3** дизайн
@@ -74,7 +76,7 @@
 > Возможны реклама и внутриигровые покупки.
 
 **Нужен интернет?**
-> Нет, всё работает локально.
+> Для основных генераторов нет. Интернет используется для рекламы, проверки обновлений, отправки crash-отчётов и открытия внешних ссылок.
 
 ## 📥 Скачать
 
@@ -86,8 +88,8 @@
 - **Язык**: Kotlin
 - **UI Framework**: Jetpack Compose
 - **Дизайн**: Material 3
-- **Минимальная версия Android**: API 28 (Android 9.0)
-- **Целевая версия Android**: API 36 (Android 14)
+- **Минимальная версия Android**: API 26 (Android 8.0)
+- **Целевая версия Android**: API 36 (Android 16)
 
 ## 🤝 Обратная связь
 

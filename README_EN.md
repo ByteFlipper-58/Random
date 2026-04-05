@@ -12,12 +12,12 @@
   </p>
 </div>
 
-![Android 9+](https://img.shields.io/badge/Android-9%2B-3DDC84?logo=android&logoColor=white)
+![Android 8+](https://img.shields.io/badge/Android-8%2B-3DDC84?logo=android&logoColor=white)
 ![Made with Kotlin](https://img.shields.io/badge/Made%20with-Kotlin-7F52FF?logo=kotlin&logoColor=white)
 ![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-UI-4285F4)
 ![Material 3](https://img.shields.io/badge/Material%203-Design-FF6F00)
 ![Privacy friendly](https://img.shields.io/badge/Privacy-friendly-00BFA5)
-![Offline](https://img.shields.io/badge/Works-Offline-795548)
+![Offline](https://img.shields.io/badge/Core%20features-Offline-795548)
 ![GPLv3](https://img.shields.io/badge/License-GPLv3-black)
 
 ## 🚀 Features
@@ -56,8 +56,10 @@
 
 ## 🔐 Privacy and convenience
 
-- 🔐 **No accounts**, tracking or analytics
-- 📵 **Works offline**, internet not required
+- 🔐 **No account required**, and behavioral analytics is not used
+- 🎯 **Ads are requested only after consent** through Google UMP
+- 🛠 **Crash reports** are collected through Firebase Crashlytics
+- 📵 **Core generators work offline**, but ads, update checks, and external links require internet
 - 💾 **Data and settings** stored locally on your device
 - 🌓 **Dark theme support** and dynamic colors (Material You)
 - 🎨 **Modern Material 3** design
@@ -74,7 +76,7 @@
 > Ads and in‑app purchases may be present.
 
 **Do I need internet?**
-> No, everything works locally.
+> Not for the core generators. Internet is used for ads, update checks, crash reporting, and opening external links.
 
 ## 📥 Download
 
@@ -86,8 +88,8 @@
 - **Language**: Kotlin
 - **UI Framework**: Jetpack Compose
 - **Design**: Material 3
-- **Minimum Android version**: API 28 (Android 9.0)
-- **Target Android version**: API 36 (Android 14)
+- **Minimum Android version**: API 26 (Android 8.0)
+- **Target Android version**: API 36 (Android 16)
 
 ## 🤝 Feedback
 

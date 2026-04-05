@@ -3,10 +3,8 @@ package com.byteflipper.random.ui.setup
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,8 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,9 +47,6 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.theme.ExpTitleTypography
 import kotlinx.collections.immutable.ImmutableList
@@ -66,33 +59,14 @@ fun SetupScreen(
     setupViewModel: SetupViewModel = hiltViewModel(),
     onSetupComplete: () -> Unit
 ) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val uiState by setupViewModel.uiState.collectAsState()
-
-    // Re-check permissions when the screen is resumed
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                setupViewModel.checkPermissions(context)
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }
-
     val pages = remember {
-        val list = mutableListOf<SetupPage>(
-            SetupPage.Welcome,
-        )
-        // Add notifications permission page for Android 13+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            list.add(SetupPage.NotificationsPermission)
+        buildList {
+            add(SetupPage.Welcome)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                add(SetupPage.NotificationsPermission)
+            }
+            add(SetupPage.Finish)
         }
-        list.add(SetupPage.Finish)
-        list
     }
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
@@ -102,21 +76,14 @@ fun SetupScreen(
         bottomBar = {
             SetupBottomBar(
                 pagerState = pagerState,
-                animated = (pagerState.currentPage != 0),
-                isFinishButtonEnabled = uiState.allPermissionsGranted,
                 onNextClicked = {
                     scope.launch {
                         pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 },
                 onFinishClicked = {
-                    setupViewModel.checkPermissions(context)
-                    if (uiState.allPermissionsGranted) {
-                        setupViewModel.setSetupComplete()
-                        onSetupComplete()
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.setup_permission_error), Toast.LENGTH_SHORT).show()
-                    }
+                    setupViewModel.setSetupComplete()
+                    onSetupComplete()
                 }
             )
         }
@@ -141,7 +108,7 @@ fun SetupScreen(
             ) {
                 when (page) {
                     SetupPage.Welcome -> WelcomePage()
-                    SetupPage.NotificationsPermission -> NotificationsPermissionPage(uiState)
+                    SetupPage.NotificationsPermission -> NotificationsPermissionPage()
                     SetupPage.Finish -> FinishPage()
                 }
             }
@@ -233,11 +200,38 @@ fun WelcomePage() {
 }
 
 @Composable
-fun NotificationsPermissionPage(uiState: SetupUiState) {
+fun FinishPage() {
+    val finishIcons = persistentListOf(
+        R.drawable.check_circle_24px,
+        R.drawable.favorite_24px,
+        R.drawable.celebration_24px,
+        R.drawable.star_shine_24px,
+        R.drawable.explosion_24px
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(text = stringResource(R.string.setup_finish_title), style = MaterialTheme.typography.headlineLarge)
+        Spacer(modifier = Modifier.height(16.dp))
+        PermissionIconCollage(
+            modifier = Modifier.height(230.dp),
+            icons = finishIcons
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = stringResource(R.string.setup_finish_description), style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+fun NotificationsPermissionPage() {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
 
     val context = LocalContext.current
-
     var isGranted by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -265,42 +259,25 @@ fun NotificationsPermissionPage(uiState: SetupUiState) {
         title = stringResource(R.string.setup_notifications_title),
         granted = isGranted,
         description = stringResource(R.string.setup_notifications_description),
-        buttonText = if (isGranted) stringResource(R.string.setup_permission_granted) else stringResource(R.string.setup_enable_notifications),
+        buttonText = if (isGranted) {
+            stringResource(R.string.setup_permission_granted)
+        } else {
+            stringResource(R.string.setup_enable_notifications)
+        },
         icons = notificationIcons,
         onGrantClicked = {
             if (!isGranted) {
                 launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
-    )
-}
-
-
-@Composable
-fun FinishPage() {
-    val finishIcons = persistentListOf(
-        R.drawable.check_circle_24px,
-        R.drawable.favorite_24px,
-        R.drawable.celebration_24px,
-        R.drawable.star_shine_24px,
-        R.drawable.explosion_24px
-    )
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
     ) {
-        Text(text = stringResource(R.string.setup_finish_title), style = MaterialTheme.typography.headlineLarge)
-        Spacer(modifier = Modifier.height(16.dp))
-        PermissionIconCollage(
-            modifier = Modifier.height(230.dp),
-            icons = finishIcons
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.setup_notifications_optional),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = stringResource(R.string.setup_finish_description), style = MaterialTheme.typography.bodyLarge)
     }
 }
 
@@ -332,9 +309,9 @@ fun PermissionPageLayout(
             enabled = !granted,
             contentPadding = PaddingValues(horizontal = 24.dp, vertical = 12.dp)
         ) {
-            AnimatedVisibility(visible = granted) {
+            if (granted) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Check, contentDescription = "Granted")
+                    Icon(Icons.Rounded.Check, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }

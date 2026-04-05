@@ -100,8 +100,6 @@ class MainActivity : AppCompatActivity() {
             AppRoot()
         }
 
-        interstitialAdManager.preload()
-
         // In-App Update
         setupInAppUpdate()
 

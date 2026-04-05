@@ -252,6 +252,7 @@
     <string name="setup_finish_description">Теперь вы готовы довериться случайности 🎲</string>
     <string name="setup_finish_title">Готово!</string>
     <string name="setup_notifications_description">Включите уведомления, чтобы получать оповещения о новых обновлениях и событиях.</string>
+    <string name="setup_notifications_optional">Необязательно. Можно продолжить без этого и включить уведомления позже в настройках системы.</string>
     <string name="setup_notifications_title">Уведомления</string>
     <string name="setup_permission_error">Пожалуйста, предоставьте все необходимые разрешения.</string>
     <string name="setup_permission_granted">Разрешение предоставлено</string>

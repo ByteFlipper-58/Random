@@ -74,10 +74,7 @@ dependencies {
 	implementation(libs.androidx.lifecycle.process)
 
     // Firebase
-    implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.messaging)
-    implementation(libs.firebase.inappmessaging.display)
 
     // Play Billing и прочее
     implementation(libs.play.billing)
