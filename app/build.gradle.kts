@@ -46,6 +46,10 @@ android {
         compose = true
         buildConfig = true
     }
+    androidResources {
+        generateLocaleConfig = true
+        localeFilters += listOf("en", "ru", "uk", "be", "pl", "kk", "hi", "es", "fr")
+    }
 }
 
 dependencies {

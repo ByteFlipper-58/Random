@@ -47,56 +47,20 @@ fun SettingsGeneralContent(
             description = stringResource(R.string.language_description)
         )
 
-        val langKey = when (state.appLanguage) {
-            AppLanguage.System -> "system"
-            AppLanguage.English -> "en"
-            AppLanguage.Russian -> "ru"
-            AppLanguage.Ukrainian -> "uk"
-            AppLanguage.Belarusian -> "be"
-            AppLanguage.Polish -> "pl"
-            AppLanguage.Kazakh -> "kk"
-            AppLanguage.Hindi -> "hi"
-            AppLanguage.Spanish -> "es"
-            AppLanguage.French -> "fr"
+        val languageItems = AppLanguage.entries.map { language ->
+            language to stringResource(language.labelResId())
         }
-
-        val langItems = listOf(
-            "system" to stringResource(R.string.language_system),
-            "en" to stringResource(R.string.language_english),
-            "ru" to stringResource(R.string.language_russian),
-            "uk" to stringResource(R.string.language_ukrainian),
-            "be" to stringResource(R.string.language_belarusian),
-            "pl" to stringResource(R.string.language_polish),
-            "kk" to stringResource(R.string.language_kazakh),
-            "hi" to stringResource(R.string.language_hindi),
-            "es" to stringResource(R.string.language_spanish),
-            "fr" to stringResource(R.string.language_french)
-        )
 
         FlowRow(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            langItems.forEach { (key, label) ->
+            languageItems.forEach { (language, label) ->
                 CustomChip(
                     label = label,
-                    selected = langKey == key,
-                    onClick = {
-                        val language = when (key) {
-                            "en" -> AppLanguage.English
-                            "ru" -> AppLanguage.Russian
-                            "uk" -> AppLanguage.Ukrainian
-                            "be" -> AppLanguage.Belarusian
-                            "pl" -> AppLanguage.Polish
-                            "kk" -> AppLanguage.Kazakh
-                            "hi" -> AppLanguage.Hindi
-                            "es" -> AppLanguage.Spanish
-                            "fr" -> AppLanguage.French
-                            else -> AppLanguage.System
-                        }
-                        onSetLanguage(language)
-                    }
+                    selected = state.appLanguage == language,
+                    onClick = { onSetLanguage(language) }
                 )
             }
         }
@@ -178,6 +142,19 @@ fun SettingsGeneralContent(
             onCheckedChange = onSetShakeToGenerateEnabled
         )
     }
+}
+
+private fun AppLanguage.labelResId(): Int = when (this) {
+    AppLanguage.System -> R.string.language_system
+    AppLanguage.English -> R.string.language_english
+    AppLanguage.Russian -> R.string.language_russian
+    AppLanguage.Ukrainian -> R.string.language_ukrainian
+    AppLanguage.Belarusian -> R.string.language_belarusian
+    AppLanguage.Polish -> R.string.language_polish
+    AppLanguage.Kazakh -> R.string.language_kazakh
+    AppLanguage.Hindi -> R.string.language_hindi
+    AppLanguage.Spanish -> R.string.language_spanish
+    AppLanguage.French -> R.string.language_french
 }
 
 
