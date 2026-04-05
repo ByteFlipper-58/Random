@@ -43,7 +43,6 @@ fun SettingsAppearanceContent(
             ThemeMode.System -> "system"
             ThemeMode.Light -> "light"
             ThemeMode.Dark -> "dark"
-            else -> "system"
         }
         SingleChoiceSegmentedButtonRow(modifier = Modifier.padding(horizontal = 16.dp)) {
             val items = listOf(
@@ -104,7 +103,6 @@ fun SettingsAppearanceContent(
             FabSizeSetting.Small -> "s"
             FabSizeSetting.Medium -> "m"
             FabSizeSetting.Large -> "l"
-            else -> "m"
         }
         Column(modifier = Modifier.padding(horizontal = 8.dp)) {
             RadioButtonGroup(

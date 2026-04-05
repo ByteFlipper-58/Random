@@ -105,7 +105,7 @@ fun RoundedHexagonShape(
         } else {
             lineTo(p1x, p1y)
         }
-        quadraticBezierTo(v.first, v.second, p2x, p2y)
+        quadraticTo(v.first, v.second, p2x, p2y)
     }
     close()
 }
