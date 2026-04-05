@@ -8,11 +8,14 @@
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
+    <string name="confirm">Confirm</string>
     <string name="delete">Delete</string>
     <string name="disabled">Disabled</string>
     <string name="edit">Edit</string>
     <string name="enabled">Enabled</string>
+    <string name="finish">Finish</string>
     <string name="loading">Loading…</string>
+    <string name="next">Next</string>
     <string name="rename">Rename</string>
     <string name="reset">Reset</string>
     <string name="result">Result</string>
@@ -103,6 +106,7 @@
     <string name="item_2">Item 2</string>
     <string name="item_3">Item 3</string>
     <string name="list_empty">List is empty</string>
+    <string name="list_clipboard_label">Random List</string>
     <string name="list_name">List name</string>
     <string name="my_list">My list</string>
     <string name="new_list">New list</string>
@@ -120,6 +124,9 @@
     <string name="from">FROM</string>
     <string name="history_cleared">Used numbers history cleared</string>
     <string name="number">Number</string>
+    <string name="numbers_clipboard_label">Random Numbers</string>
+    <string name="numbers_reset_used_message">This will clear all used numbers and allow them to be generated again.</string>
+    <string name="numbers_reset_used_title">Reset Used Numbers</string>
     <string name="only_available_numbers">Only %1$d unused numbers available</string>
     <string name="reset_history">Reset used numbers history</string>
     <string name="to">TO</string>
@@ -159,6 +166,7 @@
     <string name="open_after_save">Open after saving</string>
     <string name="seconds">sec</string>
     <string name="seconds_short">s</string>
+    <string name="seconds_short_value">%1$d s</string>
     <string name="use_delay">Use delay</string>
 
     <!-- Settings screen -->
@@ -258,6 +266,8 @@
     <string name="setup_notifications_title">Notifications</string>
     <string name="setup_permission_error">Please grant all required permissions.</string>
     <string name="setup_permission_granted">Permission Granted</string>
+    <string name="setup_lets_go">Let\'s Go!</string>
+    <string name="setup_step_progress">Step %1$d of %2$d</string>
     <string name="setup_welcome_description">Let\'s get the app ready for you.</string>
     <string name="setup_welcome_title">Welcome to Randify</string>
 

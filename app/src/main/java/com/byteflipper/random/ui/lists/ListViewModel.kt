@@ -1,11 +1,13 @@
 package com.byteflipper.random.ui.lists
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.ui.common.defaultRandomItems
 import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
 import com.byteflipper.random.utils.Constants.DEFAULT_GENERATE_COUNT
 import com.byteflipper.random.utils.Constants.INSTANT_DELAY_MS
@@ -29,6 +31,7 @@ import com.byteflipper.random.domain.lists.ListSortingMode as DomainListSortingM
 import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
 import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
 import com.byteflipper.random.ui.lists.components.ListSortingMode
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 data class ListUiState(
     val preset: ListPreset? = null,
@@ -72,6 +75,7 @@ sealed interface ListUiEvent {
 
 @HiltViewModel
 class ListViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val listPresetRepository: ListPresetRepository,
     private val settingsRepository: SettingsRepository,
     private val savedStateHandle: SavedStateHandle,
@@ -129,12 +133,10 @@ class ListViewModel @Inject constructor(
     private fun loadPreset() {
         viewModelScope.launch {
             if (presetId == null) {
-                // Load default list from DataStore
-                val defaultName = settingsRepository.getDefaultListName() ?: "List"
                 val defaultItems = settingsRepository.getDefaultListItems()
 
                 val items = if (defaultItems.isEmpty()) {
-                    listOf("Item 1", "Item 2", "Item 3") // Default items
+                    appContext.defaultRandomItems()
                 } else {
                     defaultItems
                 }

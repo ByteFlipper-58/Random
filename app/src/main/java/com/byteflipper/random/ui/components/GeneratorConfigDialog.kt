@@ -357,7 +357,7 @@ private fun DelaySection(delayConfig: DelayConfig) {
                     FilterChip(
                         selected = currentSec == minSec,
                         onClick = { delayConfig.onDelayChange((minSec * 1000).toString()) },
-                        label = { Text("${minSec}s") }
+                        label = { Text(stringResource(R.string.seconds_short_value, minSec)) }
                     )
 
                     Card(
@@ -367,7 +367,7 @@ private fun DelaySection(delayConfig: DelayConfig) {
                         shape = MaterialTheme.shapes.large
                     ) {
                         Text(
-                            text = "$currentSec ${stringResource(R.string.seconds_short)}",
+                            text = stringResource(R.string.seconds_short_value, currentSec),
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
@@ -377,7 +377,7 @@ private fun DelaySection(delayConfig: DelayConfig) {
                     FilterChip(
                         selected = currentSec == maxSec,
                         onClick = { delayConfig.onDelayChange((maxSec * 1000).toString()) },
-                        label = { Text("${maxSec}s") }
+                        label = { Text(stringResource(R.string.seconds_short_value, maxSec)) }
                     )
                 }
 

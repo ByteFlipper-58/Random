@@ -67,6 +67,7 @@ fun NumbersScreen(onBack: () -> Unit) {
     val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
     val context = LocalContext.current
+    val numbersClipboardLabel = stringResource(R.string.numbers_clipboard_label)
 
     // Все пользовательские параметры и результаты берём из VM
     val viewModel: NumbersViewModel = hiltViewModel()
@@ -323,7 +324,7 @@ fun NumbersScreen(onBack: () -> Unit) {
                     if (results.isNotEmpty()) {
                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val text = results.joinToString(", ")
-                        clipboard.setPrimaryClip(ClipData.newPlainText("Random Numbers", text))
+                        clipboard.setPrimaryClip(ClipData.newPlainText(numbersClipboardLabel, text))
                         scope.launch {
                             snackbarHostState.showSnackbar(context.getString(R.string.copied_to_clipboard))
                         }

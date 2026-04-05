@@ -10,7 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.byteflipper.random.R
 import com.byteflipper.random.data.settings.FabSizeSetting
 import com.byteflipper.random.ui.components.SizedFab
 
@@ -32,7 +34,7 @@ fun WheelFabControls(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Settings,
-                contentDescription = "Settings"
+                contentDescription = stringResource(R.string.settings)
             )
         }
 
@@ -45,7 +47,7 @@ fun WheelFabControls(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Edit,
-                contentDescription = "Edit items"
+                contentDescription = stringResource(R.string.wheel_edit_items)
             )
         }
     }

@@ -1,10 +1,13 @@
 package com.byteflipper.random.ui.wheel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.ui.common.defaultRandomItems
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +20,7 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 data class WheelUiState(
-    val items: List<String> = listOf("Item 1", "Item 2", "Item 3"),
+    val items: List<String> = emptyList(),
     val excludedIndices: Set<Int> = emptySet(),
     val noRepeats: Boolean = false,
     val spinDuration: Int = 5000,
@@ -31,6 +34,7 @@ data class WheelUiState(
 
 @HiltViewModel
 class WheelViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val settingsRepository: SettingsRepository,
     private val listPresetRepository: ListPresetRepository,
     private val adsController: com.byteflipper.random.ads.AdsController
@@ -49,7 +53,7 @@ class WheelViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    private val _uiState = MutableStateFlow(WheelUiState())
+    private val _uiState = MutableStateFlow(WheelUiState(items = appContext.defaultRandomItems()))
     val uiState: StateFlow<WheelUiState> = _uiState.asStateFlow()
 
     fun onEvent(event: WheelUiEvent) {

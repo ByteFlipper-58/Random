@@ -70,6 +70,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     val presets by viewModel.presets.collectAsStateWithLifecycle()
 
     val listString = stringResource(R.string.list)
+    val listEmptyText = stringResource(R.string.list_empty)
+    val allOptionsUsedText = stringResource(R.string.all_options_used)
+    val resetText = stringResource(R.string.reset)
+    val listClipboardLabel = stringResource(R.string.list_clipboard_label)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -87,7 +91,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     fun handleGenerate() {
         val base = viewModel.getBaseItems()
         if (base.isEmpty()) {
-            scope.launch { snackbarHostState.showSnackbar("List is empty") }
+            scope.launch { snackbarHostState.showSnackbar(listEmptyText) }
             return
         }
 
@@ -96,8 +100,8 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             if (pool.isEmpty()) {
                 scope.launch {
                     val result = snackbarHostState.showSnackbar(
-                        message = "All options used",
-                        actionLabel = "Reset"
+                        message = allOptionsUsedText,
+                        actionLabel = resetText
                     )
                     if (result == SnackbarResult.ActionPerformed) {
                         viewModel.onEvent(ListUiEvent.ResetUsedItems)
@@ -122,7 +126,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
             effectiveDelayMs = delayMs,
             onReveal = { _ ->
                 isGenerating = false
-                val results = viewModel.generateAndUpdateResults()
+                viewModel.generateAndUpdateResults()
             },
             onSpinCompleted = {
                 viewModel.notifyHapticPressIfEnabled()
@@ -136,7 +140,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is ListUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.messageRes.toString())
+                is ListUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(ctx.getString(effect.messageRes))
                 is ListUiEffect.HapticPress -> hapticsManager?.performPress(effect.intensity)
             }
         }
@@ -152,7 +156,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
 
     val topTitle = if (presetId == null) stringResource(R.string.list) else (uiState.preset?.name ?: stringResource(R.string.list))
     val topSave = if (presetId == null) ({ viewModel.updateSaveName(listString); viewModel.toggleSaveDialog() }) else null
-    val topRename = if (presetId != null) ({ viewModel.updateRenameName(uiState.preset?.name ?: ""); viewModel.toggleRenameDialog() }) else null
+    val topRename = if (presetId != null) ({ viewModel.updateRenameName(uiState.preset?.name ?: listString); viewModel.toggleRenameDialog() }) else null
 
     ListScaffold(
         onBack = onBack,
@@ -260,7 +264,7 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
                     if (uiState.results.isNotEmpty()) {
                         val clipboard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val text = uiState.results.joinToString(", ")
-                        clipboard.setPrimaryClip(ClipData.newPlainText("Random List", text))
+                        clipboard.setPrimaryClip(ClipData.newPlainText(listClipboardLabel, text))
                         scope.launch {
                             snackbarHostState.showSnackbar(ctx.getString(R.string.copied_to_clipboard))
                         }

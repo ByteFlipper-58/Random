@@ -8,11 +8,14 @@
     <string name="back">Назад</string>
     <string name="cancel">Отмена</string>
     <string name="close">Закрыть</string>
+    <string name="confirm">Подтвердить</string>
     <string name="delete">Удалить</string>
     <string name="disabled">Отключено</string>
     <string name="edit">Редактировать</string>
     <string name="enabled">Включено</string>
+    <string name="finish">Завершить</string>
     <string name="loading">Загрузка…</string>
+    <string name="next">Далее</string>
     <string name="rename">Переименовать</string>
     <string name="reset">Сброс</string>
     <string name="result">Результат</string>
@@ -103,6 +106,7 @@
     <string name="item_2">Элемент 2</string>
     <string name="item_3">Элемент 3</string>
     <string name="list_empty">Список пуст</string>
+    <string name="list_clipboard_label">Случайный список</string>
     <string name="list_name">Название списка</string>
     <string name="my_list">Мой список</string>
     <string name="new_list">Новый список</string>
@@ -120,6 +124,9 @@
     <string name="from">ОТ</string>
     <string name="history_cleared">История использованных чисел очищена</string>
     <string name="number">Число</string>
+    <string name="numbers_clipboard_label">Случайные числа</string>
+    <string name="numbers_reset_used_message">Это очистит все использованные числа и позволит генерировать их снова.</string>
+    <string name="numbers_reset_used_title">Сбросить использованные числа</string>
     <string name="only_available_numbers">Доступно только %1$d неиспользованных чисел</string>
     <string name="reset_history">Сбросить историю чисел</string>
     <string name="to">ДО</string>
@@ -159,6 +166,7 @@
     <string name="open_after_save">Открыть после сохранения</string>
     <string name="seconds">сек</string>
     <string name="seconds_short">с</string>
+    <string name="seconds_short_value">%1$d с</string>
     <string name="use_delay">Использовать задержку</string>
 
     <!-- Settings screen -->
@@ -258,6 +266,8 @@
     <string name="setup_notifications_title">Уведомления</string>
     <string name="setup_permission_error">Пожалуйста, предоставьте все необходимые разрешения.</string>
     <string name="setup_permission_granted">Разрешение предоставлено</string>
+    <string name="setup_lets_go">Поехали!</string>
+    <string name="setup_step_progress">Шаг %1$d из %2$d</string>
     <string name="setup_welcome_description">Давайте подготовим приложение для вас.</string>
     <string name="setup_welcome_title">Добро пожаловать в Randify</string>
 

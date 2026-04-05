@@ -84,6 +84,7 @@ fun WheelEditorSheet(
     var showClearConfirm by remember { mutableStateOf(false) }
     var showSaveDialog by remember { mutableStateOf(false) }
     var savePresetName by remember { mutableStateOf("") }
+    val defaultItems = listOf(stringResource(R.string.item_1), stringResource(R.string.item_2))
     
     // Edit mode
     var editingIndex by remember { mutableIntStateOf(-1) }
@@ -155,7 +156,7 @@ fun WheelEditorSheet(
     }
 
     fun clearAll() {
-        onUpdateItems(listOf("Item 1", "Item 2"))
+        onUpdateItems(defaultItems)
         showClearConfirm = false
     }
 
@@ -204,7 +205,7 @@ fun WheelEditorSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.DeleteSweep,
-                                contentDescription = "Clear all",
+                                contentDescription = stringResource(R.string.wheel_clear_all),
                                 tint = if (items.size > 1) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
                         }
@@ -220,7 +221,7 @@ fun WheelEditorSheet(
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.Save,
-                                    contentDescription = "Save as preset"
+                                    contentDescription = stringResource(R.string.wheel_save_as_preset)
                                 )
                             }
                         }
@@ -259,7 +260,7 @@ fun WheelEditorSheet(
                                         Column {
                                             Text(preset.name, fontWeight = FontWeight.Medium)
                                             Text(
-                                                "${preset.items.size} items",
+                                                stringResource(R.string.wheel_preset_items_count, preset.items.size),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
@@ -338,7 +339,7 @@ fun WheelEditorSheet(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Add,
-                            contentDescription = "Add"
+                            contentDescription = stringResource(R.string.add)
                         )
                     }
                     }
@@ -355,7 +356,7 @@ fun WheelEditorSheet(
                         OutlinedTextField(
                             value = editingText,
                             onValueChange = { if (it.length <= 30) editingText = it },
-                            label = { Text("Edit item ${editingIndex + 1}") },
+                            label = { Text(stringResource(R.string.wheel_edit_item, editingIndex + 1)) },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
                             shape = RoundedCornerShape(12.dp),
@@ -375,14 +376,14 @@ fun WheelEditorSheet(
                         ) {
                             Icon(
                                 imageVector = Icons.Filled.Check,
-                                contentDescription = "Confirm"
+                                contentDescription = stringResource(R.string.confirm)
                             )
                         }
                         
                         IconButton(onClick = { cancelEdit() }) {
                             Icon(
                                 imageVector = Icons.Filled.Close,
-                                contentDescription = "Cancel"
+                                contentDescription = stringResource(R.string.cancel)
                             )
                         }
                     }
@@ -422,7 +423,7 @@ fun WheelEditorSheet(
                                 {
                                     Icon(
                                         imageVector = Icons.Filled.Edit,
-                                        contentDescription = "Edit",
+                                        contentDescription = stringResource(R.string.edit),
                                         modifier = Modifier.size(14.dp),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                     )
@@ -437,7 +438,7 @@ fun WheelEditorSheet(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.Close,
-                                            contentDescription = "Remove",
+                                            contentDescription = stringResource(R.string.delete),
                                             modifier = Modifier.size(16.dp),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
