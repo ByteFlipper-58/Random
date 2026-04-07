@@ -5,17 +5,25 @@
 
     <!-- Common -->
     <string name="add">Добавить</string>
+    <string name="all">Все</string>
+    <string name="all_presets">Все пресеты</string>
     <string name="back">Назад</string>
     <string name="cancel">Отмена</string>
     <string name="close">Закрыть</string>
     <string name="confirm">Подтвердить</string>
     <string name="delete">Удалить</string>
     <string name="disabled">Отключено</string>
+    <string name="duplicate">Дублировать</string>
     <string name="edit">Редактировать</string>
     <string name="enabled">Включено</string>
     <string name="finish">Завершить</string>
     <string name="loading">Загрузка…</string>
     <string name="next">Далее</string>
+    <string name="open">Открыть</string>
+    <string name="open_presets">Открыть пресеты</string>
+    <string name="pinned">Закреплённые</string>
+    <string name="presets">Пресеты</string>
+    <string name="recent">Недавние</string>
     <string name="rename">Переименовать</string>
     <string name="reset">Сброс</string>
     <string name="result">Результат</string>
@@ -23,6 +31,7 @@
     <string name="save">Сохранить</string>
     <string name="settings">Настройки</string>
     <string name="title">Заголовок</string>
+    <string name="tools">Режимы</string>
     <string name="copied_to_clipboard">Скопировано в буфер обмена</string>
 
     <!-- Main screen -->
@@ -57,6 +66,17 @@
     <string name="wheel_save_as_preset">Сохранить как пресет</string>
     <string name="wheel_preset_name">Название пресета</string>
     <string name="wheel_preset_items_count">%1$d элементов</string>
+    <string name="wheel_preset_requires_selection">%1$d элементов • выберите до 16</string>
+    <string name="wheel_preset_limit_title">Адаптировать пресет для колеса</string>
+    <string name="wheel_preset_limit_message">В пресете "%1$s" %2$d элементов, а колесо поддерживает до %3$d. Выберите способ импорта.</string>
+    <string name="wheel_preset_choose_manually">Выбрать вручную</string>
+    <string name="wheel_preset_load_first">Взять первые %1$d</string>
+    <string name="wheel_preset_load_random">Взять случайные %1$d</string>
+    <string name="wheel_preset_manual_title">Выберите элементы для колеса</string>
+    <string name="wheel_preset_manual_message">Выбрано %1$d из %2$d</string>
+    <string name="wheel_selection_minimum_required">Выберите минимум 2 элемента</string>
+    <string name="wheel_selection_limit_reached">Достигнут лимит</string>
+    <string name="wheel_add_to_wheel">Добавить в колесо</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">Да / Нет</string>
@@ -111,10 +131,39 @@
     <string name="my_list">Мой список</string>
     <string name="new_list">Новый список</string>
     <string name="new_name">Новое имя</string>
+    <string name="no_presets_found">Ничего не найдено</string>
+    <string name="no_search_results">Ничего не найдено</string>
+    <string name="no_most_used_presets">Нет часто используемых пресетов</string>
+    <string name="no_recent_presets">Нет недавних пресетов</string>
+    <string name="no_presets_yet">Пока нет пресетов</string>
+    <string name="create_preset">Создать пресет</string>
+    <string name="last_used">Последний</string>
+    <string name="more_presets">Ещё пресеты</string>
+    <string name="pin_preset">Закрепить пресет</string>
+    <string name="preset_deleted">Пресет удалён</string>
+    <string name="preset_duplicated">Пресет продублирован</string>
+    <string name="preset_duplicate_name">%1$s (копия)</string>
+    <string name="presets_empty_filtered_hint">Попробуй другой запрос или переключи фильтр.</string>
+    <string name="presets_empty_create_hint">После первого сохранения пресеты появятся здесь.</string>
+    <string name="presets_empty_most_used_hint">Используй пресеты несколько раз, и они появятся здесь.</string>
+    <string name="presets_empty_recent_hint">Открой несколько пресетов, и они появятся здесь.</string>
+    <string name="presets_empty_search_hint">По запросу "%1$s" ничего не найдено.</string>
     <string name="preset_actions">Действия с пресетами</string>
+    <string name="preset_items_count">%1$d элементов</string>
+    <string name="preset_not_used_yet">Ещё не использовался</string>
+    <string name="preset_saved_count">%1$d сохранено</string>
+    <string name="preset_used_relative">Использован %1$s</string>
     <string name="rename_list">Переименовать список</string>
     <string name="save_settings">Сохранить настройки</string>
+    <string name="search_presets">Поиск пресетов</string>
     <string name="share_preset">Поделиться пресетом</string>
+    <string name="sort_most_used">Часто используемые</string>
+    <string name="sort_name">По имени</string>
+    <string name="sort_recent">Недавние</string>
+    <string name="sort_activity">По активности</string>
+    <string name="sort_usage">По использованию</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="unpin_preset">Открепить пресет</string>
     <string name="use_preset">Использовать пресет</string>
 
     <!-- Numbers screen -->
@@ -164,6 +213,7 @@
     <string name="expandable_section_expand">Развернуть</string>
     <string name="fixed_delay_1_second">Фиксированная задержка: 1 секунда</string>
     <string name="open_after_save">Открыть после сохранения</string>
+    <string name="undo">Отменить</string>
     <string name="seconds">сек</string>
     <string name="seconds_short">с</string>
     <string name="seconds_short_value">%1$d с</string>

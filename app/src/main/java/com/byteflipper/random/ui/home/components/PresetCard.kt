@@ -1,11 +1,16 @@
 package com.byteflipper.random.ui.home.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import com.byteflipper.random.ui.theme.ShapesTokens
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledIconButton
@@ -31,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,12 +53,28 @@ fun PresetCard(
     onPresetClick: (ListPreset) -> Unit,
     onRenameClick: (ListPreset) -> Unit,
     onDeleteClick: (ListPreset) -> Unit,
+    subtitle: String? = null,
+    highlightPinned: Boolean = false,
+    emphasize: Boolean = false,
+    trailingContent: @Composable RowScope.(ListPreset) -> Unit = { currentPreset ->
+        DefaultPresetCardActions(
+            preset = currentPreset,
+            onRenameClick = onRenameClick,
+            onDeleteClick = onDeleteClick
+        )
+    },
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
+    val colorScheme = MaterialTheme.colorScheme
+    val resolvedSubtitle = subtitle ?: stringResource(R.string.preset_items_count, preset.items.size)
 
-    val cardElevation by animateFloatAsState(
-        targetValue = if (isPressed) 1.dp.value else 6.dp.value,
+    val cardElevation by animateDpAsState(
+        targetValue = when {
+            isPressed -> 1.dp
+            emphasize -> 8.dp
+            else -> 6.dp
+        },
         animationSpec = tween(200),
         label = "elevation"
     )
@@ -60,6 +83,24 @@ fun PresetCard(
         targetValue = if (isPressed) 0.9f else 1f,
         animationSpec = tween(150),
         label = "scale"
+    )
+    val containerColor by animateColorAsState(
+        targetValue = if (emphasize) {
+            lerp(colorScheme.surface, colorScheme.secondaryContainer, 0.18f)
+        } else {
+            colorScheme.surface
+        },
+        animationSpec = tween(250),
+        label = "container_color"
+    )
+    val borderColor by animateColorAsState(
+        targetValue = if (emphasize) {
+            lerp(colorScheme.outlineVariant, colorScheme.tertiary, 0.45f)
+        } else {
+            colorScheme.outlineVariant
+        },
+        animationSpec = tween(250),
+        label = "border_color"
     )
 
     Card(
@@ -73,12 +114,12 @@ fun PresetCard(
             .height(88.dp),
         shape = ShapesTokens.CardShape,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = containerColor,
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = cardElevation.dp
+            defaultElevation = cardElevation
         ),
-        border = CardDefaults.outlinedCardBorder()
+        border = BorderStroke(1.dp, borderColor.copy(alpha = 0.72f))
     ) {
         Row(
             modifier = Modifier
@@ -110,24 +151,43 @@ fun PresetCard(
 
             // Название и информация о пресете
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .weight(1f)
+                    .animateContentSize()
             ) {
-                Text(
-                    text = preset.name,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = preset.name,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
+
+                    if (highlightPinned && preset.isPinned) {
+                        Icon(
+                            imageVector = Icons.Outlined.PushPin,
+                            contentDescription = stringResource(R.string.pinned),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
 
                 // Можно добавить дополнительную информацию о пресете
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.list),
+                    text = resolvedSubtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -136,48 +196,54 @@ fun PresetCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Кнопка редактирования
-                FilledIconButton(
-                    onClick = { onRenameClick(preset) },
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.edit_24px),
-                        contentDescription = stringResource(R.string.edit),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-
-                // Кнопка удаления
-                FilledIconButton(
-                    onClick = { onDeleteClick(preset) },
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    ),
-                    modifier = Modifier.size(36.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.delete_24px),
-                        contentDescription = stringResource(R.string.delete),
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-
-                // Стрелка навигации
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(16.dp)
-                )
+                trailingContent(preset)
             }
         }
     }
+}
+
+@Composable
+private fun RowScope.DefaultPresetCardActions(
+    preset: ListPreset,
+    onRenameClick: (ListPreset) -> Unit,
+    onDeleteClick: (ListPreset) -> Unit
+) {
+    FilledIconButton(
+        onClick = { onRenameClick(preset) },
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        ),
+        modifier = Modifier.size(36.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.edit_24px),
+            contentDescription = stringResource(R.string.edit),
+            modifier = Modifier.size(18.dp)
+        )
+    }
+
+    FilledIconButton(
+        onClick = { onDeleteClick(preset) },
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer
+        ),
+        modifier = Modifier.size(36.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.delete_24px),
+            contentDescription = stringResource(R.string.delete),
+            modifier = Modifier.size(18.dp)
+        )
+    }
+
+    Icon(
+        imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.size(16.dp)
+    )
 }
 
 @Preview(showBackground = true)

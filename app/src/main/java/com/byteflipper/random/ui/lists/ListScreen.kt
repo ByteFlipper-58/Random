@@ -53,6 +53,7 @@ import kotlin.random.Random
 import com.byteflipper.random.utils.findActivity
 import androidx.compose.ui.platform.LocalContext
 import com.byteflipper.random.ui.components.ShakeEffect
+import com.byteflipper.random.data.preset.ListPreset
 
 
 private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
@@ -63,7 +64,12 @@ private fun Set<String>.indicesOf(baseSize: Int): Set<Int> {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long) -> Unit = {}) {
+fun ListScreen(
+    onBack: () -> Unit,
+    presetId: Long? = null,
+    initialPreset: ListPreset? = null,
+    onOpenListById: (Long) -> Unit = {}
+) {
     val viewModel: ListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -163,9 +169,11 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         onShake = { handleGenerate() }
     )
 
-    val topTitle = if (presetId == null) stringResource(R.string.list) else (uiState.preset?.name ?: stringResource(R.string.list))
+    val displayedPreset = uiState.preset ?: initialPreset?.takeIf { it.id == presetId }
+    val displayedItems = if (uiState.editorItems.isNotEmpty()) uiState.editorItems else (displayedPreset?.items ?: emptyList())
+    val topTitle = if (presetId == null) stringResource(R.string.list) else (displayedPreset?.name ?: stringResource(R.string.list))
     val topSave = if (presetId == null) ({ viewModel.updateSaveName(listString); viewModel.toggleSaveDialog() }) else null
-    val topRename = if (presetId != null) ({ viewModel.updateRenameName(uiState.preset?.name ?: listString); viewModel.toggleRenameDialog() }) else null
+    val topRename = if (presetId != null) ({ viewModel.updateRenameName(displayedPreset?.name ?: listString); viewModel.toggleRenameDialog() }) else null
 
     ListScaffold(
         onBack = onBack,
@@ -188,10 +196,10 @@ fun ListScreen(onBack: () -> Unit, presetId: Long? = null, onOpenListById: (Long
         Box(modifier = Modifier.fillMaxSize().padding(inner)) {
             val blur = (8f * flipCtrl.scrimProgress.value).dp
 
-            if (presetId == null || uiState.preset != null) {
+            if (presetId == null || displayedPreset != null) {
                 ListContent(
                     modifier = Modifier.fillMaxSize().padding(16.dp).blur(blur),
-                    items = uiState.editorItems,
+                    items = displayedItems,
                     onItemsChange = { viewModel.onEvent(ListUiEvent.UpdateEditorItems(it)) }
                 )
             } else {

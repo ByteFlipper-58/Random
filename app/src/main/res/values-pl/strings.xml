@@ -30,6 +30,7 @@
     <string name="numbers">Liczby</string>
     <string name="random">Losowe</string>
     <string name="menu">Menu</string>
+    <string name="tools">Tryby</string>
     <string name="wheel">Koło fortuny</string>
 
     <!-- Wheel screen -->
@@ -54,6 +55,17 @@
     <string name="wheel_save_as_preset">Zapisz jako preset</string>
     <string name="wheel_preset_name">Nazwa presetu</string>
     <string name="wheel_preset_items_count">%1$d elementów</string>
+    <string name="wheel_preset_requires_selection">%1$d elementów • wybierz maks. 16</string>
+    <string name="wheel_preset_limit_title">Dostosuj preset do koła</string>
+    <string name="wheel_preset_limit_message">Preset „%1$s” zawiera %2$d elementów, ale koło obsługuje maksymalnie %3$d. Wybierz sposób importu.</string>
+    <string name="wheel_preset_choose_manually">Wybierz ręcznie</string>
+    <string name="wheel_preset_load_first">Weź pierwsze %1$d</string>
+    <string name="wheel_preset_load_random">Weź losowe %1$d</string>
+    <string name="wheel_preset_manual_title">Wybierz elementy do koła</string>
+    <string name="wheel_preset_manual_message">Wybrano %1$d z %2$d</string>
+    <string name="wheel_selection_minimum_required">Wybierz co najmniej 2 elementy</string>
+    <string name="wheel_selection_limit_reached">Osiągnięto limit</string>
+    <string name="wheel_add_to_wheel">Dodaj do koła</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">Tak / Nie</string>
@@ -108,6 +120,37 @@
     <string name="new_list">Nowa lista</string>
     <string name="new_name">Nowa nazwa</string>
     <string name="preset_actions">Gotowe akcje</string>
+    <string name="presets">Presety</string>
+    <string name="all_presets">Wszystkie presety</string>
+    <string name="more_presets">Więcej presetów</string>
+    <string name="pinned">Przypięte</string>
+    <string name="recent">Ostatnie</string>
+    <string name="search_presets">Szukaj presetów</string>
+    <string name="sort_recent">Ostatnie</string>
+    <string name="sort_name">Nazwa</string>
+    <string name="sort_most_used">Najczęściej używane</string>
+    <string name="sort_activity">Według aktywności</string>
+    <string name="sort_usage">Według użycia</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="pin_preset">Przypnij preset</string>
+    <string name="unpin_preset">Odepnij preset</string>
+    <string name="no_presets_found">Nie znaleziono presetów</string>
+    <string name="no_most_used_presets">Brak najczęściej używanych presetów</string>
+    <string name="no_recent_presets">Brak ostatnich presetów</string>
+    <string name="no_presets_yet">Nie ma jeszcze presetów</string>
+    <string name="create_preset">Utwórz preset</string>
+    <string name="preset_deleted">Preset usunięty</string>
+    <string name="preset_duplicated">Preset skopiowany</string>
+    <string name="preset_duplicate_name">%1$s (kopia)</string>
+    <string name="presets_empty_filtered_hint">Spróbuj innego zapytania lub zmień filtr.</string>
+    <string name="presets_empty_create_hint">Zapisane presety pojawią się tutaj po utworzeniu pierwszego.</string>
+    <string name="presets_empty_most_used_hint">Użyj presetów kilka razy, a pojawią się tutaj.</string>
+    <string name="presets_empty_recent_hint">Otwórz kilka presetów, a pojawią się tutaj.</string>
+    <string name="presets_empty_search_hint">Brak presetów pasujących do "%1$s".</string>
+    <string name="preset_items_count">%1$d elementów</string>
+    <string name="preset_not_used_yet">Jeszcze nieużywany</string>
+    <string name="preset_saved_count">%1$d zapisano</string>
+    <string name="preset_used_relative">Użyto %1$s</string>
     <string name="rename_list">Zmień nazwę listy</string>
     <string name="save_settings">Zapisz ustawienia</string>
     <string name="share_preset">Udostępnij preset</string>

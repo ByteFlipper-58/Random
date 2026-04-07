@@ -43,6 +43,7 @@ import com.byteflipper.random.R
 fun MenuCard(
     icon: Painter,
     title: String,
+    subtitle: String? = null,
     onClick: () -> Unit,
     onAddClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
@@ -118,6 +119,14 @@ fun MenuCard(
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
+
+                subtitle?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             // Кнопки справа
@@ -161,6 +170,7 @@ fun MenuCardPreview() {
         MenuCard(
             icon = painterResource(id = R.drawable.add_24px),
             title = stringResource(R.string.title),
+            subtitle = "Preview subtitle",
             onClick = {},
             onAddClick = {},
             modifier = Modifier.padding(16.dp)

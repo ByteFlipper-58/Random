@@ -30,6 +30,7 @@
     <string name="numbers">Сандар</string>
     <string name="random">Кездейсоқ</string>
     <string name="menu">Мәзір</string>
+    <string name="tools">Режимдер</string>
     <string name="wheel">Фортуна дөңгелегі</string>
 
     <!-- Wheel screen -->
@@ -54,6 +55,17 @@
     <string name="wheel_save_as_preset">Алдын ала орнату ретінде сақтау</string>
     <string name="wheel_preset_name">Алдын ала орнату атауы</string>
     <string name="wheel_preset_items_count">%1$d элемент</string>
+    <string name="wheel_preset_requires_selection">%1$d элемент • 16-ға дейін таңдаңыз</string>
+    <string name="wheel_preset_limit_title">Пресетті дөңгелекке бейімдеу</string>
+    <string name="wheel_preset_limit_message">"%1$s" пресетінде %2$d элемент бар, ал дөңгелек ең көбі %3$d элементті қолдайды. Импорттау тәсілін таңдаңыз.</string>
+    <string name="wheel_preset_choose_manually">Қолмен таңдау</string>
+    <string name="wheel_preset_load_first">Алғашқы %1$d элементті алу</string>
+    <string name="wheel_preset_load_random">Кездейсоқ %1$d элементті алу</string>
+    <string name="wheel_preset_manual_title">Дөңгелекке арналған элементтерді таңдаңыз</string>
+    <string name="wheel_preset_manual_message">%2$d ішінен %1$d таңдалды</string>
+    <string name="wheel_selection_minimum_required">Кемінде 2 элемент таңдаңыз</string>
+    <string name="wheel_selection_limit_reached">Шекке жетті</string>
+    <string name="wheel_add_to_wheel">Дөңгелекке қосу</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">Иә / Жоқ</string>
@@ -108,6 +120,37 @@
     <string name="new_list">Жаңа тізім</string>
     <string name="new_name">Жаңа атау</string>
     <string name="preset_actions">Дайын әрекеттер</string>
+    <string name="presets">Алдын ала орнатулар</string>
+    <string name="all_presets">Барлық алдын ала орнатулар</string>
+    <string name="more_presets">Қосымша алдын ала орнатулар</string>
+    <string name="pinned">Бекітілген</string>
+    <string name="recent">Соңғылар</string>
+    <string name="search_presets">Алдын ала орнатуларды іздеу</string>
+    <string name="sort_recent">Соңғылары</string>
+    <string name="sort_name">Атауы бойынша</string>
+    <string name="sort_most_used">Ең жиі қолданылатын</string>
+    <string name="sort_activity">Белсенділігі бойынша</string>
+    <string name="sort_usage">Қолданылуы бойынша</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="pin_preset">Алдын ала орнатуды бекіту</string>
+    <string name="unpin_preset">Алдын ала орнатудан бекітуді алу</string>
+    <string name="no_presets_found">Алдын ала орнатулар табылмады</string>
+    <string name="no_most_used_presets">Жиі қолданылатын алдын ала орнатулар жоқ</string>
+    <string name="no_recent_presets">Соңғы алдын ала орнатулар жоқ</string>
+    <string name="no_presets_yet">Әзірге алдын ала орнатулар жоқ</string>
+    <string name="create_preset">Пресет жасау</string>
+    <string name="preset_deleted">Алдын ала орнату жойылды</string>
+    <string name="preset_duplicated">Алдын ала орнату көшірмеленді</string>
+    <string name="preset_duplicate_name">%1$s (көшірме)</string>
+    <string name="presets_empty_filtered_hint">Басқа сұрауды қолданып көріңіз немесе сүзгіні ауыстырыңыз.</string>
+    <string name="presets_empty_create_hint">Бірінші алдын ала орнатуды жасағаннан кейін сақталған орнатулар осы жерде пайда болады.</string>
+    <string name="presets_empty_most_used_hint">Алдын ала орнатуларды бірнеше рет қолданыңдар, сонда олар осында пайда болады.</string>
+    <string name="presets_empty_recent_hint">Бірнеше алдын ала орнатуды ашыңдар, сонда олар осында пайда болады.</string>
+    <string name="presets_empty_search_hint">"%1$s" бойынша алдын ала орнатулар табылмады.</string>
+    <string name="preset_items_count">%1$d элемент</string>
+    <string name="preset_not_used_yet">Әлі қолданылмаған</string>
+    <string name="preset_saved_count">%1$d сақталған</string>
+    <string name="preset_used_relative">%1$s қолданылды</string>
     <string name="rename_list">Тізім атын өзгерту</string>
     <string name="save_settings">Параметрлерді сақтау</string>
     <string name="share_preset">Алдын ала орнатумен бөлісу</string>

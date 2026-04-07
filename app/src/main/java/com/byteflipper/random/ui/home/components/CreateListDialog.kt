@@ -9,6 +9,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
+import com.byteflipper.random.ui.common.defaultRandomItems
 
 @Composable
 fun CreateListDialog(
@@ -29,10 +31,13 @@ fun CreateListDialog(
 ) {
     val context = LocalContext.current
     var createName by rememberSaveable { mutableStateOf("") }
+    val nextNumber = presetCount + 1
+    val defaultName = "${context.getString(R.string.new_list)} $nextNumber"
 
     if (showDialog) {
-        val nextNumber = presetCount + 1
-        if (createName.isBlank()) createName = "${context.getString(R.string.new_list)} $nextNumber"
+        LaunchedEffect(showDialog, presetCount) {
+            createName = defaultName
+        }
 
         AlertDialog(
             onDismissRequest = onDismiss,
@@ -51,12 +56,8 @@ fun CreateListDialog(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    val name = createName.trim().ifEmpty { "${context.getString(R.string.new_list)} $nextNumber" }
-                    val items = listOf(
-                        context.getString(R.string.item_1),
-                        context.getString(R.string.item_2),
-                        context.getString(R.string.item_3)
-                    )
+                    val name = createName.trim().ifEmpty { defaultName }
+                    val items = context.defaultRandomItems()
                     onCreate(name, items)
                     onPresetCreated()
                 }) { Text(stringResource(R.string.save)) }

@@ -62,9 +62,6 @@ class WheelViewModel @Inject constructor(
             is WheelUiEvent.SetNoRepeats -> setNoRepeats(event.enabled)
             is WheelUiEvent.SetSpinDuration -> setSpinDuration(event.durationMs)
             is WheelUiEvent.LoadPreset -> loadPreset(event.preset)
-            is WheelUiEvent.Spin -> spin()
-            is WheelUiEvent.SetSpinning -> setSpinning(event.spinning)
-            is WheelUiEvent.SetResult -> setResult(event.index)
             is WheelUiEvent.SetResultByRotation -> setResultByRotation(event.rotation)
             WheelUiEvent.Reset -> reset()
             WheelUiEvent.ToggleEditorSheet -> _uiState.update { it.copy(showEditorSheet = !it.showEditorSheet) }
@@ -96,6 +93,9 @@ class WheelViewModel @Inject constructor(
                 lastResult = null, 
                 lastResultIndex = null
             ) 
+        }
+        viewModelScope.launch {
+            listPresetRepository.markUsed(preset.id)
         }
     }
 
@@ -133,30 +133,6 @@ class WheelViewModel @Inject constructor(
         _uiState.update { it.copy(targetRotation = targetRotation, isSpinning = true) }
         
         return Pair(winnerIndex, targetRotation)
-    }
-
-    private fun setSpinning(spinning: Boolean) {
-        _uiState.update { it.copy(isSpinning = spinning) }
-    }
-
-    private fun setResult(index: Int) {
-        val state = _uiState.value
-        val result = state.items.getOrNull(index) ?: return
-        
-        val newExcluded = if (state.noRepeats) {
-            state.excludedIndices + index
-        } else {
-            state.excludedIndices
-        }
-        
-        _uiState.update { 
-            it.copy(
-                lastResult = result, 
-                lastResultIndex = index, 
-                excludedIndices = newExcluded,
-                isSpinning = false
-            ) 
-        }
     }
 
     private fun setResultByRotation(rotation: Float) {
@@ -221,9 +197,6 @@ sealed interface WheelUiEvent {
     data class SetNoRepeats(val enabled: Boolean) : WheelUiEvent
     data class SetSpinDuration(val durationMs: Int) : WheelUiEvent
     data class LoadPreset(val preset: ListPreset) : WheelUiEvent
-    data object Spin : WheelUiEvent
-    data class SetSpinning(val spinning: Boolean) : WheelUiEvent
-    data class SetResult(val index: Int) : WheelUiEvent
     data class SetResultByRotation(val rotation: Float) : WheelUiEvent
     data object Reset : WheelUiEvent
     data object ToggleEditorSheet : WheelUiEvent

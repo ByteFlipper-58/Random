@@ -30,6 +30,7 @@
     <string name="numbers">Числа</string>
     <string name="random">Випадкове</string>
     <string name="menu">Меню</string>
+    <string name="tools">Режими</string>
     <string name="wheel">Колесо фортуни</string>
 
     <!-- Wheel screen -->
@@ -54,6 +55,17 @@
     <string name="wheel_save_as_preset">Зберегти як пресет</string>
     <string name="wheel_preset_name">Назва пресета</string>
     <string name="wheel_preset_items_count">%1$d елементів</string>
+    <string name="wheel_preset_requires_selection">%1$d елементів • виберіть до 16</string>
+    <string name="wheel_preset_limit_title">Адаптувати пресет для колеса</string>
+    <string name="wheel_preset_limit_message">У пресеті "%1$s" %2$d елементів, а колесо підтримує до %3$d. Виберіть спосіб імпорту.</string>
+    <string name="wheel_preset_choose_manually">Вибрати вручну</string>
+    <string name="wheel_preset_load_first">Взяти перші %1$d</string>
+    <string name="wheel_preset_load_random">Взяти випадкові %1$d</string>
+    <string name="wheel_preset_manual_title">Виберіть елементи для колеса</string>
+    <string name="wheel_preset_manual_message">Вибрано %1$d з %2$d</string>
+    <string name="wheel_selection_minimum_required">Виберіть щонайменше 2 елементи</string>
+    <string name="wheel_selection_limit_reached">Досягнуто ліміту</string>
+    <string name="wheel_add_to_wheel">Додати в колесо</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">Так / Ні</string>
@@ -108,6 +120,37 @@
     <string name="new_list">Новий список</string>
     <string name="new_name">Нова назва</string>
     <string name="preset_actions">Готові дії</string>
+    <string name="presets">Пресети</string>
+    <string name="all_presets">Усі пресети</string>
+    <string name="more_presets">Ще пресети</string>
+    <string name="pinned">Закріплені</string>
+    <string name="recent">Нещодавні</string>
+    <string name="search_presets">Пошук пресетів</string>
+    <string name="sort_recent">Нещодавні</string>
+    <string name="sort_name">За назвою</string>
+    <string name="sort_most_used">Найчастіше використовувані</string>
+    <string name="sort_activity">За активністю</string>
+    <string name="sort_usage">За використанням</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="pin_preset">Закріпити пресет</string>
+    <string name="unpin_preset">Відкріпити пресет</string>
+    <string name="no_presets_found">Нічого не знайдено</string>
+    <string name="no_most_used_presets">Немає часто використовуваних пресетів</string>
+    <string name="no_recent_presets">Немає недавніх пресетів</string>
+    <string name="no_presets_yet">Поки що немає пресетів</string>
+    <string name="create_preset">Створити пресет</string>
+    <string name="preset_deleted">Пресет видалено</string>
+    <string name="preset_duplicated">Пресет дубльовано</string>
+    <string name="preset_duplicate_name">%1$s (копія)</string>
+    <string name="presets_empty_filtered_hint">Спробуй інший запит або зміни фільтр.</string>
+    <string name="presets_empty_create_hint">Після створення першого пресету збережені пресети з’являться тут.</string>
+    <string name="presets_empty_most_used_hint">Скористайся пресетами кілька разів, і вони з’являться тут.</string>
+    <string name="presets_empty_recent_hint">Відкрий кілька пресетів, і вони з’являться тут.</string>
+    <string name="presets_empty_search_hint">Немає пресетів за запитом "%1$s".</string>
+    <string name="preset_items_count">%1$d елементів</string>
+    <string name="preset_not_used_yet">Ще не використовувався</string>
+    <string name="preset_saved_count">%1$d збережено</string>
+    <string name="preset_used_relative">Використано %1$s</string>
     <string name="rename_list">Перейменувати список</string>
     <string name="save_settings">Зберегти налаштування</string>
     <string name="share_preset">Поділитися пресетом</string>

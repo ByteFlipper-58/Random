@@ -247,10 +247,9 @@ fun WheelScreen(onBack: () -> Unit) {
         excludedIndices = uiState.excludedIndices,
         onUpdateItems = { viewModel.onEvent(WheelUiEvent.UpdateItems(it)) },
         presets = presets,
-        onLoadPreset = { preset ->
-            val itemsToLoad = preset.items.take(16)
-            viewModel.onEvent(WheelUiEvent.LoadPreset(preset.copy(items = itemsToLoad)))
-        },
+        onLoadPreset = { preset -> viewModel.onEvent(WheelUiEvent.LoadPreset(preset)) },
+        hapticsEnabled = settings.hapticsEnabled,
+        hapticsIntensity = settings.hapticsIntensity,
         onSaveAsPreset = { name -> viewModel.saveAsPreset(name) }
     )
 

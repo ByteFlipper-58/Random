@@ -8,7 +8,7 @@ import com.byteflipper.random.data.preset.ListPresetDao
 
 @Database(
     entities = [ListPreset::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)

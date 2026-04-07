@@ -30,6 +30,7 @@
     <string name="numbers">Лікі</string>
     <string name="random">Выпадковае</string>
     <string name="menu">Меню</string>
+    <string name="tools">Рэжымы</string>
     <string name="wheel">Кола фартуны</string>
 
     <!-- Wheel screen -->
@@ -54,6 +55,17 @@
     <string name="wheel_save_as_preset">Захаваць як прэсэт</string>
     <string name="wheel_preset_name">Назва прэсэта</string>
     <string name="wheel_preset_items_count">%1$d элементаў</string>
+    <string name="wheel_preset_requires_selection">%1$d элементаў • абярыце да 16</string>
+    <string name="wheel_preset_limit_title">Адаптаваць прэсэт для кола</string>
+    <string name="wheel_preset_limit_message">У прэсэце "%1$s" %2$d элементаў, а кола падтрымлівае да %3$d. Абярыце спосаб імпарту.</string>
+    <string name="wheel_preset_choose_manually">Абраць уручную</string>
+    <string name="wheel_preset_load_first">Узяць першыя %1$d</string>
+    <string name="wheel_preset_load_random">Узяць выпадковыя %1$d</string>
+    <string name="wheel_preset_manual_title">Абярыце элементы для кола</string>
+    <string name="wheel_preset_manual_message">Абрана %1$d з %2$d</string>
+    <string name="wheel_selection_minimum_required">Абярыце мінімум 2 элементы</string>
+    <string name="wheel_selection_limit_reached">Дасягнуты ліміт</string>
+    <string name="wheel_add_to_wheel">Дадаць у кола</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">Так / Не</string>
@@ -108,6 +120,37 @@
     <string name="new_list">Новы спіс</string>
     <string name="new_name">Новая назва</string>
     <string name="preset_actions">Гатовыя дзеянні</string>
+    <string name="presets">Прэсэты</string>
+    <string name="all_presets">Усе прэсэты</string>
+    <string name="more_presets">Яшчэ прэсэты</string>
+    <string name="pinned">Замацаваныя</string>
+    <string name="recent">Нядаўнія</string>
+    <string name="search_presets">Пошук прэсэтаў</string>
+    <string name="sort_recent">Нядаўнія</string>
+    <string name="sort_name">Па назве</string>
+    <string name="sort_most_used">Найчасцейшыя</string>
+    <string name="sort_activity">Па актыўнасці</string>
+    <string name="sort_usage">Па выкарыстанні</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="pin_preset">Замацаваць прэсэт</string>
+    <string name="unpin_preset">Адмацаваць прэсэт</string>
+    <string name="no_presets_found">Нічога не знойдзена</string>
+    <string name="no_most_used_presets">Няма часта выкарыстоўваных прэсэтаў</string>
+    <string name="no_recent_presets">Няма нядаўніх прэсэтаў</string>
+    <string name="no_presets_yet">Пакуль няма прэсэтаў</string>
+    <string name="create_preset">Стварыць прэсет</string>
+    <string name="preset_deleted">Прэсэт выдалены</string>
+    <string name="preset_duplicated">Прэсэт дубляваны</string>
+    <string name="preset_duplicate_name">%1$s (копія)</string>
+    <string name="presets_empty_filtered_hint">Паспрабуйце іншы запыт або пераключыце фільтр.</string>
+    <string name="presets_empty_create_hint">Пасля першага захавання прэсэты з’явяцца тут.</string>
+    <string name="presets_empty_most_used_hint">Скарыстайцеся прэсэтамі некалькі разоў, і яны з’явяцца тут.</string>
+    <string name="presets_empty_recent_hint">Адкрыйце некалькі прэсэтаў, і яны з’явяцца тут.</string>
+    <string name="presets_empty_search_hint">Няма прэсэтаў па запыце "%1$s".</string>
+    <string name="preset_items_count">%1$d элементаў</string>
+    <string name="preset_not_used_yet">Яшчэ не выкарыстоўваўся</string>
+    <string name="preset_saved_count">%1$d захавана</string>
+    <string name="preset_used_relative">Выкарыстаны %1$s</string>
     <string name="rename_list">Перайменаваць спіс</string>
     <string name="save_settings">Захаваць налады</string>
     <string name="share_preset">Падзяліцца прэсэтам</string>

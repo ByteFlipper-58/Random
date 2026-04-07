@@ -19,14 +19,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import java.text.Normalizer
-import java.util.Locale
-import kotlin.random.Random
 import com.byteflipper.random.domain.lists.ListSortingMode as DomainListSortingMode
 import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
 import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
@@ -155,6 +151,7 @@ class ListViewModel @Inject constructor(
                             editorItems = it.items.ifEmpty { listOf("") }
                         )
                     }
+                    listPresetRepository.markUsed(it.id)
                 }
             }
         }
@@ -284,7 +281,10 @@ class ListViewModel @Inject constructor(
 
         if (newName.isNotEmpty() && preset != null) {
             viewModelScope.launch {
-                val updatedPreset = preset.copy(name = newName)
+                val updatedPreset = preset.copy(
+                    name = newName,
+                    updatedAt = System.currentTimeMillis()
+                )
                 listPresetRepository.upsert(updatedPreset)
                 _uiState.update { it.copy(preset = updatedPreset, showRenameDialog = false) }
             }
@@ -320,7 +320,10 @@ class ListViewModel @Inject constructor(
         val state = _uiState.value
         if (presetId != null && state.preset != null) {
             val items = getBaseItems()
-            val updatedPreset = state.preset.copy(items = items)
+            val updatedPreset = state.preset.copy(
+                items = items,
+                updatedAt = System.currentTimeMillis()
+            )
             viewModelScope.launch {
                 listPresetRepository.upsert(updatedPreset)
                 _uiState.update { it.copy(preset = updatedPreset) }

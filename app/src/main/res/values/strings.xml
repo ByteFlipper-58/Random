@@ -5,17 +5,25 @@
 
     <!-- Common -->
     <string name="add">Add</string>
+    <string name="all">All</string>
+    <string name="all_presets">All presets</string>
     <string name="back">Back</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
     <string name="confirm">Confirm</string>
     <string name="delete">Delete</string>
     <string name="disabled">Disabled</string>
+    <string name="duplicate">Duplicate</string>
     <string name="edit">Edit</string>
     <string name="enabled">Enabled</string>
     <string name="finish">Finish</string>
     <string name="loading">Loading…</string>
     <string name="next">Next</string>
+    <string name="open">Open</string>
+    <string name="open_presets">Open presets</string>
+    <string name="pinned">Pinned</string>
+    <string name="presets">Presets</string>
+    <string name="recent">Recent</string>
     <string name="rename">Rename</string>
     <string name="reset">Reset</string>
     <string name="result">Result</string>
@@ -23,6 +31,7 @@
     <string name="save">Save</string>
     <string name="settings">Settings</string>
     <string name="title">Title</string>
+    <string name="tools">Modes</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <!-- Main screen -->
@@ -57,6 +66,17 @@
     <string name="wheel_save_as_preset">Save as preset</string>
     <string name="wheel_preset_name">Preset name</string>
     <string name="wheel_preset_items_count">%1$d items</string>
+    <string name="wheel_preset_requires_selection">%1$d items • choose up to 16</string>
+    <string name="wheel_preset_limit_title">Adapt preset for the wheel</string>
+    <string name="wheel_preset_limit_message">"%1$s" contains %2$d items, but the wheel supports up to %3$d. Choose how to import it.</string>
+    <string name="wheel_preset_choose_manually">Choose manually</string>
+    <string name="wheel_preset_load_first">Take first %1$d</string>
+    <string name="wheel_preset_load_random">Take random %1$d</string>
+    <string name="wheel_preset_manual_title">Select items for the wheel</string>
+    <string name="wheel_preset_manual_message">Selected %1$d of %2$d</string>
+    <string name="wheel_selection_minimum_required">Choose at least 2 items</string>
+    <string name="wheel_selection_limit_reached">Limit reached</string>
+    <string name="wheel_add_to_wheel">Add to wheel</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">Yes / No</string>
@@ -111,10 +131,39 @@
     <string name="my_list">My list</string>
     <string name="new_list">New list</string>
     <string name="new_name">New name</string>
+    <string name="no_presets_found">No presets found</string>
+    <string name="no_search_results">Nothing found</string>
+    <string name="no_most_used_presets">No frequently used presets</string>
+    <string name="no_recent_presets">No recent presets</string>
+    <string name="no_presets_yet">No presets yet</string>
+    <string name="create_preset">Create preset</string>
+    <string name="last_used">Last used</string>
+    <string name="more_presets">More presets</string>
+    <string name="pin_preset">Pin preset</string>
+    <string name="preset_deleted">Preset deleted</string>
+    <string name="preset_duplicated">Preset duplicated</string>
+    <string name="preset_duplicate_name">%1$s (copy)</string>
+    <string name="presets_empty_filtered_hint">Try another query or switch the filter.</string>
+    <string name="presets_empty_create_hint">Saved presets will appear here after you create the first one.</string>
+    <string name="presets_empty_most_used_hint">Use presets a few times and they will appear here.</string>
+    <string name="presets_empty_recent_hint">Open a few presets and they will appear here.</string>
+    <string name="presets_empty_search_hint">No presets match "%1$s".</string>
     <string name="preset_actions">Preset actions</string>
+    <string name="preset_items_count">%1$d items</string>
+    <string name="preset_not_used_yet">Not used yet</string>
+    <string name="preset_saved_count">%1$d saved</string>
+    <string name="preset_used_relative">Used %1$s</string>
     <string name="rename_list">Rename list</string>
     <string name="save_settings">Save settings</string>
+    <string name="search_presets">Search presets</string>
     <string name="share_preset">Share preset</string>
+    <string name="sort_most_used">Most used</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_recent">Recent</string>
+    <string name="sort_activity">Activity</string>
+    <string name="sort_usage">Usage</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="unpin_preset">Unpin preset</string>
     <string name="use_preset">Use preset</string>
 
     <!-- Numbers screen -->
@@ -164,6 +213,7 @@
     <string name="expandable_section_expand">Expand</string>
     <string name="fixed_delay_1_second">Fixed delay: 1 second</string>
     <string name="open_after_save">Open after saving</string>
+    <string name="undo">Undo</string>
     <string name="seconds">sec</string>
     <string name="seconds_short">s</string>
     <string name="seconds_short_value">%1$d s</string>

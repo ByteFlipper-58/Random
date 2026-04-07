@@ -33,7 +33,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,6 +55,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,6 +64,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
+import com.byteflipper.random.data.settings.HapticsIntensity
+import com.byteflipper.random.ui.components.RoundedDropdownMenuShape
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -75,15 +77,21 @@ fun WheelEditorSheet(
     onUpdateItems: (List<String>) -> Unit,
     presets: List<ListPreset>,
     onLoadPreset: (ListPreset) -> Unit,
+    hapticsEnabled: Boolean,
+    hapticsIntensity: HapticsIntensity,
     onSaveAsPreset: ((String) -> Unit)? = null,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 ) {
+    val wheelPresetLimit = 16
     var newItemText by rememberSaveable { mutableStateOf("") }
     var showPresetMenu by remember { mutableStateOf(false) }
     var showTemplatesMenu by remember { mutableStateOf(false) }
     var showClearConfirm by remember { mutableStateOf(false) }
     var showSaveDialog by remember { mutableStateOf(false) }
     var savePresetName by remember { mutableStateOf("") }
+    var oversizedPreset by remember { mutableStateOf<ListPreset?>(null) }
+    var manualSelectionPreset by remember { mutableStateOf<ListPreset?>(null) }
+    var manualSelectionIndices by remember { mutableStateOf<Set<Int>>(emptySet()) }
     val defaultItems = listOf(stringResource(R.string.item_1), stringResource(R.string.item_2))
     
     // Edit mode
@@ -117,7 +125,7 @@ fun WheelEditorSheet(
 
     fun addItem() {
         val text = newItemText.trim()
-        if (text.isNotEmpty() && items.size < 16) {
+        if (text.isNotEmpty() && items.size < wheelPresetLimit) {
             onUpdateItems(items + text)
             newItemText = ""
         }
@@ -161,11 +169,49 @@ fun WheelEditorSheet(
     }
 
     fun loadTemplate(template: List<String>) {
-        onUpdateItems(template.take(16))
+        onUpdateItems(template.take(wheelPresetLimit))
         showTemplatesMenu = false
     }
 
-    if (visible) {
+    fun loadPresetIntoWheel(preset: ListPreset, loadedItems: List<String>) {
+        onLoadPreset(preset.copy(items = loadedItems))
+        oversizedPreset = null
+        manualSelectionPreset = null
+        manualSelectionIndices = emptySet()
+    }
+
+    fun beginLoadPreset(preset: ListPreset) {
+        if (preset.items.size <= wheelPresetLimit) {
+            loadPresetIntoWheel(preset, preset.items)
+        } else {
+            oversizedPreset = preset
+        }
+        showPresetMenu = false
+    }
+
+    fun loadPresetFirstItems(preset: ListPreset) {
+        loadPresetIntoWheel(preset, preset.items.take(wheelPresetLimit))
+    }
+
+    fun loadPresetRandomItems(preset: ListPreset) {
+        loadPresetIntoWheel(preset, preset.items.shuffled().take(wheelPresetLimit))
+    }
+
+    fun startManualPresetSelection(preset: ListPreset) {
+        oversizedPreset = null
+        manualSelectionPreset = preset
+        manualSelectionIndices = preset.items.indices.take(wheelPresetLimit).toSet()
+    }
+
+    fun confirmManualPresetSelection() {
+        val preset = manualSelectionPreset ?: return
+        val selectedItems = preset.items.filterIndexed { index, _ -> index in manualSelectionIndices }
+        if (selectedItems.size in 2..wheelPresetLimit) {
+            loadPresetIntoWheel(preset, selectedItems)
+        }
+    }
+
+    if (visible && oversizedPreset == null && manualSelectionPreset == null) {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
@@ -252,7 +298,8 @@ fun WheelEditorSheet(
                         
                         DropdownMenu(
                             expanded = showPresetMenu,
-                            onDismissRequest = { showPresetMenu = false }
+                            onDismissRequest = { showPresetMenu = false },
+                            shape = RoundedDropdownMenuShape
                         ) {
                             presets.forEach { preset ->
                                 DropdownMenuItem(
@@ -260,15 +307,24 @@ fun WheelEditorSheet(
                                         Column {
                                             Text(preset.name, fontWeight = FontWeight.Medium)
                                             Text(
-                                                stringResource(R.string.wheel_preset_items_count, preset.items.size),
+                                                buildPresetSubtitle(
+                                                    count = preset.items.size,
+                                                    exceedsLimit = preset.items.size > wheelPresetLimit
+                                                ),
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     },
+                                    leadingIcon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.list_alt_24px),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    },
                                     onClick = {
-                                        onLoadPreset(preset)
-                                        showPresetMenu = false
+                                        beginLoadPreset(preset)
                                     }
                                 )
                             }
@@ -284,7 +340,8 @@ fun WheelEditorSheet(
                         
                         DropdownMenu(
                             expanded = showTemplatesMenu,
-                            onDismissRequest = { showTemplatesMenu = false }
+                            onDismissRequest = { showTemplatesMenu = false },
+                            shape = RoundedDropdownMenuShape
                         ) {
                             quickTemplates.forEach { (name, template) ->
                                 DropdownMenuItem(
@@ -324,7 +381,7 @@ fun WheelEditorSheet(
                         shape = RoundedCornerShape(12.dp),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = { addItem() }),
-                        enabled = items.size < 16,
+                        enabled = items.size < wheelPresetLimit,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
@@ -335,7 +392,7 @@ fun WheelEditorSheet(
                     
                     FilledTonalIconButton(
                         onClick = { addItem() },
-                        enabled = newItemText.isNotBlank() && items.size < 16
+                        enabled = newItemText.isNotBlank() && items.size < wheelPresetLimit
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Add,
@@ -534,5 +591,50 @@ fun WheelEditorSheet(
                 }
             }
         )
+    }
+
+    oversizedPreset?.let { preset ->
+        WheelPresetImportSheet(
+            preset = preset,
+            itemLimit = wheelPresetLimit,
+            onDismiss = { oversizedPreset = null },
+            onLoadFirst = { loadPresetFirstItems(preset) },
+            onLoadRandom = { loadPresetRandomItems(preset) },
+            onSelectManually = { startManualPresetSelection(preset) }
+        )
+    }
+
+    manualSelectionPreset?.let { preset ->
+        WheelPresetSelectionSheet(
+            preset = preset,
+            selectedIndices = manualSelectionIndices,
+            itemLimit = wheelPresetLimit,
+            onSelectionChange = { index ->
+                manualSelectionIndices = when {
+                    index in manualSelectionIndices -> manualSelectionIndices - index
+                    manualSelectionIndices.size < wheelPresetLimit -> manualSelectionIndices + index
+                    else -> manualSelectionIndices
+                }
+            },
+            hapticsEnabled = hapticsEnabled,
+            hapticsIntensity = hapticsIntensity,
+            onDismiss = {
+                manualSelectionPreset = null
+                manualSelectionIndices = emptySet()
+            },
+            onConfirm = { confirmManualPresetSelection() }
+        )
+    }
+}
+
+@Composable
+private fun buildPresetSubtitle(
+    count: Int,
+    exceedsLimit: Boolean
+): String {
+    return if (exceedsLimit) {
+        stringResource(R.string.wheel_preset_requires_selection, count)
+    } else {
+        stringResource(R.string.wheel_preset_items_count, count)
     }
 }

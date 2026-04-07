@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.navigation.NavTransitions
@@ -24,6 +25,8 @@ import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.dice.DiceScreen
 import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.lists.ListScreen
+import com.byteflipper.random.ui.lot.LotScreen
+import com.byteflipper.random.ui.numbers.NumbersScreen
 import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
 import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
@@ -31,11 +34,12 @@ import com.byteflipper.random.ui.theme.RandomTheme
 import com.byteflipper.random.ui.theme.model.Theme
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.components.SystemHapticsManager
-import com.byteflipper.random.ui.numbers.NumbersScreen
-import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.setup.SetupScreen
+import com.byteflipper.random.ui.wheel.WheelScreen
 
 object AppRoutes {
+    const val ListPresetNameKey: String = "list_preset_name"
+    const val ListPresetItemsKey: String = "list_preset_items"
     const val Setup: String = "setup"
     const val Home: String = "home"
     const val Numbers: String = "numbers"
@@ -49,6 +53,8 @@ object AppRoutes {
     const val SettingsGeneral: String = "settings_general"
     const val SettingsAppearance: String = "settings_appearance"
     const val About: String = "about"
+
+    fun list(id: Long): String = "list/$id"
 }
 
 @Composable
@@ -63,7 +69,6 @@ fun AppRoot() {
 
     // Ensure we don't render anything until settings are loaded to prevent flash
     if (initialSettings == null) return
-
 
     val darkTheme = when (settings.themeMode) {
         ThemeMode.System -> isSystemInDarkTheme()
@@ -81,6 +86,13 @@ fun AppRoot() {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
+                fun openPresetList(preset: ListPreset) {
+                    navController.currentBackStackEntry?.savedStateHandle?.apply {
+                        set(AppRoutes.ListPresetNameKey, preset.name)
+                        set(AppRoutes.ListPresetItemsKey, ArrayList(preset.items))
+                    }
+                    navController.navigate(AppRoutes.list(preset.id))
+                }
 
                 val startDestination = if (settings.setupCompleted) AppRoutes.Home else AppRoutes.Setup
                 NavHost(navController = navController, startDestination = startDestination) {
@@ -95,7 +107,7 @@ fun AppRoot() {
                         HomeScreen(
                             onOpenNumbers = { navController.navigate(AppRoutes.Numbers) },
                             onOpenList = { navController.navigate(AppRoutes.List) },
-                            onOpenListById = { id -> navController.navigate("list/$id") },
+                            onOpenListPreset = ::openPresetList,
                             onOpenDice = { navController.navigate(AppRoutes.Dice) },
                             onOpenLot = { navController.navigate(AppRoutes.Lot) },
                             onOpenCoin = { navController.navigate(AppRoutes.Coin) },
@@ -138,7 +150,7 @@ fun AppRoot() {
                         exitTransition = NavTransitions.exit,
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
-                    ) { com.byteflipper.random.ui.wheel.WheelScreen(onBack = { navController.popBackStack() }) }
+                    ) { WheelScreen(onBack = { navController.popBackStack() }) }
                     composable(
                         route = AppRoutes.Settings,
                         enterTransition = NavTransitions.enter,
@@ -183,7 +195,7 @@ fun AppRoot() {
                         ListScreen(
                             onBack = { navController.popBackStack() },
                             onOpenListById = { id ->
-                                navController.navigate("list/$id") {
+                                navController.navigate(AppRoutes.list(id)) {
                                     popUpTo(AppRoutes.Home) { inclusive = false }
                                 }
                             }
@@ -198,10 +210,21 @@ fun AppRoot() {
                         popExitTransition = NavTransitions.popExit
                     ) { backStackEntry ->
                         val id = backStackEntry.arguments?.getLong("id")
+                        val initialPreset = remember(id) {
+                            val previousStateHandle = navController.previousBackStackEntry?.savedStateHandle
+                            val name = previousStateHandle?.get<String>(AppRoutes.ListPresetNameKey)
+                            val items = previousStateHandle?.get<ArrayList<String>>(AppRoutes.ListPresetItemsKey)
+                            if (id != null && name != null && items != null) {
+                                ListPreset(id = id, name = name, items = items)
+                            } else {
+                                null
+                            }
+                        }
                         ListScreen(
                             onBack = { navController.popBackStack() },
                             presetId = id,
-                            onOpenListById = { newId -> navController.navigate("list/$newId") }
+                            initialPreset = initialPreset,
+                            onOpenListById = { newId -> navController.navigate(AppRoutes.list(newId)) }
                         )
                     }
                 }

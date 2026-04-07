@@ -30,6 +30,7 @@
     <string name="numbers">संख्याएं</string>
     <string name="random">यादृच्छिक</string>
     <string name="menu">मेनू</string>
+    <string name="tools">मोड</string>
     <string name="wheel">भाग्य का पहिया</string>
 
     <!-- Wheel screen -->
@@ -54,6 +55,17 @@
     <string name="wheel_save_as_preset">प्रीसेट के रूप में सहेजें</string>
     <string name="wheel_preset_name">प्रीसेट नाम</string>
     <string name="wheel_preset_items_count">%1$d आइटम</string>
+    <string name="wheel_preset_requires_selection">%1$d आइटम • अधिकतम 16 चुनें</string>
+    <string name="wheel_preset_limit_title">प्रीसेट को व्हील के लिए अनुकूलित करें</string>
+    <string name="wheel_preset_limit_message">"%1$s" में %2$d आइटम हैं, लेकिन व्हील अधिकतम %3$d को सपोर्ट करता है। इम्पोर्ट का तरीका चुनें।</string>
+    <string name="wheel_preset_choose_manually">मैन्युअली चुनें</string>
+    <string name="wheel_preset_load_first">पहले %1$d लें</string>
+    <string name="wheel_preset_load_random">%1$d यादृच्छिक लें</string>
+    <string name="wheel_preset_manual_title">व्हील के लिए आइटम चुनें</string>
+    <string name="wheel_preset_manual_message">%2$d में से %1$d चुने गए</string>
+    <string name="wheel_selection_minimum_required">कम से कम 2 आइटम चुनें</string>
+    <string name="wheel_selection_limit_reached">सीमा पूरी हो गई</string>
+    <string name="wheel_add_to_wheel">व्हील में जोड़ें</string>
     
     <!-- Wheel Templates -->
     <string name="wheel_template_yes_no">हां / नहीं</string>
@@ -108,6 +120,37 @@
     <string name="new_list">नई सूची</string>
     <string name="new_name">नया नाम</string>
     <string name="preset_actions">प्रीसेट क्रियाएं</string>
+    <string name="presets">प्रीसेट</string>
+    <string name="all_presets">सभी प्रीसेट</string>
+    <string name="more_presets">और प्रीसेट</string>
+    <string name="pinned">पिन किए गए</string>
+    <string name="recent">हाल के</string>
+    <string name="search_presets">प्रीसेट खोजें</string>
+    <string name="sort_recent">हाल के</string>
+    <string name="sort_name">नाम से</string>
+    <string name="sort_most_used">सबसे अधिक उपयोग किए गए</string>
+    <string name="sort_activity">गतिविधि के अनुसार</string>
+    <string name="sort_usage">उपयोग के अनुसार</string>
+    <string name="sort_summary">%1$s • %2$s</string>
+    <string name="pin_preset">प्रीसेट पिन करें</string>
+    <string name="unpin_preset">प्रीसेट से पिन हटाएँ</string>
+    <string name="no_presets_found">कोई प्रीसेट नहीं मिला</string>
+    <string name="no_most_used_presets">ज़्यादा इस्तेमाल किए गए प्रीसेट नहीं हैं</string>
+    <string name="no_recent_presets">हाल के प्रीसेट नहीं हैं</string>
+    <string name="no_presets_yet">अभी तक कोई प्रीसेट नहीं है</string>
+    <string name="create_preset">प्रीसेट बनाएं</string>
+    <string name="preset_deleted">प्रीसेट हटाया गया</string>
+    <string name="preset_duplicated">प्रीसेट डुप्लिकेट किया गया</string>
+    <string name="preset_duplicate_name">%1$s (कॉपी)</string>
+    <string name="presets_empty_filtered_hint">कोई दूसरा खोज शब्द आज़माएँ या फ़िल्टर बदलें.</string>
+    <string name="presets_empty_create_hint">पहला प्रीसेट बनाने के बाद सहेजे गए प्रीसेट यहाँ दिखाई देंगे.</string>
+    <string name="presets_empty_most_used_hint">कुछ प्रीसेट कई बार इस्तेमाल करें, वे यहाँ दिखाई देंगे.</string>
+    <string name="presets_empty_recent_hint">कुछ प्रीसेट खोलें, वे यहाँ दिखाई देंगे.</string>
+    <string name="presets_empty_search_hint">"%1$s" से मेल खाने वाले प्रीसेट नहीं मिले.</string>
+    <string name="preset_items_count">%1$d आइटम</string>
+    <string name="preset_not_used_yet">अभी तक इस्तेमाल नहीं हुआ</string>
+    <string name="preset_saved_count">%1$d सहेजे गए</string>
+    <string name="preset_used_relative">%1$s इस्तेमाल किया गया</string>
     <string name="rename_list">सूची का नाम बदलें</string>
     <string name="save_settings">सेटिंग्स सहेजें</string>
     <string name="share_preset">प्रीसेट साझा करें</string>
