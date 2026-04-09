@@ -1,13 +1,10 @@
 package com.byteflipper.random.ui.home
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,8 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
@@ -30,14 +25,9 @@ import com.byteflipper.random.ui.home.components.CreateListDialog
 import com.byteflipper.random.ui.home.components.HomeMenuBottomSheet
 import com.byteflipper.random.ui.presets.PresetsExternalAction
 import com.byteflipper.random.ui.presets.PresetsExternalActionType
-import com.byteflipper.random.ui.presets.PresetsContent
 import com.byteflipper.random.ui.presets.PresetsSelectionUiState
-import com.byteflipper.random.ui.presets.PresetsSearchTopBar
 import com.byteflipper.random.ui.presets.PresetsViewModel
-import com.byteflipper.random.ui.presets.components.PresetsFabControls
-import com.byteflipper.random.ui.presets.components.PresetsSelectionTopBar
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 
 enum class MenuItemType {
     NUMBERS,
@@ -123,6 +113,10 @@ fun HomeScreen(
         menuItems = newItems
     }
 
+    fun postPresetsAction(type: PresetsExternalActionType) {
+        pendingPresetsAction = PresetsExternalAction(type = type)
+    }
+
     LaunchedEffect(selectedTab) {
         if (selectedTab != HomeTab.Presets && showPresetsSearch) {
             showPresetsSearch = false
@@ -161,8 +155,45 @@ fun HomeScreen(
     BackHandler(
         enabled = selectedTab == HomeTab.Presets && presetsSelectionState.active && !showPresetsSearch
     ) {
-        pendingPresetsAction = PresetsExternalAction(type = PresetsExternalActionType.ExitSelection)
+        postPresetsAction(PresetsExternalActionType.ExitSelection)
     }
+
+    val searchTopBar = HomePresetsSearchBar(
+        selectedTab = selectedTab,
+        showPresetsSearch = showPresetsSearch,
+        presetsUiState = presetsUiState,
+        onFilterChange = presetsViewModel::updateFilter,
+        onToggleSortOrder = presetsViewModel::toggleSortOrder,
+        onFilterInteractionChanged = { isInteracting ->
+            isPresetsFilterInteracting = isInteracting
+        },
+        onOpenPreset = onOpenListPreset,
+        onDismiss = { showPresetsSearch = false }
+    )
+
+    val topBarOverride = HomePresetsSelectionTopBar(
+        selectedTab = selectedTab,
+        showPresetsSearch = showPresetsSearch,
+        selectionState = presetsSelectionState,
+        onAction = ::postPresetsAction
+    )
+
+    val floatingActionButton = HomePresetsFab(
+        selectedTab = selectedTab,
+        showPresetsSearch = showPresetsSearch,
+        selectionState = presetsSelectionState,
+        expanded = showPresetsFabMenu,
+        hasPresets = presetsUiState.hasAnyPresets,
+        onExpandedChange = { showPresetsFabMenu = it },
+        onCreatePreset = {
+            showPresetsFabMenu = false
+            showCreateDialog = true
+        },
+        onAction = { type ->
+            showPresetsFabMenu = false
+            postPresetsAction(type)
+        }
+    )
 
     Box(modifier = Modifier.fillMaxSize()) {
         HomeScaffold(
@@ -181,165 +212,41 @@ fun HomeScreen(
             },
             onOpenMenu = { showMenu = true },
             onOpenSearch = { showPresetsSearch = true },
-            searchTopBar = if (selectedTab == HomeTab.Presets && showPresetsSearch) {
-                {
-                    PresetsSearchTopBar(
-                        uiState = presetsUiState,
-                        onFilterChange = presetsViewModel::updateFilter,
-                        onToggleSortOrder = presetsViewModel::toggleSortOrder,
-                        onFilterInteractionChanged = { isInteracting ->
-                            isPresetsFilterInteracting = isInteracting
-                        },
-                        onOpenPreset = onOpenListPreset,
-                        onDismiss = {
-                            showPresetsSearch = false
-                        }
-                    )
-                }
-            } else {
-                null
-            },
-            topBarOverride = if (
-                selectedTab == HomeTab.Presets &&
-                !showPresetsSearch &&
-                presetsSelectionState.active
-            ) {
-                {
-                    PresetsSelectionTopBar(
-                        selectedCount = presetsSelectionState.selectedCount,
-                        hasSelection = presetsSelectionState.hasSelection,
-                        canMerge = presetsSelectionState.canMerge,
-                        onClose = {
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.ExitSelection
-                            )
-                        },
-                        onShare = {
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.ShareSelected
-                            )
-                        },
-                        onExport = {
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.ExportSelected
-                            )
-                        },
-                        onDelete = {
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.DeleteSelected
-                            )
-                        },
-                        onMerge = {
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.MergeSelected
-                            )
-                        },
-                    )
-                }
-            } else {
-                null
-            },
-            floatingActionButton = if (
-                selectedTab == HomeTab.Presets &&
-                !showPresetsSearch &&
-                !presetsSelectionState.active
-            ) {
-                {
-                    PresetsFabControls(
-                        expanded = showPresetsFabMenu,
-                        hasPresets = presetsUiState.hasAnyPresets,
-                        onExpandedChange = { showPresetsFabMenu = it },
-                        onCreatePreset = {
-                            showPresetsFabMenu = false
-                            showCreateDialog = true
-                        },
-                        onImportFile = {
-                            showPresetsFabMenu = false
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.ImportFile
-                            )
-                        },
-                        onImportClipboard = {
-                            showPresetsFabMenu = false
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.ImportClipboard
-                            )
-                        },
-                        onExportAll = {
-                            showPresetsFabMenu = false
-                            pendingPresetsAction = PresetsExternalAction(
-                                type = PresetsExternalActionType.ExportAll
-                            )
-                        }
-                    )
-                }
-            } else {
-                {}
-            }
+            searchTopBar = searchTopBar,
+            topBarOverride = topBarOverride,
+            floatingActionButton = floatingActionButton
         ) { inner ->
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(inner),
-                userScrollEnabled = !isPresetsFilterInteracting && !showPresetsSearch,
-                beyondViewportPageCount = 1
-            ) { page ->
-                val pageOffset = (
-                    (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
-                ).absoluteValue.coerceIn(0f, 1f)
-                val motionProgress = FastOutSlowInEasing.transform(1f - pageOffset)
-                val pageScale = lerp(0.985f, 1f, motionProgress)
-                val pageAlpha = lerp(0.9f, 1f, motionProgress)
-
-                when (HomeTab.entries[page]) {
-                    HomeTab.Tools -> HomeContent(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer {
-                                scaleX = pageScale
-                                scaleY = pageScale
-                                alpha = pageAlpha
-                            },
-                        menuItems = menuItems,
-                        onMoveItem = ::moveItem,
-                        onOpenNumbers = onOpenNumbers,
-                        onOpenList = onOpenList,
-                        onAddList = { showCreateDialog = true },
-                        onOpenDice = onOpenDice,
-                        onOpenLot = onOpenLot,
-                        onOpenCoin = onOpenCoin,
-                        onOpenWheel = onOpenWheel
-                    )
-
-                    HomeTab.Presets -> PresetsContent(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer {
-                                scaleX = pageScale
-                                scaleY = pageScale
-                                alpha = pageAlpha
-                            },
-                        onOpenPreset = onOpenListPreset,
-                        onCreatePreset = { showCreateDialog = true },
-                        pendingSharedImport = pendingSharedImport,
-                        onSharedImportConsumed = appViewModel::clearSharedImport,
-                        externalAction = pendingPresetsAction,
-                        onExternalActionHandled = { actionId ->
-                            if (pendingPresetsAction?.id == actionId) {
-                                pendingPresetsAction = null
-                            }
-                        },
-                        onSelectionStateChanged = { selectionState ->
-                            presetsSelectionState = selectionState
-                        },
-                        viewModel = presetsViewModel,
-                        onFilterInteractionChanged = { isInteracting ->
-                            isPresetsFilterInteracting = isInteracting
-                        }
-                    )
+            HomePagerContent(
+                pagerState = pagerState,
+                innerPadding = inner,
+                menuItems = menuItems,
+                showPresetsSearch = showPresetsSearch,
+                isPresetsFilterInteracting = isPresetsFilterInteracting,
+                pendingSharedImport = pendingSharedImport,
+                pendingPresetsAction = pendingPresetsAction,
+                presetsViewModel = presetsViewModel,
+                onMoveItem = ::moveItem,
+                onOpenNumbers = onOpenNumbers,
+                onOpenList = onOpenList,
+                onAddList = { showCreateDialog = true },
+                onOpenDice = onOpenDice,
+                onOpenLot = onOpenLot,
+                onOpenCoin = onOpenCoin,
+                onOpenWheel = onOpenWheel,
+                onOpenPreset = onOpenListPreset,
+                onSharedImportConsumed = appViewModel::clearSharedImport,
+                onExternalActionHandled = { actionId ->
+                    if (pendingPresetsAction?.id == actionId) {
+                        pendingPresetsAction = null
+                    }
+                },
+                onSelectionStateChanged = { selectionState ->
+                    presetsSelectionState = selectionState
+                },
+                onFilterInteractionChanged = { isInteracting ->
+                    isPresetsFilterInteracting = isInteracting
                 }
-            }
+            )
         }
     }
 

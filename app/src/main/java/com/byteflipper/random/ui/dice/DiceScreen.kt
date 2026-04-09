@@ -1,10 +1,5 @@
 package com.byteflipper.random.ui.dice
 
-import android.view.SoundEffectConstants
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,33 +9,20 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Fill
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalHapticFeedback
-import com.byteflipper.random.ui.components.LocalHapticsManager
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import kotlin.math.min
-import kotlin.random.Random
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.layout.Arrangement
-import kotlinx.coroutines.Job
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.ui.dice.components.DiceFabControls
 import com.byteflipper.random.ui.dice.components.DiceOverlay
-import com.byteflipper.random.utils.findActivity
+import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.components.ShakeEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,114 +30,39 @@ import com.byteflipper.random.ui.components.ShakeEffect
 fun DiceScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    val haptics = LocalHapticFeedback.current
     val hapticsManager = LocalHapticsManager.current
     val view = LocalView.current
     val viewModel: DiceViewModel = hiltViewModel()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val controller = rememberDiceScreenController()
 
-    val maxDice = 10
-    var diceCount by rememberSaveable { mutableStateOf(uiState.diceCount) }
-
-    val rotations = remember { List(maxDice) { Animatable(0f) } }
-    val scales = remember { List(maxDice) { Animatable(1f) } }
-    val isAnimating = remember { mutableStateOf(List(maxDice) { false }) }
-
-    val diceColorPalette = remember {
-        listOf(
-            Color(0xFFE74C3C), Color(0xFF3498DB), Color(0xFF2ECC71), Color(0xFFF39C12),
-            Color(0xFF9B59B6), Color(0xFF1ABC9C), Color(0xFFE67E22), Color(0xFF34495E),
-            Color(0xFF16A085), Color(0xFF27AE60), Color(0xFF2980B9), Color(0xFF8E44AD),
-            Color(0xFFC0392B), Color(0xFFD35400), Color(0xFF7F8C8D), Color(0xFF2C3E50)
-        )
-    }
-
-    var diceColors by remember { mutableStateOf(List(maxDice) { diceColorPalette.random() }) }
-
-    val animatedColors = diceColors.mapIndexed { index, color ->
+    val animatedColors = controller.diceColors.mapIndexed { index, color ->
         animateColorAsState(
             targetValue = color,
-            animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
+            animationSpec = DiceAnimations.ColorChange,
             label = "dice_color_${index}"
         )
     }
 
-    var isRolling by remember { mutableStateOf(false) }
-    val scrimAlpha = remember { Animatable(0f) }
-    var currentRollJob by remember { mutableStateOf<Job?>(null) }
-
-    LaunchedEffect(uiState.diceCount) { diceCount = uiState.diceCount }
-    LaunchedEffect(diceCount) { viewModel.onEvent(DiceUiEvent.SetDiceCount(diceCount)) }
-
-    suspend fun openOverlayIfNeeded() {
-        if (!uiState.isOverlayVisible) {
-            viewModel.onEvent(DiceUiEvent.SetOverlayVisible(true))
-            scrimAlpha.snapTo(0f)
-            scrimAlpha.animateTo(1f, tween(250, easing = FastOutSlowInEasing))
-        }
-    }
-
-    fun closeOverlay() {
-        scope.launch {
-            scrimAlpha.animateTo(0f, tween(200, easing = FastOutSlowInEasing))
-            viewModel.onEvent(DiceUiEvent.SetOverlayVisible(false))
-        }
-    }
-
-    fun rollAll(hapticsAllowed: Boolean) {
-        currentRollJob?.cancel()
-        currentRollJob = scope.launch {
-            isRolling = true
-            if (hapticsAllowed) hapticsManager?.performPress(settings.hapticsIntensity)
-            view.playSoundEffect(SoundEffectConstants.CLICK)
-            openOverlayIfNeeded()
-
-            val newValues = viewModel.rollAll()
-
-            diceColors = List(maxDice) { index ->
-                val currentColor = diceColors[index]
-                var newColor = diceColorPalette.random()
-                while (newColor == currentColor && diceColorPalette.size > 1) {
-                    newColor = diceColorPalette.random()
-                }
-                newColor
-            }
-
-            val jobs = mutableListOf<Job>()
-            repeat(diceCount) { i ->
-
-                val currentRotation = rotations[i].value
-                val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
-                rotations[i].snapTo(normalizedRotation)
-
-                jobs += launch {
-                    val fullRotations = Random.nextInt(3, 6) * 360f
-                    val finalRotation = fullRotations + 90f * Random.nextInt(0, 4)
-                    rotations[i].animateTo(
-                        targetValue = normalizedRotation + finalRotation,
-                        animationSpec = tween(durationMillis = 700, easing = FastOutSlowInEasing)
-                    )
-                }
-                jobs += launch {
-                    scales[i].animateTo(1.15f, tween(150, easing = FastOutSlowInEasing))
-                    scales[i].animateTo(1f, tween(250, easing = FastOutSlowInEasing))
-                }
-            }
-            jobs.forEach { it.join() }
-            isRolling = false
-            // Реклама: каждые 8 общих бросков костей
-            val ctx = view.context
-            ctx.findActivity()?.let { act -> viewModel.checkAd(act) }
-        }
-    }
+    LaunchedEffect(uiState.diceCount) { controller.syncDiceCount(uiState.diceCount) }
+    LaunchedEffect(controller.diceCount) { viewModel.onEvent(DiceUiEvent.SetDiceCount(controller.diceCount)) }
 
     // Shake-to-generate integration
     ShakeEffect(
-        enabled = settings.shakeToGenerateEnabled && !isRolling,
+        enabled = settings.shakeToGenerateEnabled && !controller.isRolling,
         hapticsEnabled = settings.hapticsEnabled,
         hapticsIntensity = settings.hapticsIntensity,
-        onShake = { rollAll(settings.hapticsEnabled) }
+        onShake = {
+            controller.rollAll(
+                scope = scope,
+                uiState = uiState,
+                settings = settings,
+                viewModel = viewModel,
+                view = view,
+                hapticsManager = hapticsManager
+            )
+        }
     )
 
     DiceScaffold(
@@ -164,9 +71,16 @@ fun DiceScreen(onBack: () -> Unit) {
         floatingActionButton = {
             DiceFabControls(
                 size = settings.fabSize,
-                isRolling = isRolling,
+                isRolling = controller.isRolling,
                 onClick = {
-                    rollAll(settings.hapticsEnabled) 
+                    controller.rollAll(
+                        scope = scope,
+                        uiState = uiState,
+                        settings = settings,
+                        viewModel = viewModel,
+                        view = view,
+                        hapticsManager = hapticsManager
+                    )
                 }
             )
         }
@@ -176,153 +90,41 @@ fun DiceScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(inner)
                 .padding(16.dp)
-                .blur((8f * scrimAlpha.value).dp),
+                .blur((8f * controller.scrimAlpha.value).dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             DiceContent(
                 modifier = Modifier.fillMaxWidth(),
-                diceCount = diceCount,
-                onDiceCountChange = { diceCount = it }
+                diceCount = controller.diceCount,
+                onDiceCountChange = { controller.syncDiceCount(it) }
             )
         }
 
         if (uiState.isOverlayVisible) {
             DiceOverlay(
-                scrimAlpha = scrimAlpha.value,
-                diceCount = diceCount,
-                rotations = rotations,
-                scales = scales,
-                isAnimating = isAnimating.value,
+                scrimAlpha = controller.scrimAlpha.value,
+                diceCount = controller.diceCount,
+                rotations = controller.rotations,
+                scales = controller.scales,
+                isAnimating = controller.isAnimating,
                 animatedColors = animatedColors,
                 values = uiState.values,
-                onDismiss = { closeOverlay() },
-                onDieClick = { i ->
-                    if (!isAnimating.value[i]) {
-                        scope.launch {
-                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = true }
-                            if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-                            val newV = viewModel.rollOne(i)
-                            val currentColor = diceColors[i]
-                            var newColor = diceColorPalette.random()
-                            while (newColor == currentColor && diceColorPalette.size > 1) {
-                                newColor = diceColorPalette.random()
-                            }
-                            diceColors = diceColors.toMutableList().also { it[i] = newColor }
-
-                            val currentRotation = rotations[i].value
-                            val normalizedRotation = ((currentRotation % 360) / 90).toInt() * 90f
-                            rotations[i].snapTo(normalizedRotation)
-
-                            rotations[i].animateTo(
-                                targetValue = normalizedRotation + 360f * Random.nextInt(2, 4),
-                                animationSpec = tween(500, easing = FastOutSlowInEasing)
-                            )
-                            scales[i].animateTo(1.12f, tween(120))
-                            scales[i].animateTo(1f, tween(180))
-                            isAnimating.value = isAnimating.value.toMutableList().also { it[i] = false }
-                        }
+                onDismiss = {
+                    controller.closeOverlay(scope) { visible ->
+                        viewModel.onEvent(DiceUiEvent.SetOverlayVisible(visible))
                     }
+                },
+                onDieClick = { i ->
+                    controller.rollSingleDie(
+                        scope = scope,
+                        index = i,
+                        settings = settings,
+                        viewModel = viewModel,
+                        hapticsManager = hapticsManager
+                    )
                 }
             )
-        }
-    }
-}
-
-private fun DrawScope.drawDots(value: Int, s: Float, w: Float, h: Float, baseColor: Color) {
-    val margin = s * 0.24f
-    val cx = w / 2f
-    val cy = h / 2f
-    val left = margin
-    val right = w - margin
-    val top = margin
-    val bottom = h - margin
-    val pipR = s * 0.08f
-
-    fun drawDot(x: Float, y: Float) {
-        // Внешняя тень точки
-        drawCircle(
-            brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                colors = listOf(
-                    Color.Black.copy(alpha = 0.4f),
-                    Color.Transparent
-                ),
-                center = androidx.compose.ui.geometry.Offset(x + 2f, y + 2f),
-                radius = pipR * 1.2f
-            ),
-            radius = pipR * 1.2f,
-            center = androidx.compose.ui.geometry.Offset(x + 2f, y + 2f)
-        )
-
-        // Впадина вокруг точки
-        drawCircle(
-            color = Color.Black.copy(alpha = 0.15f),
-            radius = pipR * 1.1f,
-            center = androidx.compose.ui.geometry.Offset(x, y)
-        )
-
-        // Основная точка
-        drawCircle(
-            brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                colors = listOf(
-                    Color(0xFFFAFAFA),
-                    Color(0xFFE0E0E0),
-                    Color(0xFFBDBDBD)
-                ),
-                center = androidx.compose.ui.geometry.Offset(x, y),
-                radius = pipR
-            ),
-            radius = pipR,
-            center = androidx.compose.ui.geometry.Offset(x, y)
-        )
-
-        // Блик на точке
-        drawCircle(
-            brush = androidx.compose.ui.graphics.Brush.radialGradient(
-                colors = listOf(
-                    Color.White,
-                    Color.White.copy(alpha = 0.3f),
-                    Color.Transparent
-                ),
-                center = androidx.compose.ui.geometry.Offset(x - pipR * 0.3f, y - pipR * 0.3f),
-                radius = pipR * 0.5f
-            ),
-            radius = pipR * 0.4f,
-            center = androidx.compose.ui.geometry.Offset(x - pipR * 0.3f, y - pipR * 0.3f)
-        )
-    }
-
-    when (value.coerceIn(1, 6)) {
-        1 -> drawDot(cx, cy)
-        2 -> {
-            drawDot(left, top)
-            drawDot(right, bottom)
-        }
-        3 -> {
-            drawDot(left, top)
-            drawDot(cx, cy)
-            drawDot(right, bottom)
-        }
-        4 -> {
-            drawDot(left, top)
-            drawDot(right, top)
-            drawDot(left, bottom)
-            drawDot(right, bottom)
-        }
-        5 -> {
-            drawDot(left, top)
-            drawDot(right, top)
-            drawDot(cx, cy)
-            drawDot(left, bottom)
-            drawDot(right, bottom)
-        }
-        6 -> {
-            drawDot(left, top)
-            drawDot(left, cy)
-            drawDot(left, bottom)
-            drawDot(right, top)
-            drawDot(right, cy)
-            drawDot(right, bottom)
         }
     }
 }

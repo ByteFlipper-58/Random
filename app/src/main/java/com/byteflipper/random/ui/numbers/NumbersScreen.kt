@@ -1,355 +1,120 @@
 package com.byteflipper.random.ui.numbers
 
-import android.view.SoundEffectConstants
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import com.byteflipper.random.ui.components.LocalHapticsManager
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
-import kotlinx.coroutines.launch
-import kotlin.math.max
-import kotlin.math.min
-
-import com.byteflipper.random.ui.components.flip.FlipCardOverlay
-import com.byteflipper.random.ui.components.flip.rememberFlipCardState
-import com.byteflipper.random.ui.components.flip.FlipCardControls
-import com.byteflipper.random.ui.components.GeneratorConfigDialog
-import com.byteflipper.random.ui.theme.getRainbowColors
-import com.byteflipper.random.ui.settings.components.RadioOption
-import com.byteflipper.random.domain.numbers.SortingMode
+import com.byteflipper.random.ui.common.FlipGenerateScreenHost
+import com.byteflipper.random.ui.common.rememberGeneratorScreenRuntime
+import com.byteflipper.random.ui.common.rememberFlipGenerateController
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-
-import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
-import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
-import com.byteflipper.random.utils.Constants.MAX_DELAY_MS
-import com.byteflipper.random.ui.numbers.components.NumbersFabControls
-import com.byteflipper.random.ui.numbers.components.NumbersResultsDisplay
-import com.byteflipper.random.ui.numbers.components.computeCardBaseSizeDp
-import com.byteflipper.random.ui.numbers.components.computeHeightScale
-import com.byteflipper.random.ui.numbers.components.pickStableColor
-import com.byteflipper.random.ui.theme.CardContentTheme
-import com.byteflipper.random.utils.findActivity
 import com.byteflipper.random.ui.components.ShakeEffect
+import com.byteflipper.random.ui.numbers.components.NumbersConfigSheet
+import com.byteflipper.random.ui.numbers.components.NumbersFabControls
+import com.byteflipper.random.ui.numbers.components.NumbersFlipOverlay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NumbersScreen(onBack: () -> Unit) {
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val hapticsManager = LocalHapticsManager.current
+    val runtime = rememberGeneratorScreenRuntime()
     val view = LocalView.current
-    val context = LocalContext.current
     val numbersClipboardLabel = stringResource(R.string.numbers_clipboard_label)
 
     // Все пользовательские параметры и результаты берём из VM
     val viewModel: NumbersViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
+    val controller = rememberFlipGenerateController()
 
-    // Позиции FAB
-    var fabCenterInRoot by remember { mutableStateOf(Offset.Zero) }
-    var fabSize by remember { mutableStateOf(IntSize.Zero) }
-    var isGenerating by remember { mutableStateOf(false) }
-
-    // Пульс FAB
-    val fabPulseProgress = remember { Animatable(0f) }
-    val fabScale = remember { Animatable(1f) }
-
-    // Состояние и контроллер для переиспользуемой карточки
-    val flipCardState = rememberFlipCardState()
-    val flipCardController = FlipCardControls(flipCardState)
-
-    fun resetUsedNumbers() { viewModel.resetUsedNumbers() }
-
-    fun validateInputs(): Pair<IntRange, Int>? {
-        val validation = viewModel.validateInputs()
-        if (validation != null) return validation
-
-        // Если не прошло валидацию, отдельно обработаем исчерпание вариантов при запрете повторов
-        val from = uiState.fromText.trim().toIntOrNull()
-        val to = uiState.toText.trim().toIntOrNull()
-        if (from != null && to != null && !uiState.allowRepetitions) {
-            val range = if (from <= to) from..to else to..from
-            val availableCount = range.count { it !in uiState.usedNumbers }
-            if (availableCount <= 0) {
-                scope.launch {
-                    val result = snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.all_numbers_used),
-                        actionLabel = context.getString(R.string.reset)
-                    )
-                    if (result == androidx.compose.material3.SnackbarResult.ActionPerformed) {
-                        viewModel.resetUsedNumbers()
-                    }
-                }
-                return null
-            }
-        }
-
-        scope.launch {
-            snackbarHostState.showSnackbar(context.getString(R.string.enter_valid_numbers))
-        }
-        return null
-    }
-
-    // Сброс usedNumbers на изменения диапазона/режима
-    LaunchedEffect(uiState.fromText, uiState.toText, uiState.allowRepetitions) {
-        if (uiState.allowRepetitions) {
-            viewModel.resetUsedNumbers(silent = true)
-        } else {
-            val from = uiState.fromText.trim().toIntOrNull()
-            val to = uiState.toText.trim().toIntOrNull()
-            if (from != null && to != null) {
-                val range = if (from <= to) from..to else to..from
-                viewModel.pruneUsedNumbersToRange(range)
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                is NumbersUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(context.getString(effect.messageRes))
-                is NumbersUiEffect.HapticPress -> hapticsManager?.performPress(effect.intensity)
-            }
-        }
-    }
-
-    fun triggerFabPulse() = scope.launch {
-        if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-        view.playSoundEffect(SoundEffectConstants.CLICK)
-        fabPulseProgress.snapTo(0f)
-        val ring = launch {
-            fabPulseProgress.animateTo(1f, tween(500, easing = FastOutSlowInEasing))
-            fabPulseProgress.snapTo(0f)
-        }
-        val scale = launch {
-            fabScale.animateTo(1.12f, spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium))
-            fabScale.animateTo(1f, spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessLow))
-        }
-        ring.join()
-        scale.join()
-    }
-
-    // Shake-to-generate integration
-    fun handleGenerate() {
-        val result = validateInputs() ?: return
-        val delayMs = viewModel.getEffectiveDelayMs()
-        viewModel.onEvent(NumbersUiEvent.RandomizeCardColor)
-        if (!flipCardController.isVisible()) {
-            flipCardController.open()
-            viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(true))
-        }
-        isGenerating = true
-        flipCardController.spinAndReveal(
-            effectiveDelayMs = delayMs,
-            onReveal = { targetIsFront ->
-                isGenerating = false
-                val newNumbers = viewModel.generate()
-                if (targetIsFront) {
-                    viewModel.onEvent(NumbersUiEvent.SetFrontValues(newNumbers))
-                    viewModel.onEvent(NumbersUiEvent.SetBackValues(emptyList()))
-                } else {
-                    viewModel.onEvent(NumbersUiEvent.SetBackValues(newNumbers))
-                    viewModel.onEvent(NumbersUiEvent.SetFrontValues(emptyList()))
-                }
-            },
-            onSpinCompleted = {
-                viewModel.notifyHapticPressIfEnabled()
-                context.findActivity()?.let { act ->
-                    viewModel.checkAd(act)
-                }
-            }
-        )
-    }
+    NumbersScreenEffects(
+        uiState = uiState,
+        viewModel = viewModel,
+        snackbarHostState = runtime.snackbarHostState,
+        context = runtime.context,
+        hapticsManager = runtime.hapticsManager
+    )
 
     ShakeEffect(
         enabled = settings.shakeToGenerateEnabled,
         hapticsEnabled = settings.hapticsEnabled,
         hapticsIntensity = settings.hapticsIntensity,
-        onShake = { handleGenerate() }
+        onShake = {
+            controller.handleNumberGeneration(
+                uiState = uiState,
+                viewModel = viewModel,
+                scope = runtime.scope,
+                snackbarHostState = runtime.snackbarHostState,
+                context = runtime.context,
+                view = view
+            )
+        }
     )
 
-    // Диалог настроек
-    GeneratorConfigDialog(
-        visible = uiState.showConfigDialog,
-        onDismissRequest = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(false)) },
-        countText = uiState.countText,
-        onCountChange = { viewModel.onEvent(NumbersUiEvent.UpdateCountText(it)) },
-        allowRepetitions = uiState.allowRepetitions,
-        onAllowRepetitionsChange = { viewModel.onEvent(NumbersUiEvent.UpdateAllowRepetitions(it)) },
-        usedNumbers = uiState.usedNumbers,
-        availableRange = run {
-            val from = uiState.fromText.trim().toIntOrNull()
-            val to = uiState.toText.trim().toIntOrNull()
-            if (from != null && to != null) {
-                if (from <= to) from..to else to..from
-            } else null
-        },
-        onResetUsedNumbers = { viewModel.onEvent(NumbersUiEvent.ResetUsedNumbers) },
-        useDelay = uiState.useDelay,
-        onUseDelayChange = { viewModel.onEvent(NumbersUiEvent.UpdateUseDelay(it)) },
-        delayText = uiState.delayText,
-        onDelayChange = { viewModel.onEvent(NumbersUiEvent.UpdateDelayText(it)) },
-        minDelayMs = MIN_DELAY_MS,
-        maxDelayMs = MAX_DELAY_MS,
-        defaultDelayMs = DEFAULT_DELAY_MS,
-        sortingOptions = listOf(
-            RadioOption(key = SortingMode.Random.name, title = stringResource(R.string.random_order)),
-            RadioOption(key = SortingMode.Ascending.name, title = stringResource(R.string.ascending)),
-            RadioOption(key = SortingMode.Descending.name, title = stringResource(R.string.descending))
-        ),
-        selectedSortingKey = uiState.sortingMode.name,
-        onSortingChange = { key -> viewModel.onEvent(NumbersUiEvent.UpdateSortingMode(SortingMode.valueOf(key))) }
+    NumbersConfigSheet(
+        uiState = uiState,
+        onEvent = viewModel::onEvent
     )
 
     NumbersScaffold(
         onBack = onBack,
-        snackbarHostState = snackbarHostState,
+        snackbarHostState = runtime.snackbarHostState,
         floatingActionButton = {
             NumbersFabControls(
                 size = settings.fabSize,
                 onConfigClick = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(true)) },
-                onGenerateClick = { handleGenerate() },
-                onFabPositioned = { center, size ->
-                    fabCenterInRoot = center
-                    fabSize = size
+                onGenerateClick = {
+                    controller.handleNumberGeneration(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        scope = runtime.scope,
+                        snackbarHostState = runtime.snackbarHostState,
+                        context = runtime.context,
+                        view = view
+                    )
+                },
+                onFabPositioned = { center, _ ->
+                    controller.fabCenterInRoot = center
                 }
             )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
-            val blurRadius = (8f * flipCardController.scrimProgress.value).dp
-
-            NumbersContent(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .blur(blurRadius),
-                fromText = uiState.fromText,
-                toText = uiState.toText,
-                onFromChange = { viewModel.onEvent(NumbersUiEvent.UpdateFromText(it)) },
-                onToChange = { viewModel.onEvent(NumbersUiEvent.UpdateToText(it)) }
-            )
-
-            val resultsCountForSizing = max(uiState.frontValues.size, uiState.backValues.size)
-            val configuration = LocalConfiguration.current
-            val screenWidthDp = configuration.screenWidthDp.dp
-            val screenHeightDp = configuration.screenHeightDp.dp
-            
-            // Limit card to screen size with some margins
-            val maxCardWidth = (screenWidthDp - 32.dp).coerceAtLeast(200.dp)
-            val maxCardHeight = (screenHeightDp - 64.dp).coerceAtLeast(300.dp)
-
-            // If generating, shrink to base size
-            val effectiveCount = if (isGenerating) 1 else resultsCountForSizing
-
-            val basePx = computeCardBaseSizeDp(effectiveCount)
-            val dynamicMin = 240.coerceAtMost(maxCardWidth.value.toInt())
-            val targetCardSize = basePx.coerceIn(dynamicMin, maxCardWidth.value.toInt()).dp
-            
-            val heightScale = computeHeightScale(effectiveCount)
-            val minHeight = 300.dp.coerceAtMost(maxCardHeight)
-            val targetContentHeight = (targetCardSize * heightScale).coerceIn(minHeight, maxCardHeight)
-
-            val animatedCardSize by androidx.compose.animation.core.animateDpAsState(
-                targetValue = targetCardSize,
-                animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow)
-            )
-            val animatedCardHeight by androidx.compose.animation.core.animateDpAsState(
-                targetValue = targetContentHeight,
-                animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessLow)
-            )
-
-            val rainbowColors = getRainbowColors()
-            val animatedColor =
-                remember { androidx.compose.animation.Animatable(Color.Transparent) }
-            val targetColor = remember(uiState.cardColorSeed, uiState.frontValues) {
-                pickStableColor(uiState.cardColorSeed, rainbowColors)
-            }
-            LaunchedEffect(targetColor) {
-                if (animatedColor.value == Color.Transparent) {
-                    animatedColor.snapTo(targetColor)
-                } else {
-                    animatedColor.animateTo(targetColor, tween(400))
-                }
-            }
-
-            FlipCardOverlay(
-                state = flipCardState,
-                anchorInRoot = fabCenterInRoot,
+        FlipGenerateScreenHost(
+            innerPadding = innerPadding,
+            controller = controller,
+            content = { contentModifier ->
+                NumbersContent(
+                    modifier = contentModifier,
+                    fromText = uiState.fromText,
+                    toText = uiState.toText,
+                    onFromChange = { viewModel.onEvent(NumbersUiEvent.UpdateFromText(it)) },
+                    onToChange = { viewModel.onEvent(NumbersUiEvent.UpdateToText(it)) }
+                )
+            },
+            overlay = {
+                NumbersFlipOverlay(
+                uiState = uiState,
+                settings = settings,
+                flipCardState = controller.flipState,
+                anchorInRoot = controller.fabCenterInRoot,
+                context = runtime.context,
+                snackbarHostState = runtime.snackbarHostState,
+                hapticsManager = runtime.hapticsManager,
+                clipboardLabel = numbersClipboardLabel,
+                onEvent = viewModel::onEvent,
                 onClosed = {
-                    triggerFabPulse()
-                    viewModel.onEvent(NumbersUiEvent.ClearResults)
-                    viewModel.onEvent(NumbersUiEvent.SetOverlayVisible(false))
+                    notifyNumbersOverlayClosed(
+                        settings = settings,
+                        hapticsManager = runtime.hapticsManager,
+                        view = view
+                    )
                 },
-                cardSize = animatedCardSize,
-                cardHeight = animatedCardHeight,
-                frontContainerColor = animatedColor.value,
-                backContainerColor = animatedColor.value,
-                onLongPress = {
-                    // Копирование результатов в буфер обмена
-                    val results = if (uiState.frontValues.isNotEmpty()) uiState.frontValues else uiState.backValues
-                    if (results.isNotEmpty()) {
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val text = results.joinToString(", ")
-                        clipboard.setPrimaryClip(ClipData.newPlainText(numbersClipboardLabel, text))
-                        scope.launch {
-                            snackbarHostState.showSnackbar(context.getString(R.string.copied_to_clipboard))
-                        }
-                        if (settings.hapticsEnabled) hapticsManager?.performPress(settings.hapticsIntensity)
-                    }
-                },
-                frontContent = {
-                    CardContentTheme {
-                        NumbersResultsDisplay(
-                            results = uiState.frontValues,
-                            cardColor = animatedColor.value,
-                            cardSize = animatedCardHeight
-                        )
-                    }
-                },
-                backContent = {
-                    CardContentTheme {
-                        NumbersResultsDisplay(
-                            results = uiState.backValues,
-                            cardColor = animatedColor.value,
-                            cardSize = animatedCardHeight
-                        )
-                    }
-                }
+                scope = runtime.scope,
+                isGenerating = controller.isGenerating
             )
-        }
+            }
+        )
     }
 }

@@ -26,6 +26,8 @@ import javax.inject.Inject
 import com.byteflipper.random.domain.lists.ListSortingMode as DomainListSortingMode
 import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
 import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
+import com.byteflipper.random.ui.common.FeedbackUiEffect
+import com.byteflipper.random.ui.common.GeneratorHostViewModel
 import com.byteflipper.random.ui.lists.components.ListSortingMode
 import dagger.hilt.android.qualifiers.ApplicationContext
 
@@ -78,7 +80,7 @@ class ListViewModel @Inject constructor(
     private val generateListResults: GenerateListResultsUseCase,
     private val sortListResults: SortListResultsUseCase,
     private val adsController: com.byteflipper.random.ads.AdsController
-) : ViewModel() {
+) : ViewModel(), GeneratorHostViewModel {
 
     private val presetId: Long? = savedStateHandle.get<Long?>("id")
         ?: savedStateHandle.get<String>("id")?.toLongOrNull()
@@ -93,7 +95,7 @@ class ListViewModel @Inject constructor(
     )
 
     private val _effects = kotlinx.coroutines.flow.MutableSharedFlow<ListUiEffect>()
-    val effects: kotlinx.coroutines.flow.SharedFlow<ListUiEffect> = _effects
+    internal val effects: kotlinx.coroutines.flow.SharedFlow<ListUiEffect> = _effects
 
     val presets = listPresetRepository.observeAll().stateIn(
         scope = viewModelScope,
@@ -253,7 +255,7 @@ class ListViewModel @Inject constructor(
         _uiState.update { it.copy(sortingMode = mode) }
     }
 
-    fun getEffectiveDelayMs(): Int {
+    override fun getEffectiveDelayMs(): Int {
         val state = _uiState.value
         return if (state.useDelay) {
             state.delayText.toIntOrNull()?.coerceIn(MIN_DELAY_MS, DEFAULT_DELAY_MS * 2) ?: DEFAULT_DELAY_MS
@@ -342,17 +344,17 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    fun notifyHapticPressIfEnabled() {
+    override fun notifyHapticPressIfEnabled() {
         if (settings.value.hapticsEnabled) {
             emitEffect(ListUiEffect.HapticPress(settings.value.hapticsIntensity))
         }
     }
 
-    fun setOverlayVisible(visible: Boolean) {
+    override fun setOverlayVisible(visible: Boolean) {
         _uiState.update { it.copy(isOverlayVisible = visible) }
     }
 
-    fun randomizeCardColor() {
+    override fun randomizeCardColor() {
         val newSeed = kotlin.random.Random.nextLong()
         _uiState.update { it.copy(cardColorSeed = newSeed) }
     }
@@ -361,12 +363,19 @@ class ListViewModel @Inject constructor(
         viewModelScope.launch { _effects.emit(effect) }
     }
 
-    fun checkAd(activity: android.app.Activity) {
+    override fun checkAd(activity: android.app.Activity) {
         adsController.onNumbersOrListsGenerated(activity)
     }
 }
 
-sealed interface ListUiEffect {
-    data class ShowSnackbar(val messageRes: Int) : ListUiEffect
-    data class HapticPress(val intensity: com.byteflipper.random.data.settings.HapticsIntensity) : ListUiEffect
+internal sealed interface ListUiEffect : FeedbackUiEffect {
+    data class ShowSnackbar(val messageRes: Int) : ListUiEffect {
+        override val snackbarMessageRes: Int = messageRes
+        override val hapticIntensity: com.byteflipper.random.data.settings.HapticsIntensity? = null
+    }
+
+    data class HapticPress(val intensity: com.byteflipper.random.data.settings.HapticsIntensity) : ListUiEffect {
+        override val snackbarMessageRes: Int? = null
+        override val hapticIntensity: com.byteflipper.random.data.settings.HapticsIntensity = intensity
+    }
 }

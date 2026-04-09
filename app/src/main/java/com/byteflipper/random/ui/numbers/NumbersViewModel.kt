@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import com.byteflipper.random.R
 import com.byteflipper.random.data.settings.HapticsIntensity
+import com.byteflipper.random.ui.common.FeedbackUiEffect
+import com.byteflipper.random.ui.common.GeneratorHostViewModel
 
 data class NumbersUiState(
     val fromText: String = "1",
@@ -63,7 +65,7 @@ class NumbersViewModel @Inject constructor(
     private val validateNumberInputs: ValidateNumberInputsUseCase,
     private val generateNumbers: GenerateNumbersUseCase,
     private val adsController: com.byteflipper.random.ads.AdsController
-) : ViewModel() {
+) : ViewModel(), GeneratorHostViewModel {
 
     private val _uiState = MutableStateFlow(NumbersUiState())
     val uiState: StateFlow<NumbersUiState> = _uiState.asStateFlow()
@@ -75,7 +77,7 @@ class NumbersViewModel @Inject constructor(
     )
 
     private val _effects = MutableSharedFlow<NumbersUiEffect>()
-    val effects: SharedFlow<NumbersUiEffect> = _effects
+    internal val effects: SharedFlow<NumbersUiEffect> = _effects
 
     fun onEvent(event: NumbersUiEvent) {
         when (event) {
@@ -161,7 +163,7 @@ class NumbersViewModel @Inject constructor(
         return result.values
     }
 
-    fun getEffectiveDelayMs(): Int {
+    override fun getEffectiveDelayMs(): Int {
         val state = _uiState.value
         return if (state.useDelay) {
             state.delayText.toIntOrNull()?.coerceIn(MIN_DELAY_MS, DEFAULT_DELAY_MS * 20) ?: DEFAULT_DELAY_MS
@@ -190,17 +192,17 @@ class NumbersViewModel @Inject constructor(
         _uiState.update { it.copy(showConfigDialog = visible) }
     }
 
-    fun notifyHapticPressIfEnabled() {
+    override fun notifyHapticPressIfEnabled() {
         if (settings.value.hapticsEnabled) {
             emitEffect(NumbersUiEffect.HapticPress(settings.value.hapticsIntensity))
         }
     }
 
-    fun setOverlayVisible(visible: Boolean) {
+    override fun setOverlayVisible(visible: Boolean) {
         _uiState.update { it.copy(isOverlayVisible = visible) }
     }
 
-    fun randomizeCardColor() {
+    override fun randomizeCardColor() {
         val newSeed = kotlin.random.Random.nextLong()
         _uiState.update { it.copy(cardColorSeed = newSeed) }
     }
@@ -209,12 +211,19 @@ class NumbersViewModel @Inject constructor(
         viewModelScope.launch { _effects.emit(effect) }
     }
 
-    fun checkAd(activity: android.app.Activity) {
+    override fun checkAd(activity: android.app.Activity) {
         adsController.onNumbersOrListsGenerated(activity)
     }
 }
 
-sealed interface NumbersUiEffect {
-    data class ShowSnackbar(val messageRes: Int) : NumbersUiEffect
-    data class HapticPress(val intensity: HapticsIntensity) : NumbersUiEffect
+internal sealed interface NumbersUiEffect : FeedbackUiEffect {
+    data class ShowSnackbar(val messageRes: Int) : NumbersUiEffect {
+        override val snackbarMessageRes: Int = messageRes
+        override val hapticIntensity: HapticsIntensity? = null
+    }
+
+    data class HapticPress(val intensity: HapticsIntensity) : NumbersUiEffect {
+        override val snackbarMessageRes: Int? = null
+        override val hapticIntensity: HapticsIntensity = intensity
+    }
 }
