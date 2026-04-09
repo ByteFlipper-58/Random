@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,9 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import com.byteflipper.random.ui.theme.ShapesTokens
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledIconButton
@@ -36,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.painterResource
@@ -51,6 +50,7 @@ import com.byteflipper.random.data.preset.ListPreset
 fun PresetCard(
     preset: ListPreset,
     onPresetClick: (ListPreset) -> Unit,
+    onPresetLongClick: ((ListPreset) -> Unit)? = null,
     onRenameClick: (ListPreset) -> Unit,
     onDeleteClick: (ListPreset) -> Unit,
     subtitle: String? = null,
@@ -104,14 +104,24 @@ fun PresetCard(
     )
 
     Card(
-        onClick = {
-            isPressed = true
-            onPresetClick(preset)
-            isPressed = false
-        },
         modifier = modifier
             .fillMaxWidth()
-            .height(88.dp),
+            .height(88.dp)
+            .clip(ShapesTokens.CardShape)
+            .combinedClickable(
+                onClick = {
+                    isPressed = true
+                    onPresetClick(preset)
+                    isPressed = false
+                },
+                onLongClick = onPresetLongClick?.let { callback ->
+                    {
+                        isPressed = true
+                        callback(preset)
+                        isPressed = false
+                    }
+                }
+            ),
         shape = ShapesTokens.CardShape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
@@ -172,7 +182,7 @@ fun PresetCard(
 
                     if (highlightPinned && preset.isPinned) {
                         Icon(
-                            imageVector = Icons.Outlined.PushPin,
+                            painter = painterResource(id = R.drawable.keep_filled_24px),
                             contentDescription = stringResource(R.string.pinned),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp)
@@ -239,7 +249,7 @@ private fun RowScope.DefaultPresetCardActions(
     }
 
     Icon(
-        imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+        painter = painterResource(id = R.drawable.arrow_forward_ios_24px),
         contentDescription = null,
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.size(16.dp)

@@ -2,10 +2,6 @@ package com.byteflipper.random.ui.home.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -19,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
@@ -40,7 +37,7 @@ fun PresetActionButton(
             modifier = modifier.size(40.dp)
         ) {
             Icon(
-                imageVector = Icons.Outlined.MoreVert,
+                painter = painterResource(id = R.drawable.more_vert_24px),
                 contentDescription = stringResource(R.string.preset_actions),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(20.dp)
@@ -56,7 +53,7 @@ fun PresetActionButton(
                 text = { Text(stringResource(R.string.rename)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.Edit,
+                        painter = painterResource(id = R.drawable.edit_24px),
                         contentDescription = null
                     )
                 },
@@ -70,7 +67,7 @@ fun PresetActionButton(
                 text = { Text(stringResource(R.string.delete)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.Delete,
+                        painter = painterResource(id = R.drawable.delete_24px),
                         contentDescription = null
                     )
                 },

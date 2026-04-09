@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import com.byteflipper.random.ui.theme.ShapesTokens
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledIconButton
@@ -144,7 +141,7 @@ fun MenuCard(
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Add,
+                            painter = painterResource(id = R.drawable.add_24px),
                             contentDescription = stringResource(R.string.add),
                             modifier = Modifier.size(18.dp)
                         )
@@ -153,7 +150,7 @@ fun MenuCard(
 
                 // Стрелка навигации
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                    painter = painterResource(id = R.drawable.arrow_forward_ios_24px),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(16.dp)

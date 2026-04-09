@@ -1,12 +1,26 @@
 package com.byteflipper.random.ui.presets
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
+import com.byteflipper.random.data.preset.transfer.ParsedPresetImport
+import com.byteflipper.random.data.preset.transfer.PresetImportMode
+import com.byteflipper.random.data.preset.transfer.PresetImportIssue
+import com.byteflipper.random.data.preset.transfer.PresetImportIssueReason
+import com.byteflipper.random.data.preset.transfer.PresetTransferException
+import com.byteflipper.random.data.preset.transfer.PresetTransferFormat
+import com.byteflipper.random.data.preset.transfer.PresetTransferPayload
+import com.byteflipper.random.data.preset.transfer.PresetTransferService
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,8 +28,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
+import java.util.Locale
 
 enum class PresetFilter {
     All,
@@ -37,7 +51,9 @@ data class PresetsUiState(
 @HiltViewModel
 class PresetsViewModel @Inject constructor(
     private val listPresetRepository: ListPresetRepository,
-    settingsRepository: SettingsRepository
+    settingsRepository: SettingsRepository,
+    private val presetTransferService: PresetTransferService,
+    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     private companion object {
@@ -58,6 +74,14 @@ class PresetsViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = Settings()
     )
+
+    val lastTransferFormat: StateFlow<PresetTransferFormat> = settingsRepository.lastPresetTransferFormatFlow.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = PresetTransferFormat.Json
+    )
+
+    private val settingsRepository = settingsRepository
 
     private val contentState = combine(
         listPresetRepository.observeAll(),
@@ -168,6 +192,68 @@ class PresetsViewModel @Inject constructor(
         }
     }
 
+    suspend fun prepareExportPayload(
+        presets: List<ListPreset>,
+        format: PresetTransferFormat
+    ): PresetTransferPayload {
+        settingsRepository.setLastPresetTransferFormat(format)
+        return runTransferResult {
+            if (presets.size == 1) {
+                presetTransferService.exportPreset(presets.first(), format)
+            } else {
+                presetTransferService.exportPresets(presets, format)
+            }
+        }
+    }
+
+    suspend fun writeExportToUri(payload: PresetTransferPayload, uri: Uri): String {
+        return runTransferAction(R.string.preset_exported) {
+            presetTransferService.writeExportToUri(payload, uri)
+        }
+    }
+
+    suspend fun writeBundleExportToUri(payload: PresetTransferPayload, uri: Uri): String {
+        return runTransferAction(R.string.presets_exported) {
+            presetTransferService.writeExportToUri(payload, uri)
+        }
+    }
+
+    suspend fun parseImportFromUri(uri: Uri): ParsedPresetImport {
+        return runTransferResult {
+            presetTransferService.parseImportFromUri(uri)
+        }
+    }
+
+    suspend fun parseImportFromClipboard(text: String): ParsedPresetImport {
+        return runTransferResult {
+            presetTransferService.parseImportFromClipboard(text)
+        }
+    }
+
+    suspend fun commitImport(parsedImport: ParsedPresetImport, mode: PresetImportMode): String {
+        return runTransferResult {
+            val result = presetTransferService.commitImport(parsedImport, mode)
+            buildImportMessage(importedCount = result.importedCount, issues = result.issues)
+        }
+    }
+
+    suspend fun createShareIntent(
+        payload: PresetTransferPayload,
+        subject: String
+    ): Intent {
+        return runTransferResult {
+            settingsRepository.setLastPresetTransferFormat(payload.format)
+            presetTransferService.createShareIntent(payload, subject)
+        }
+    }
+
+    suspend fun mergePresets(
+        presets: List<ListPreset>,
+        mergedName: String
+    ): ListPreset {
+        return listPresetRepository.mergePresets(presets, mergedName)
+    }
+
     private fun comparatorFor(
         filter: PresetFilter,
         ascending: Boolean
@@ -191,5 +277,93 @@ class PresetsViewModel @Inject constructor(
 
     private fun activityAt(preset: ListPreset): Long {
         return preset.lastUsedAt ?: preset.updatedAt
+    }
+
+    private suspend fun runTransferAction(
+        successMessageRes: Int,
+        block: suspend () -> Unit
+    ): String {
+        return try {
+            block()
+            appContext.getString(successMessageRes)
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Throwable) {
+            throw IllegalStateException(transferErrorMessage(error), error)
+        }
+    }
+
+    private suspend fun <T> runTransferResult(block: suspend () -> T): T {
+        return try {
+            block()
+        } catch (error: CancellationException) {
+            throw error
+        } catch (error: Throwable) {
+            throw IllegalStateException(transferErrorMessage(error), error)
+        }
+    }
+
+    private fun transferErrorMessage(error: Throwable): String {
+        return when (error) {
+            is PresetTransferException.EmptyPayload -> appContext.getString(R.string.preset_transfer_error_empty)
+            is PresetTransferException.EmptyText -> appContext.getString(R.string.preset_transfer_error_empty)
+            is PresetTransferException.FileTooLarge -> appContext.getString(R.string.preset_transfer_error_file_too_large)
+            is PresetTransferException.InvalidCsv -> appContext.getString(R.string.preset_transfer_error_invalid_csv)
+            is PresetTransferException.InvalidJson -> appContext.getString(R.string.preset_transfer_error_invalid_json)
+            is PresetTransferException.NoPresets -> appContext.getString(R.string.preset_transfer_error_no_presets)
+            is PresetTransferException.MissingTextItems -> appContext.getString(R.string.preset_transfer_error_missing_text_items)
+            is PresetTransferException.MissingTextName -> appContext.getString(R.string.preset_transfer_error_missing_text_name)
+            is PresetTransferException.TooManyItems -> appContext.getString(R.string.preset_transfer_error_too_many_items)
+            is PresetTransferException.TooManyPresets -> appContext.getString(R.string.preset_transfer_error_too_many_presets)
+            is PresetTransferException.UnsupportedEncoding -> appContext.getString(R.string.preset_transfer_error_unsupported_encoding)
+            is PresetTransferException.UnsupportedFileFormat -> appContext.getString(R.string.preset_transfer_error_unsupported_file_format)
+            is PresetTransferException.UnsupportedKind -> appContext.getString(R.string.preset_transfer_error_unsupported_kind)
+            is PresetTransferException.UnsupportedVersion -> appContext.getString(R.string.preset_transfer_error_unsupported_version)
+            is java.io.IOException -> appContext.getString(R.string.preset_transfer_error_io)
+            else -> appContext.getString(R.string.preset_transfer_error_generic)
+        }
+    }
+
+    private fun buildImportMessage(
+        importedCount: Int,
+        issues: List<PresetImportIssue>
+    ): String {
+        if (issues.isEmpty()) {
+            return appContext.getString(R.string.preset_imported_count, importedCount)
+        }
+
+        val issueSummary = issues
+            .groupingBy { it.reason }
+            .eachCount()
+            .entries
+            .sortedByDescending { it.value }
+            .joinToString(separator = ", ") { (reason, count) ->
+                appContext.getString(reason.toSummaryStringRes(), count)
+            }
+
+        return if (importedCount > 0) {
+            appContext.getString(
+                R.string.preset_imported_partial_count,
+                importedCount,
+                issues.size,
+                issueSummary
+            )
+        } else {
+            appContext.getString(
+                R.string.preset_imported_none_valid,
+                issues.size,
+                issueSummary
+            )
+        }
+    }
+
+    private fun PresetImportIssueReason.toSummaryStringRes(): Int {
+        return when (this) {
+            PresetImportIssueReason.InvalidEntry -> R.string.preset_import_issue_invalid_entry
+            PresetImportIssueReason.MissingName -> R.string.preset_import_issue_missing_name
+            PresetImportIssueReason.MissingItems -> R.string.preset_import_issue_missing_items
+            PresetImportIssueReason.UnsupportedPresetType -> R.string.preset_import_issue_unsupported_type
+            PresetImportIssueReason.TooManyItems -> R.string.preset_import_issue_too_many_items
+        }
     }
 }

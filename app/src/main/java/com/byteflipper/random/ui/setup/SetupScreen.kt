@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -311,7 +309,10 @@ fun PermissionPageLayout(
         ) {
             if (granted) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Rounded.Check, contentDescription = null)
+                    Icon(
+                        painter = painterResource(id = R.drawable.check_24px),
+                        contentDescription = null
+                    )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
             }

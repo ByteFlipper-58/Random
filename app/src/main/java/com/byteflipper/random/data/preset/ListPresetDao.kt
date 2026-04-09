@@ -27,6 +27,9 @@ interface ListPresetDao {
     )
     fun observeAll(): Flow<List<ListPreset>>
 
+    @Query("SELECT * FROM list_presets ORDER BY name COLLATE NOCASE ASC")
+    suspend fun getAll(): List<ListPreset>
+
     @Query("SELECT * FROM list_presets WHERE id = :id")
     suspend fun getById(id: Long): ListPreset?
 

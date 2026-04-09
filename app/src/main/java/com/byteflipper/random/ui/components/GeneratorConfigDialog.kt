@@ -4,8 +4,6 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -305,7 +303,7 @@ private fun RepetitionSection(repetitionConfig: RepetitionConfig) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Icon(
-                        imageVector = Icons.Default.RestartAlt,
+                        painter = painterResource(id = R.drawable.restart_alt_24px),
                         contentDescription = null,
                         modifier = Modifier.size(18.dp)
                     )

@@ -15,13 +15,22 @@ fun ListScaffold(
     onBack: () -> Unit,
     title: String,
     onShowSave: (() -> Unit)? = null,
+    onShowSaveResults: (() -> Unit)? = null,
     onShowRename: (() -> Unit)? = null,
     snackbarHostState: SnackbarHostState,
     floatingActionButton: @Composable () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
-        topBar = { ListTopBar(onBack = onBack, title = title, onShowSave = onShowSave, onShowRename = onShowRename) },
+        topBar = {
+            ListTopBar(
+                onBack = onBack,
+                title = title,
+                onShowSave = onShowSave,
+                onShowSaveResults = onShowSaveResults,
+                onShowRename = onShowRename
+            )
+        },
         contentWindowInsets = WindowInsets.systemBars,
         floatingActionButton = floatingActionButton,
         snackbarHost = { SnackbarHost(snackbarHostState) },

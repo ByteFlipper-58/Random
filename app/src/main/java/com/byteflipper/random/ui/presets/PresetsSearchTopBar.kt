@@ -11,9 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.AppBarWithSearch
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -32,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
@@ -103,7 +101,7 @@ fun PresetsSearchTopBar(
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                        painter = painterResource(id = R.drawable.arrow_back_24px),
                         contentDescription = stringResource(R.string.back)
                     )
                 }
@@ -116,7 +114,7 @@ fun PresetsSearchTopBar(
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.Close,
+                            painter = painterResource(id = R.drawable.close_24px),
                             contentDescription = stringResource(R.string.close)
                         )
                     }

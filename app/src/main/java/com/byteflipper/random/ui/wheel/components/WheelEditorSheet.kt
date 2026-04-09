@@ -18,14 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.outlined.DeleteSweep
-import androidx.compose.material.icons.outlined.FolderOpen
-import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
@@ -248,11 +240,11 @@ fun WheelEditorSheet(
                         IconButton(
                             onClick = { showClearConfirm = true },
                             enabled = items.size > 1
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.DeleteSweep,
-                                contentDescription = stringResource(R.string.wheel_clear_all),
-                                tint = if (items.size > 1) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.delete_sweep_24px),
+                                    contentDescription = stringResource(R.string.wheel_clear_all),
+                                    tint = if (items.size > 1) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                             )
                         }
                         
@@ -266,7 +258,7 @@ fun WheelEditorSheet(
                                 enabled = items.isNotEmpty()
                             ) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Save,
+                                    painter = painterResource(id = R.drawable.save_24px),
                                     contentDescription = stringResource(R.string.wheel_save_as_preset)
                                 )
                             }
@@ -288,7 +280,7 @@ fun WheelEditorSheet(
                             label = { Text(stringResource(R.string.wheel_presets), fontSize = 12.sp) },
                             leadingIcon = {
                                 Icon(
-                                    imageVector = Icons.Outlined.FolderOpen,
+                                    painter = painterResource(id = R.drawable.folder_open_24px),
                                     contentDescription = null,
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -395,7 +387,7 @@ fun WheelEditorSheet(
                         enabled = newItemText.isNotBlank() && items.size < wheelPresetLimit
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Add,
+                            painter = painterResource(id = R.drawable.add_24px),
                             contentDescription = stringResource(R.string.add)
                         )
                     }
@@ -432,14 +424,14 @@ fun WheelEditorSheet(
                             enabled = editingText.isNotBlank()
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Check,
+                                painter = painterResource(id = R.drawable.check_24px),
                                 contentDescription = stringResource(R.string.confirm)
                             )
                         }
                         
                         IconButton(onClick = { cancelEdit() }) {
                             Icon(
-                                imageVector = Icons.Filled.Close,
+                                painter = painterResource(id = R.drawable.close_24px),
                                 contentDescription = stringResource(R.string.cancel)
                             )
                         }
@@ -479,7 +471,7 @@ fun WheelEditorSheet(
                             leadingIcon = if (!isExcluded && editingIndex < 0) {
                                 {
                                     Icon(
-                                        imageVector = Icons.Filled.Edit,
+                                        painter = painterResource(id = R.drawable.edit_24px),
                                         contentDescription = stringResource(R.string.edit),
                                         modifier = Modifier.size(14.dp),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
@@ -494,7 +486,7 @@ fun WheelEditorSheet(
                                             .clickable { removeItem(index) }
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Filled.Close,
+                                            painter = painterResource(id = R.drawable.close_24px),
                                             contentDescription = stringResource(R.string.delete),
                                             modifier = Modifier.size(16.dp),
                                             tint = MaterialTheme.colorScheme.onSurfaceVariant

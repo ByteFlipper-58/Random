@@ -7,11 +7,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.MoreVert
 import com.byteflipper.random.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,14 +31,14 @@ fun HomeTopBar(
             if (onOpenSearch != null) {
                 IconButton(onClick = onOpenSearch) {
                     Icon(
-                        imageVector = Icons.Outlined.Search,
+                        painter = painterResource(id = R.drawable.search_24px),
                         contentDescription = stringResource(R.string.search_presets),
                     )
                 }
             }
             IconButton(onClick = onOpenMenu) {
                 Icon(
-                    imageVector = Icons.Outlined.MoreVert,
+                    painter = painterResource(id = R.drawable.more_vert_24px),
                     contentDescription = stringResource(R.string.menu),
                 )
             }

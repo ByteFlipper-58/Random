@@ -294,10 +294,11 @@ class ListViewModel @Inject constructor(
     fun saveAsNewPreset(
         name: String,
         openAfterSave: Boolean,
+        itemsOverride: List<String>? = null,
         onPresetCreated: (Long) -> Unit
     ) {
         val trimmedName = name.trim()
-        val items = getBaseItems()
+        val items = itemsOverride ?: getBaseItems()
 
         if (trimmedName.isNotEmpty() && items.isNotEmpty()) {
             viewModelScope.launch {
@@ -314,6 +315,10 @@ class ListViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getCurrentResults(): List<String> {
+        return _uiState.value.results
     }
 
     private fun saveCurrent() {

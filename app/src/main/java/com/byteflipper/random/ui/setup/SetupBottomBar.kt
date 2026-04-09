@@ -22,10 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import com.byteflipper.random.ui.theme.Dimens
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -178,12 +176,12 @@ fun SetupBottomBar(
                     ) { isNextPage ->
                         if (isNextPage) {
                             Icon(
-                                Icons.AutoMirrored.Rounded.ArrowForward,
+                                painter = painterResource(id = R.drawable.arrow_forward_24px),
                                 contentDescription = stringResource(R.string.next)
                             )
                         } else {
                             Icon(
-                                Icons.Rounded.Check,
+                                painter = painterResource(id = R.drawable.check_24px),
                                 contentDescription = stringResource(R.string.finish)
                             )
                         }

@@ -49,19 +49,32 @@ fun HomeScaffold(
     onOpenMenu: () -> Unit,
     onOpenSearch: (() -> Unit)? = null,
     searchTopBar: (@Composable () -> Unit)? = null,
+    topBarOverride: (@Composable () -> Unit)? = null,
+    floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = {
             Column {
-                if (searchTopBar != null) {
-                    searchTopBar()
-                    HomeTabSwitcherPlaceholder()
-                } else {
-                    HomeTopBar(
-                        onOpenMenu = onOpenMenu,
-                        onOpenSearch = onOpenSearch.takeIf { selectedTab == HomeTab.Presets }
-                    )
+                when {
+                    topBarOverride != null -> topBarOverride()
+                    searchTopBar != null -> {
+                        searchTopBar()
+                        HomeTabSwitcherPlaceholder()
+                    }
+                    else -> {
+                        HomeTopBar(
+                            onOpenMenu = onOpenMenu,
+                            onOpenSearch = onOpenSearch.takeIf { selectedTab == HomeTab.Presets }
+                        )
+                        HomeTabSwitcher(
+                            selectionProgress = selectionProgress,
+                            onSelectTab = onSelectTab
+                        )
+                    }
+                }
+
+                if (topBarOverride != null) {
                     HomeTabSwitcher(
                         selectionProgress = selectionProgress,
                         onSelectTab = onSelectTab
@@ -70,6 +83,7 @@ fun HomeScaffold(
             }
         },
         contentWindowInsets = WindowInsets.systemBars,
+        floatingActionButton = floatingActionButton,
         content = content
     )
 }

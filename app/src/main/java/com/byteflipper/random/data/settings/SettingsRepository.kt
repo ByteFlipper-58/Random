@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.byteflipper.random.data.preset.transfer.PresetTransferFormat
 import com.byteflipper.random.utils.Constants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -130,6 +131,7 @@ class SettingsRepository @Inject constructor(
         // Default list storage
         val defaultListName: Preferences.Key<String> = stringPreferencesKey(Constants.DEFAULT_LIST_NAME_KEY)
         val defaultListItems: Preferences.Key<String> = stringPreferencesKey(Constants.DEFAULT_LIST_ITEMS_KEY)
+        val lastPresetTransferFormat: Preferences.Key<String> = stringPreferencesKey("last_preset_transfer_format")
     }
 
     val settingsFlow: Flow<Settings> = appContext.dataStore.data.map { prefs ->
@@ -275,6 +277,20 @@ class SettingsRepository @Inject constructor(
         val joined = items.joinToString(com.byteflipper.random.utils.Constants.ITEMS_SEPARATOR)
         appContext.dataStore.edit { prefs ->
             prefs[Keys.defaultListItems] = joined
+        }
+    }
+
+    val lastPresetTransferFormatFlow: Flow<PresetTransferFormat> = appContext.dataStore.data.map { prefs ->
+        when (prefs[Keys.lastPresetTransferFormat]) {
+            PresetTransferFormat.Txt.name -> PresetTransferFormat.Txt
+            PresetTransferFormat.Csv.name -> PresetTransferFormat.Csv
+            else -> PresetTransferFormat.Json
+        }
+    }
+
+    suspend fun setLastPresetTransferFormat(format: PresetTransferFormat) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.lastPresetTransferFormat] = format.name
         }
     }
 

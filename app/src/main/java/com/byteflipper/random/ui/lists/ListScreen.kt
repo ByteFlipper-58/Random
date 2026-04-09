@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -22,10 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.material.icons.outlined.SortByAlpha
-import androidx.compose.material.icons.outlined.Shuffle
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -89,6 +86,7 @@ fun ListScreen(
     var fabSize by remember { androidx.compose.runtime.mutableStateOf(IntSize.Zero) }
     var isGenerating by remember { androidx.compose.runtime.mutableStateOf(false) }
     var pendingOpenPresetId by remember { androidx.compose.runtime.mutableStateOf<Long?>(null) }
+    var saveDialogUsesResults by remember { androidx.compose.runtime.mutableStateOf(false) }
 
     val flipState = rememberFlipCardState()
     val flipCtrl = FlipCardControls(flipState)
@@ -172,13 +170,23 @@ fun ListScreen(
     val displayedPreset = uiState.preset ?: initialPreset?.takeIf { it.id == presetId }
     val displayedItems = if (uiState.editorItems.isNotEmpty()) uiState.editorItems else (displayedPreset?.items ?: emptyList())
     val topTitle = if (presetId == null) stringResource(R.string.list) else (displayedPreset?.name ?: stringResource(R.string.list))
-    val topSave = if (presetId == null) ({ viewModel.updateSaveName(listString); viewModel.toggleSaveDialog() }) else null
+    val topSave = if (presetId == null) ({
+        saveDialogUsesResults = false
+        viewModel.updateSaveName(listString)
+        viewModel.toggleSaveDialog()
+    }) else null
+    val topSaveResults = if (uiState.results.isNotEmpty()) ({
+        saveDialogUsesResults = true
+        viewModel.updateSaveName(ctx.getString(R.string.results_preset_name))
+        viewModel.toggleSaveDialog()
+    }) else null
     val topRename = if (presetId != null) ({ viewModel.updateRenameName(displayedPreset?.name ?: listString); viewModel.toggleRenameDialog() }) else null
 
     ListScaffold(
         onBack = onBack,
         title = topTitle,
         onShowSave = topSave,
+        onShowSaveResults = topSaveResults,
         onShowRename = topRename,
         snackbarHostState = snackbarHostState,
         floatingActionButton = {
@@ -313,17 +321,17 @@ fun ListScreen(
                     RadioOption(
                         key = ListSortingMode.Random.name,
                         title = stringResource(R.string.random_order),
-                        icon = rememberVectorPainter(Icons.Outlined.Shuffle)
+                        icon = painterResource(id = R.drawable.shuffle_24px)
                     ),
                     RadioOption(
                         key = ListSortingMode.AlphabeticalAZ.name,
                         title = stringResource(R.string.alphabetical_az),
-                        icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                        icon = painterResource(id = R.drawable.sort_by_alpha_24px)
                     ),
                     RadioOption(
                         key = ListSortingMode.AlphabeticalZA.name,
                         title = stringResource(R.string.alphabetical_za),
-                        icon = rememberVectorPainter(Icons.Outlined.SortByAlpha)
+                        icon = painterResource(id = R.drawable.sort_by_alpha_24px)
                     )
                 )
                 GeneratorConfigDialog(
@@ -364,12 +372,21 @@ fun ListScreen(
                 ListSaveDialog(
                     currentName = uiState.saveName,
                     presetCount = presets.size,
-                    onDismiss = { viewModel.onEvent(ListUiEvent.ToggleSaveDialog) },
+                    onDismiss = {
+                        saveDialogUsesResults = false
+                        viewModel.onEvent(ListUiEvent.ToggleSaveDialog)
+                    },
                     onConfirm = { name, shouldOpenAfterSave ->
                         viewModel.saveAsNewPreset(
                             name = name,
-                            openAfterSave = shouldOpenAfterSave
+                            openAfterSave = shouldOpenAfterSave,
+                            itemsOverride = if (saveDialogUsesResults) {
+                                viewModel.getCurrentResults().takeIf { it.isNotEmpty() }
+                            } else {
+                                null
+                            }
                         ) { newId ->
+                            saveDialogUsesResults = false
                             pendingOpenPresetId = newId
                         }
                     }

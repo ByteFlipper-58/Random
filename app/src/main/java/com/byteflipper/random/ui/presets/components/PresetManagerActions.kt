@@ -2,12 +2,6 @@ package com.byteflipper.random.ui.presets.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ContentCopy
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -21,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
@@ -30,6 +25,9 @@ import com.byteflipper.random.ui.components.RoundedDropdownMenuShape
 fun RowScope.PresetManagerActions(
     preset: ListPreset,
     onTogglePinned: () -> Unit,
+    onCopy: () -> Unit,
+    onExport: () -> Unit,
+    onShare: () -> Unit,
     onDuplicate: () -> Unit,
     onRename: () -> Unit,
     onDelete: () -> Unit
@@ -41,7 +39,7 @@ fun RowScope.PresetManagerActions(
             onClick = { expanded = !expanded }
         ) {
             Icon(
-                imageVector = Icons.Outlined.MoreVert,
+                painter = painterResource(id = R.drawable.more_vert_24px),
                 contentDescription = stringResource(R.string.preset_actions),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -53,10 +51,16 @@ fun RowScope.PresetManagerActions(
             shape = RoundedDropdownMenuShape
         ) {
             DropdownMenuItem(
-                text = { Text(stringResource(if (preset.isPinned) R.string.unpin_preset else R.string.pin_preset)) },
+                text = { Text(stringResource(if (preset.isPinned) R.string.unpin else R.string.pin)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.PushPin,
+                        painter = painterResource(
+                            id = if (preset.isPinned) {
+                                R.drawable.keep_off_24px
+                            } else {
+                                R.drawable.keep_filled_24px
+                            }
+                        ),
                         contentDescription = null
                     )
                 },
@@ -66,10 +70,49 @@ fun RowScope.PresetManagerActions(
                 }
             )
             DropdownMenuItem(
+                text = { Text(stringResource(R.string.copy_as)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.content_copy_24px),
+                        contentDescription = null
+                    )
+                },
+                onClick = {
+                    expanded = false
+                    onCopy()
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.export)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.upload_24px),
+                        contentDescription = null
+                    )
+                },
+                onClick = {
+                    expanded = false
+                    onExport()
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.share)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.share_24px),
+                        contentDescription = null
+                    )
+                },
+                onClick = {
+                    expanded = false
+                    onShare()
+                }
+            )
+            DropdownMenuItem(
                 text = { Text(stringResource(R.string.duplicate)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.ContentCopy,
+                        painter = painterResource(id = R.drawable.content_copy_24px),
                         contentDescription = null
                     )
                 },
@@ -82,7 +125,7 @@ fun RowScope.PresetManagerActions(
                 text = { Text(stringResource(R.string.rename)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.Edit,
+                        painter = painterResource(id = R.drawable.edit_24px),
                         contentDescription = null
                     )
                 },
@@ -96,7 +139,7 @@ fun RowScope.PresetManagerActions(
                 text = { Text(stringResource(R.string.delete)) },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Outlined.Delete,
+                        painter = painterResource(id = R.drawable.delete_24px),
                         contentDescription = null
                     )
                 },

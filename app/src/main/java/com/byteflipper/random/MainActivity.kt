@@ -1,5 +1,7 @@
 package com.byteflipper.random
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +13,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.activity.viewModels
 import com.byteflipper.random.ads.AppOpenAdManager
 import com.byteflipper.random.ads.InterstitialAdManager
 import com.byteflipper.random.consent.ConsentManager
@@ -18,6 +21,8 @@ import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.review.InAppReviewManager
 import com.byteflipper.random.ui.app.AppRoot
+import com.byteflipper.random.ui.app.AppViewModel
+import com.byteflipper.random.ui.app.PendingSharedImport
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.appupdate.AppUpdateOptions
@@ -34,6 +39,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val appViewModel: AppViewModel by viewModels()
 
     @Inject
     lateinit var settingsRepository: SettingsRepository
@@ -102,6 +109,8 @@ class MainActivity : AppCompatActivity() {
         setContent {
             AppRoot()
         }
+
+        handleIncomingIntent(intent)
 
         // In-App Update
         setupInAppUpdate()
@@ -188,8 +197,67 @@ class MainActivity : AppCompatActivity() {
         installStateUpdatedListener?.let { appUpdateManager.registerListener(it) }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingIntent(intent)
+    }
+
     override fun onStop() {
         installStateUpdatedListener?.let { appUpdateManager.unregisterListener(it) }
         super.onStop()
+    }
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        val incomingIntent = intent ?: return
+        when (incomingIntent.action) {
+            Intent.ACTION_SEND -> {
+                val streamUri = incomingIntent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                    ?: incomingIntent.firstUriFromClipData()
+                val text = incomingIntent.getStringExtra(Intent.EXTRA_TEXT)
+                if (streamUri != null || !text.isNullOrBlank()) {
+                    appViewModel.submitSharedImport(
+                        PendingSharedImport(
+                            uri = streamUri,
+                            text = text?.takeIf { it.isNotBlank() },
+                            label = incomingIntent.getStringExtra(Intent.EXTRA_TITLE)
+                                ?: incomingIntent.getStringExtra(Intent.EXTRA_SUBJECT)
+                        )
+                    )
+                }
+            }
+
+            Intent.ACTION_SEND_MULTIPLE -> {
+                val streamUri = incomingIntent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+                    ?.firstOrNull()
+                    ?: incomingIntent.firstUriFromClipData()
+                val text = incomingIntent.getStringExtra(Intent.EXTRA_TEXT)
+                if (streamUri != null || !text.isNullOrBlank()) {
+                    appViewModel.submitSharedImport(
+                        PendingSharedImport(
+                            uri = streamUri,
+                            text = text?.takeIf { it.isNotBlank() },
+                            label = incomingIntent.getStringExtra(Intent.EXTRA_TITLE)
+                                ?: incomingIntent.getStringExtra(Intent.EXTRA_SUBJECT)
+                        )
+                    )
+                }
+            }
+
+            Intent.ACTION_VIEW -> {
+                val viewUri = incomingIntent.data ?: incomingIntent.firstUriFromClipData()
+                viewUri?.let { uri ->
+                    appViewModel.submitSharedImport(PendingSharedImport(uri = uri))
+                }
+            }
+        }
+    }
+
+    private fun Intent.firstUriFromClipData(): Uri? {
+        val clipData = clipData ?: return null
+        return (0 until clipData.itemCount)
+            .asSequence()
+            .mapNotNull { index -> clipData.getItemAt(index).uri }
+            .firstOrNull()
     }
 }
