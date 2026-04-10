@@ -15,6 +15,8 @@ import com.byteflipper.random.utils.Constants.MAX_GENERATE_COUNT
 import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
 import com.byteflipper.random.utils.Constants.MIN_GENERATE_COUNT
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -81,6 +83,9 @@ class ListViewModel @Inject constructor(
     private val sortListResults: SortListResultsUseCase,
     private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel(), GeneratorHostViewModel {
+    companion object {
+        private const val EDITOR_AUTOSAVE_DEBOUNCE_MS = 750L
+    }
 
     private val presetId: Long? = savedStateHandle.get<Long?>("id")
         ?: savedStateHandle.get<String>("id")?.toLongOrNull()
@@ -102,6 +107,9 @@ class ListViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
+
+    private var pendingSaveJob: Job? = null
+    private var lastSavedItems: List<String> = emptyList()
 
     init {
         loadPreset()
@@ -144,6 +152,7 @@ class ListViewModel @Inject constructor(
                         editorItems = items.ifEmpty { listOf("") }
                     )
                 }
+                lastSavedItems = normalizeItems(items)
             } else {
                 val preset = listPresetRepository.getById(presetId)
                 preset?.let {
@@ -154,6 +163,7 @@ class ListViewModel @Inject constructor(
                         )
                     }
                     listPresetRepository.markUsed(it.id)
+                    lastSavedItems = normalizeItems(it.items)
                 }
             }
         }
@@ -161,7 +171,7 @@ class ListViewModel @Inject constructor(
 
     fun updateEditorItems(items: List<String>) {
         _uiState.update { it.copy(editorItems = items) }
-        saveCurrent()
+        scheduleSaveCurrent()
     }
 
     fun updateCountText(text: String) {
@@ -265,7 +275,7 @@ class ListViewModel @Inject constructor(
     }
 
     fun getBaseItems(): List<String> {
-        return _uiState.value.editorItems.map { it.trim() }.filter { it.isNotEmpty() }
+        return normalizeItems(_uiState.value.editorItems)
     }
 
     fun canGenerate(): Boolean {
@@ -323,10 +333,29 @@ class ListViewModel @Inject constructor(
         return _uiState.value.results
     }
 
-    private fun saveCurrent() {
+    fun flushPendingSave() {
+        pendingSaveJob?.cancel()
+        pendingSaveJob = null
+        persistCurrentIfChanged()
+    }
+
+    private fun scheduleSaveCurrent() {
+        pendingSaveJob?.cancel()
+        pendingSaveJob = viewModelScope.launch {
+            delay(EDITOR_AUTOSAVE_DEBOUNCE_MS)
+            persistCurrentIfChanged()
+        }
+    }
+
+    private fun persistCurrentIfChanged() {
+        val items = getBaseItems()
+        if (items == lastSavedItems) return
+
+        pendingSaveJob = null
+        lastSavedItems = items
+
         val state = _uiState.value
         if (presetId != null && state.preset != null) {
-            val items = getBaseItems()
             val updatedPreset = state.preset.copy(
                 items = items,
                 updatedAt = System.currentTimeMillis()
@@ -336,8 +365,6 @@ class ListViewModel @Inject constructor(
                 _uiState.update { it.copy(preset = updatedPreset) }
             }
         } else {
-            // Save default list to DataStore
-            val items = getBaseItems()
             viewModelScope.launch {
                 settingsRepository.setDefaultListItems(items)
             }
@@ -365,6 +392,15 @@ class ListViewModel @Inject constructor(
 
     override fun checkAd(activity: android.app.Activity) {
         adsController.onNumbersOrListsGenerated(activity)
+    }
+
+    override fun onCleared() {
+        flushPendingSave()
+        super.onCleared()
+    }
+
+    private fun normalizeItems(items: List<String>): List<String> {
+        return items.map { it.trim() }.filter { it.isNotEmpty() }
     }
 }
 
