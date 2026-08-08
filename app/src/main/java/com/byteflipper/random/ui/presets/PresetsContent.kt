@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarHostState
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PresetsContent(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     onOpenPreset: (ListPreset) -> Unit,
     onOpenTeamPreset: (Long) -> Unit,
     onCreatePreset: () -> Unit = {},
@@ -162,6 +164,7 @@ fun PresetsContent(
 
     PresetsContentList(
         modifier = modifier,
+        contentPadding = contentPadding,
         uiState = uiState,
         sections = sections,
         listState = listState,

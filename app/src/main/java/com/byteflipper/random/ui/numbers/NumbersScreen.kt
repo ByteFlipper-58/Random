@@ -1,6 +1,7 @@
 package com.byteflipper.random.ui.numbers
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalView
@@ -84,9 +85,9 @@ fun NumbersScreen(onBack: () -> Unit) {
         FlipGenerateScreenHost(
             innerPadding = innerPadding,
             controller = controller,
-            content = { contentModifier ->
+            content = { contentModifier, innerPadding ->
                 NumbersContent(
-                    modifier = contentModifier,
+                    modifier = contentModifier.padding(innerPadding),
                     fromText = uiState.fromText,
                     toText = uiState.toText,
                     onFromChange = { viewModel.onEvent(NumbersUiEvent.UpdateFromText(it)) },

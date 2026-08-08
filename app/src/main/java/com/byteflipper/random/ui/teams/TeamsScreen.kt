@@ -94,9 +94,10 @@ fun TeamsScreen(
         FlipGenerateScreenHost(
             innerPadding = innerPadding,
             controller = controller,
-            content = { modifier ->
+            content = { modifier, innerPadding ->
                 TeamsContent(
                     modifier = modifier,
+                    contentPadding = innerPadding,
                     uiState = uiState,
                     onPickMembers = onPickMembers,
                     onRemovePerson = viewModel::togglePersonSelection

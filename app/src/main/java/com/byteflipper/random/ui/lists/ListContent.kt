@@ -2,6 +2,7 @@ package com.byteflipper.random.ui.lists
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -11,6 +12,7 @@ import com.byteflipper.random.ui.components.EditorList
 @Composable
 fun ListContent(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     items: List<String>,
     onItemsChange: (List<String>) -> Unit
 ) {
@@ -25,6 +27,7 @@ fun ListContent(
             },
             onItemsChange = onItemsChange,
             modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+            contentPadding = contentPadding,
             minItems = 1
         )
     }

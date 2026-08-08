@@ -113,10 +113,11 @@ fun ListScreen(
         FlipGenerateScreenHost(
             innerPadding = inner,
             controller = generateController,
-            content = { contentModifier ->
+            content = { contentModifier, innerPadding ->
                 if (presetId == null || displayedPreset != null) {
                     ListContent(
                         modifier = contentModifier,
+                        contentPadding = innerPadding,
                         items = displayedItems,
                         onItemsChange = { viewModel.onEvent(ListUiEvent.UpdateEditorItems(it)) }
                     )

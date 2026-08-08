@@ -1,6 +1,8 @@
 package com.byteflipper.random.ui.components
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +45,7 @@ fun EditorList(
     items: SnapshotStateList<String>,
     onItemsChange: (List<String>) -> Unit = {},
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     minItems: Int = 1
 ) {
     // Состояние фокуса
@@ -77,7 +80,12 @@ fun EditorList(
         }
     }
 
-    LazyColumn(modifier = modifier.fillMaxWidth()) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .consumeWindowInsets(contentPadding),
+        contentPadding = contentPadding
+    ) {
         items(items.size) { index ->
             Row(
                 modifier = Modifier

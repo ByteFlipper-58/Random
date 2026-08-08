@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -21,6 +22,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.byteflipper.random.R
@@ -36,6 +38,7 @@ import com.byteflipper.random.ui.teams.components.TeamPresetRow
 @Composable
 internal fun PresetsContentList(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     uiState: PresetsUiState,
     sections: List<PresetSection>,
     listState: LazyListState,
@@ -58,13 +61,20 @@ internal fun PresetsContentList(
     onDuplicate: (ListPreset, String) -> Unit,
     snackbarHostState: SnackbarHostState
 ) {
+    val layoutDirection = LocalLayoutDirection.current
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
+                .consumeWindowInsets(contentPadding)
                 .navigationBarsPadding(),
-            contentPadding = PaddingValues(bottom = 88.dp),
+            contentPadding = PaddingValues(
+                start = contentPadding.calculateLeftPadding(layoutDirection),
+                top = contentPadding.calculateTopPadding(),
+                end = contentPadding.calculateRightPadding(layoutDirection),
+                bottom = contentPadding.calculateBottomPadding() + 88.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             item(key = "presets_controls") {

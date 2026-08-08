@@ -17,7 +17,7 @@ import androidx.compose.foundation.background
 internal fun FlipGenerateScreenHost(
     innerPadding: PaddingValues,
     controller: FlipGenerateController,
-    content: @Composable (Modifier) -> Unit,
+    content: @Composable (Modifier, PaddingValues) -> Unit,
     overlay: @Composable BoxScope.() -> Unit,
     dialogs: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -30,11 +30,10 @@ internal fun FlipGenerateScreenHost(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .blur((8f * controller.flipController.scrimProgress.value).dp)
-            .padding(innerPadding)
             .consumeWindowInsets(innerPadding)
             .padding(horizontal = 16.dp)
 
-        content(contentModifier)
+        content(contentModifier, innerPadding)
         overlay()
         dialogs()
     }

@@ -2,6 +2,7 @@ package com.byteflipper.random.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     menuItems: List<MenuItemType>,
     onMoveItem: (Int, Int) -> Unit,
     onOpenNumbers: () -> Unit,
@@ -42,6 +44,7 @@ fun HomeContent(
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         state = lazyListState,
+        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

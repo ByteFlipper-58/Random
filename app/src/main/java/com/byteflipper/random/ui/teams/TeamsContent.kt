@@ -31,6 +31,7 @@ import com.byteflipper.random.ui.teams.components.PersonListRow
 @Composable
 fun TeamsContent(
     modifier: Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
     uiState: TeamsUiState,
     onPickMembers: () -> Unit,
     onRemovePerson: (Long) -> Unit
@@ -78,7 +79,10 @@ fun TeamsContent(
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(top = 8.dp, bottom = 112.dp)
+        contentPadding = PaddingValues(
+            top = contentPadding.calculateTopPadding() + 8.dp,
+            bottom = contentPadding.calculateBottomPadding() + 112.dp
+        )
     ) {
         item {
             Row(
