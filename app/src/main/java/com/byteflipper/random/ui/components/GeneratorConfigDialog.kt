@@ -1,6 +1,5 @@
 package com.byteflipper.random.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -74,16 +73,17 @@ fun GeneratorConfigDialog(
                 .verticalScroll(rememberScrollState())
         ) {
             ConfigHeader()
+            ConfigDivider()
 
-            Column(
-                modifier = Modifier.padding(vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ResultCountSection(countConfig = countConfig)
-                sortingConfig?.let { SortingSection(sortingConfig = it) }
-                RepetitionSection(repetitionConfig = repetitionConfig)
-                DelaySection(delayConfig = delayConfig)
+            ResultCountSection(countConfig = countConfig)
+            sortingConfig?.let {
+                ConfigDivider()
+                SortingSection(sortingConfig = it)
             }
+            ConfigDivider()
+            RepetitionSection(repetitionConfig = repetitionConfig)
+            ConfigDivider()
+            DelaySection(delayConfig = delayConfig)
 
             Spacer(modifier = Modifier.height(16.dp))
         }

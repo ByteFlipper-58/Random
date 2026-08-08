@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 fun PresetsContent(
     modifier: Modifier = Modifier,
     onOpenPreset: (ListPreset) -> Unit,
+    onOpenTeamPreset: (Long) -> Unit,
     onCreatePreset: () -> Unit = {},
     onFilterInteractionChanged: (Boolean) -> Unit = {},
     pendingSharedImport: PendingSharedImport? = null,
@@ -171,6 +172,7 @@ fun PresetsContent(
         onToggleSortOrder = viewModel::toggleSortOrder,
         onCreatePreset = onCreatePreset,
         onOpenPreset = onOpenPreset,
+        onOpenTeamPreset = onOpenTeamPreset,
         onToggleSelection = selectionController::toggle,
         onEnterSelection = selectionController::enter,
         onRenameClick = { transferController.renameTarget = it },

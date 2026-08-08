@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.background
 
 @Composable
 internal fun FlipGenerateScreenHost(
@@ -21,12 +23,14 @@ internal fun FlipGenerateScreenHost(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         val contentModifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background)
             .blur((8f * controller.flipController.scrimProgress.value).dp)
+            .padding(innerPadding)
+            .padding(horizontal = 16.dp)
 
         content(contentModifier)
         overlay()

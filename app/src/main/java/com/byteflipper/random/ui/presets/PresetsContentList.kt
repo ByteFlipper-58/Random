@@ -30,6 +30,7 @@ import com.byteflipper.random.ui.presets.components.PresetFiltersBar
 import com.byteflipper.random.ui.presets.components.PresetManagerActions
 import com.byteflipper.random.ui.presets.components.PresetSectionHeader
 import com.byteflipper.random.ui.presets.components.PresetsEmptyState
+import com.byteflipper.random.ui.teams.components.TeamPresetRow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -45,6 +46,7 @@ internal fun PresetsContentList(
     onToggleSortOrder: () -> Unit,
     onCreatePreset: () -> Unit,
     onOpenPreset: (ListPreset) -> Unit,
+    onOpenTeamPreset: (Long) -> Unit,
     onToggleSelection: (Long) -> Unit,
     onEnterSelection: (Long) -> Unit,
     onRenameClick: (ListPreset) -> Unit,
@@ -82,7 +84,27 @@ internal fun PresetsContentList(
                 }
             }
 
-            if (uiState.presets.isEmpty()) {
+            if (uiState.teamPresets.isNotEmpty()) {
+                item(key = "teams_section_header") {
+                    PresetSectionHeader(
+                        title = stringResource(R.string.teams),
+                        count = uiState.teamPresets.size,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                items(
+                    items = uiState.teamPresets,
+                    key = { preset -> "team_${preset.preset.id}" }
+                ) { preset ->
+                    TeamPresetRow(
+                        item = preset,
+                        onClick = { onOpenTeamPreset(preset.preset.id) },
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
+
+            if (uiState.presets.isEmpty() && uiState.teamPresets.isEmpty()) {
                 item(key = "empty_state") {
                     PresetsEmptyState(
                         hasAnyPresets = uiState.hasAnyPresets,

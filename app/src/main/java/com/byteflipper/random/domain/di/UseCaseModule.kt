@@ -8,6 +8,8 @@ import com.byteflipper.random.domain.lot.usecase.ValidateLotInputsUseCase
 import com.byteflipper.random.domain.lot.usecase.GenerateMarkedIndicesUseCase
 import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
 import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
+import com.byteflipper.random.domain.team.usecase.GenerateTeamsUseCase
+import com.byteflipper.random.domain.team.usecase.ValidateTeamPresetInputsUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,6 +51,14 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideSortListResultsUseCase(): SortListResultsUseCase = SortListResultsUseCase()
+
+    @Provides
+    @Singleton
+    fun provideGenerateTeamsUseCase(): GenerateTeamsUseCase = GenerateTeamsUseCase()
+
+    @Provides
+    @Singleton
+    fun provideValidateTeamPresetInputsUseCase(): ValidateTeamPresetInputsUseCase = ValidateTeamPresetInputsUseCase()
 }
 
 

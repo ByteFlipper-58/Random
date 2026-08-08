@@ -35,7 +35,8 @@ enum class MenuItemType {
     DICE,
     LOT,
     COIN,
-    WHEEL;
+    WHEEL,
+    TEAMS;
 
     val iconRes: Int
         get() = when (this) {
@@ -45,6 +46,7 @@ enum class MenuItemType {
             LOT -> R.drawable.gavel_24px
             COIN -> R.drawable.paid_24px
             WHEEL -> R.drawable.casino_24px
+            TEAMS -> R.drawable.groups_24px
         }
 
     val titleRes: Int
@@ -55,6 +57,7 @@ enum class MenuItemType {
             LOT -> R.string.lot
             COIN -> R.string.coin
             WHEEL -> R.string.wheel
+            TEAMS -> R.string.teams
         }
 
     val supportsQuickAdd: Boolean
@@ -66,10 +69,12 @@ fun HomeScreen(
     onOpenNumbers: () -> Unit,
     onOpenList: () -> Unit,
     onOpenListPreset: (ListPreset) -> Unit,
+    onOpenTeamPreset: (Long) -> Unit,
     onOpenDice: () -> Unit,
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
     onOpenWheel: () -> Unit,
+    onOpenTeams: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
 ) {
@@ -233,7 +238,9 @@ fun HomeScreen(
                 onOpenLot = onOpenLot,
                 onOpenCoin = onOpenCoin,
                 onOpenWheel = onOpenWheel,
+                onOpenTeams = onOpenTeams,
                 onOpenPreset = onOpenListPreset,
+                onOpenTeamPreset = onOpenTeamPreset,
                 onSharedImportConsumed = appViewModel::clearSharedImport,
                 onExternalActionHandled = { actionId ->
                     if (pendingPresetsAction?.id == actionId) {

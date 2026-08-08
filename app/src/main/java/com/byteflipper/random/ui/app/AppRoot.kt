@@ -27,6 +27,7 @@ import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.lists.ListScreen
 import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.numbers.NumbersScreen
+import com.byteflipper.random.ui.people.PeopleScreen
 import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
 import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
@@ -35,6 +36,8 @@ import com.byteflipper.random.ui.theme.model.Theme
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.components.SystemHapticsManager
 import com.byteflipper.random.ui.setup.SetupScreen
+import com.byteflipper.random.ui.teams.PeoplePickerScreen
+import com.byteflipper.random.ui.teams.TeamsScreen
 import com.byteflipper.random.ui.wheel.WheelScreen
 
 object AppRoutes {
@@ -49,12 +52,17 @@ object AppRoutes {
     const val Lot: String = "lot"
     const val Coin: String = "coin"
     const val Wheel: String = "wheel"
+    const val Teams: String = "teams"
+    const val TeamsWithId: String = "teams/{id}"
+    const val TeamMembersPicker: String = "team_members_picker"
+    const val People: String = "people"
     const val Settings: String = "settings"
     const val SettingsGeneral: String = "settings_general"
     const val SettingsAppearance: String = "settings_appearance"
     const val About: String = "about"
 
     fun list(id: Long): String = "list/$id"
+    fun teams(id: Long): String = "teams/$id"
 }
 
 @Composable
@@ -108,10 +116,12 @@ fun AppRoot() {
                             onOpenNumbers = { navController.navigate(AppRoutes.Numbers) },
                             onOpenList = { navController.navigate(AppRoutes.List) },
                             onOpenListPreset = ::openPresetList,
+                            onOpenTeamPreset = { id -> navController.navigate(AppRoutes.teams(id)) },
                             onOpenDice = { navController.navigate(AppRoutes.Dice) },
                             onOpenLot = { navController.navigate(AppRoutes.Lot) },
                             onOpenCoin = { navController.navigate(AppRoutes.Coin) },
                             onOpenWheel = { navController.navigate(AppRoutes.Wheel) },
+                            onOpenTeams = { navController.navigate(AppRoutes.Teams) },
                             onOpenSettings = { navController.navigate(AppRoutes.Settings) },
                             onOpenAbout = { navController.navigate(AppRoutes.About) }
                         )
@@ -151,6 +161,55 @@ fun AppRoot() {
                         popEnterTransition = NavTransitions.popEnter,
                         popExitTransition = NavTransitions.popExit
                     ) { WheelScreen(onBack = { navController.popBackStack() }) }
+                    composable(
+                        route = AppRoutes.Teams,
+                        enterTransition = NavTransitions.enter,
+                        exitTransition = NavTransitions.exit,
+                        popEnterTransition = NavTransitions.popEnter,
+                        popExitTransition = NavTransitions.popExit
+                    ) {
+                        TeamsScreen(
+                            onBack = { navController.popBackStack() },
+                            onManagePeople = { navController.navigate(AppRoutes.People) },
+                            onPickMembers = { navController.navigate(AppRoutes.TeamMembersPicker) }
+                        )
+                    }
+                    composable(
+                        route = AppRoutes.TeamsWithId,
+                        arguments = listOf(navArgument("id") { type = NavType.LongType }),
+                        enterTransition = NavTransitions.enter,
+                        exitTransition = NavTransitions.exit,
+                        popEnterTransition = NavTransitions.popEnter,
+                        popExitTransition = NavTransitions.popExit
+                    ) {
+                        TeamsScreen(
+                            onBack = { navController.popBackStack() },
+                            onManagePeople = { navController.navigate(AppRoutes.People) },
+                            onPickMembers = { navController.navigate(AppRoutes.TeamMembersPicker) }
+                        )
+                    }
+                    composable(
+                        route = AppRoutes.TeamMembersPicker,
+                        enterTransition = NavTransitions.enter,
+                        exitTransition = NavTransitions.exit,
+                        popEnterTransition = NavTransitions.popEnter,
+                        popExitTransition = NavTransitions.popExit
+                    ) {
+                        // Reuse the Teams destination's ViewModel so a pick lands directly in its selection.
+                        val teamsEntry = remember { navController.previousBackStackEntry }
+                            ?: return@composable
+                        PeoplePickerScreen(
+                            teamsViewModel = hiltViewModel(teamsEntry),
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable(
+                        route = AppRoutes.People,
+                        enterTransition = NavTransitions.enter,
+                        exitTransition = NavTransitions.exit,
+                        popEnterTransition = NavTransitions.popEnter,
+                        popExitTransition = NavTransitions.popExit
+                    ) { PeopleScreen(onBack = { navController.popBackStack() }) }
                     composable(
                         route = AppRoutes.Settings,
                         enterTransition = NavTransitions.enter,

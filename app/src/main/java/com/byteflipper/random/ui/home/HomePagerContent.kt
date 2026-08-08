@@ -35,7 +35,9 @@ internal fun HomePagerContent(
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
     onOpenWheel: () -> Unit,
+    onOpenTeams: () -> Unit,
     onOpenPreset: (ListPreset) -> Unit,
+    onOpenTeamPreset: (Long) -> Unit,
     onSharedImportConsumed: (Long) -> Unit,
     onExternalActionHandled: (Long) -> Unit,
     onSelectionStateChanged: (PresetsSelectionUiState) -> Unit,
@@ -73,7 +75,8 @@ internal fun HomePagerContent(
                 onOpenDice = onOpenDice,
                 onOpenLot = onOpenLot,
                 onOpenCoin = onOpenCoin,
-                onOpenWheel = onOpenWheel
+                onOpenWheel = onOpenWheel,
+                onOpenTeams = onOpenTeams
             )
 
             HomeTab.Presets -> com.byteflipper.random.ui.presets.PresetsContent(
@@ -85,6 +88,7 @@ internal fun HomePagerContent(
                         alpha = pageAlpha
                     },
                 onOpenPreset = onOpenPreset,
+                onOpenTeamPreset = onOpenTeamPreset,
                 onCreatePreset = onAddList,
                 pendingSharedImport = pendingSharedImport,
                 onSharedImportConsumed = onSharedImportConsumed,

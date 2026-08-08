@@ -4,9 +4,13 @@ import android.content.Context
 import androidx.room.Room
 import com.byteflipper.random.data.db.AppDatabase
 import com.byteflipper.random.data.db.AppMigrations
+import com.byteflipper.random.data.person.PeopleRepository
+import com.byteflipper.random.data.person.PersonDao
 import com.byteflipper.random.data.preset.ListPresetDao
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.data.team.TeamPresetDao
+import com.byteflipper.random.data.team.TeamPresetRepository
 import com.byteflipper.random.utils.Constants.DATABASE_NAME
 import dagger.Module
 import dagger.Provides
@@ -41,6 +45,30 @@ object DatabaseModule {
     @Singleton
     fun provideListPresetRepository(dao: ListPresetDao): ListPresetRepository {
         return ListPresetRepository(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun providePersonDao(database: AppDatabase): PersonDao {
+        return database.personDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providePeopleRepository(dao: PersonDao): PeopleRepository {
+        return PeopleRepository(dao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTeamPresetDao(database: AppDatabase): TeamPresetDao {
+        return database.teamPresetDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideTeamPresetRepository(dao: TeamPresetDao): TeamPresetRepository {
+        return TeamPresetRepository(dao)
     }
 
     @Provides

@@ -8,6 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
+import com.byteflipper.random.data.team.TeamPreset
+import com.byteflipper.random.data.team.TeamPresetRepository
+import com.byteflipper.random.data.team.TeamPresetWithCount
 import com.byteflipper.random.data.preset.transfer.ParsedPresetImport
 import com.byteflipper.random.data.preset.transfer.PresetImportMode
 import com.byteflipper.random.data.preset.transfer.PresetImportIssue
@@ -40,6 +43,7 @@ enum class PresetFilter {
 data class PresetsUiState(
     val filter: PresetFilter = PresetFilter.All,
     val sortAscending: Boolean = true,
+    val teamPresets: List<TeamPresetWithCount> = emptyList(),
     val availablePresets: List<ListPreset> = emptyList(),
     val presets: List<ListPreset> = emptyList(),
     val hasAnyPresets: Boolean = false,
@@ -51,6 +55,7 @@ data class PresetsUiState(
 @HiltViewModel
 class PresetsViewModel @Inject constructor(
     private val listPresetRepository: ListPresetRepository,
+    private val teamPresetRepository: TeamPresetRepository,
     settingsRepository: SettingsRepository,
     private val presetTransferService: PresetTransferService,
     @ApplicationContext private val appContext: Context
@@ -85,9 +90,10 @@ class PresetsViewModel @Inject constructor(
 
     private val contentState = combine(
         listPresetRepository.observeAll(),
+        teamPresetRepository.observeAllWithCounts(),
         filter,
         sortAscending
-    ) { presets, currentFilter, currentSortAscending ->
+    ) { presets, teamPresetsWithCounts, currentFilter, currentSortAscending ->
         val recentPresetIds = presets
             .sortedByDescending(::activityAt)
             .take(RECENT_PRESETS_LIMIT)
@@ -103,6 +109,21 @@ class PresetsViewModel @Inject constructor(
             }
             .sortedWith(comparatorFor(currentFilter, currentSortAscending))
 
+        val recentTeamPresetIds = teamPresetsWithCounts
+            .sortedByDescending { activityAt(it) }
+            .take(RECENT_PRESETS_LIMIT)
+            .mapTo(mutableSetOf()) { it.preset.id }
+
+        val availableTeamPresets = teamPresetsWithCounts
+            .filter { item ->
+                when (currentFilter) {
+                    PresetFilter.All -> true
+                    PresetFilter.Recent -> item.preset.id in recentTeamPresetIds
+                    PresetFilter.MostUsed -> item.preset.useCount > 0
+                }
+            }
+            .sortedWith(teamComparatorFor(currentFilter, currentSortAscending))
+
         val lastUsedPresetId = presets
             .filter { it.lastUsedAt != null }
             .maxByOrNull { it.lastUsedAt ?: Long.MIN_VALUE }
@@ -111,9 +132,10 @@ class PresetsViewModel @Inject constructor(
         PresetsUiState(
             filter = currentFilter,
             sortAscending = currentSortAscending,
+            teamPresets = availableTeamPresets,
             availablePresets = availablePresets,
             presets = availablePresets,
-            hasAnyPresets = presets.isNotEmpty(),
+            hasAnyPresets = presets.isNotEmpty() || teamPresetsWithCounts.isNotEmpty(),
             lastUsedPresetId = lastUsedPresetId
         )
     }
@@ -277,6 +299,18 @@ class PresetsViewModel @Inject constructor(
 
     private fun activityAt(preset: ListPreset): Long {
         return preset.lastUsedAt ?: preset.updatedAt
+    }
+
+    private fun activityAt(item: TeamPresetWithCount): Long = item.preset.lastUsedAt ?: item.preset.updatedAt
+
+    private fun teamComparatorFor(filter: PresetFilter, ascending: Boolean): Comparator<TeamPresetWithCount> {
+        val locale = Locale.getDefault()
+        val comparator = when (filter) {
+            PresetFilter.Recent -> compareBy<TeamPresetWithCount>(::activityAt).thenBy { it.preset.name.lowercase(locale) }
+            PresetFilter.MostUsed -> compareBy<TeamPresetWithCount> { it.preset.useCount }.thenBy(::activityAt).thenBy { it.preset.name.lowercase(locale) }
+            PresetFilter.All -> compareBy<TeamPresetWithCount> { it.preset.name.lowercase(locale) }.thenByDescending(::activityAt)
+        }
+        return if (ascending) comparator else comparator.reversed()
     }
 
     private suspend fun runTransferAction(

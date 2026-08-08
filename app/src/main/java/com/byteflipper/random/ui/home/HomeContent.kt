@@ -29,7 +29,8 @@ fun HomeContent(
     onOpenDice: () -> Unit,
     onOpenLot: () -> Unit,
     onOpenCoin: () -> Unit,
-    onOpenWheel: () -> Unit
+    onOpenWheel: () -> Unit,
+    onOpenTeams: () -> Unit
 ) {
     val lazyListState = androidx.compose.foundation.lazy.rememberLazyListState()
     val reorderState = rememberReorderableLazyListState(lazyListState) { from, to ->
@@ -67,6 +68,7 @@ fun HomeContent(
                         MenuItemType.LOT -> onOpenLot
                         MenuItemType.COIN -> onOpenCoin
                         MenuItemType.WHEEL -> onOpenWheel
+                        MenuItemType.TEAMS -> onOpenTeams
                     }
 
                     MenuCard(
