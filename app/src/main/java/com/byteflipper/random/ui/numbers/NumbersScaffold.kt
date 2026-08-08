@@ -2,7 +2,7 @@ package com.byteflipper.random.ui.numbers
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -19,7 +19,7 @@ fun NumbersScaffold(
 ) {
     Scaffold(
         topBar = { NumbersTopBar(onBack) },
-        contentWindowInsets = WindowInsets.systemBars,
+        contentWindowInsets = WindowInsets.safeDrawing,
         floatingActionButton = floatingActionButton,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         content = content

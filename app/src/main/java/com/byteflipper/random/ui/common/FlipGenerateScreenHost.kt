@@ -3,6 +3,7 @@ package com.byteflipper.random.ui.common
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ internal fun FlipGenerateScreenHost(
             .background(MaterialTheme.colorScheme.background)
             .blur((8f * controller.flipController.scrimProgress.value).dp)
             .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
             .padding(horizontal = 16.dp)
 
         content(contentModifier)

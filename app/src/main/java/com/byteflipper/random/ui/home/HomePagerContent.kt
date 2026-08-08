@@ -2,6 +2,7 @@ package com.byteflipper.random.ui.home
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -47,7 +48,8 @@ internal fun HomePagerContent(
         state = pagerState,
         modifier = Modifier
             .fillMaxSize()
-            .padding(innerPadding),
+            .padding(innerPadding)
+            .consumeWindowInsets(innerPadding),
         userScrollEnabled = !isPresetsFilterInteracting && !showPresetsSearch,
         beyondViewportPageCount = 1
     ) { page ->
