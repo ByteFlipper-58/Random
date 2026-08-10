@@ -19,24 +19,26 @@ internal class AppearanceController(
     private val splashScreen: SplashScreen,
     private val settingsRepository: SettingsRepository
 ) {
-    fun start() {
-        var keepSplashOnScreen = true
-        splashScreen.setKeepOnScreenCondition { keepSplashOnScreen }
+    fun start(animateSplash: Boolean) {
+        var keepSplashOnScreen = animateSplash
 
-        splashScreen.setOnExitAnimationListener { splashScreenView ->
-            val alpha = android.animation.ObjectAnimator.ofFloat(
-                splashScreenView.view,
-                android.view.View.ALPHA,
-                1f,
-                0f
-            )
-            alpha.duration = 200L
-            alpha.addListener(object : android.animation.AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: android.animation.Animator) {
-                    splashScreenView.remove()
-                }
-            })
-            alpha.start()
+        if (animateSplash) {
+            splashScreen.setKeepOnScreenCondition { keepSplashOnScreen }
+            splashScreen.setOnExitAnimationListener { splashScreenView ->
+                val alpha = android.animation.ObjectAnimator.ofFloat(
+                    splashScreenView.view,
+                    android.view.View.ALPHA,
+                    1f,
+                    0f
+                )
+                alpha.duration = 200L
+                alpha.addListener(object : android.animation.AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: android.animation.Animator) {
+                        splashScreenView.remove()
+                    }
+                })
+                alpha.start()
+            }
         }
 
         activity.lifecycleScope.launch {

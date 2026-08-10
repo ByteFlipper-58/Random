@@ -407,6 +407,15 @@
     <string name="language_hindi">Hindi</string>
     <string name="language_spanish">Spanish</string>
     <string name="language_french">French</string>
+    <string name="language_native_english" translatable="false">English</string>
+    <string name="language_native_russian" translatable="false">Русский</string>
+    <string name="language_native_ukrainian" translatable="false">Українська</string>
+    <string name="language_native_belarusian" translatable="false">Беларуская</string>
+    <string name="language_native_polish" translatable="false">Polski</string>
+    <string name="language_native_kazakh" translatable="false">Қазақша</string>
+    <string name="language_native_hindi" translatable="false">हिन्दी</string>
+    <string name="language_native_spanish" translatable="false">Español</string>
+    <string name="language_native_french" translatable="false">Français</string>
     <string name="language_system">System</string>
     <string name="light_theme">Light</string>
     <string name="settings_appearance_subtitle">Theme, dynamic colors, FAB size</string>

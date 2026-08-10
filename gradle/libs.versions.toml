@@ -3,7 +3,8 @@ activityCompose = "1.13.0"
 agp = "9.3.1"
 appcompat = "1.7.0"
 browser = "1.9.0"
-composeBom = "2025.12.00"
+composeBom = "2026.04.01"
+composeFoundation = "1.12.0-rc01"
 coreKtx = "1.17.0"
 datastore = "1.1.1"
 espressoCore = "3.7.0"
@@ -60,7 +61,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }

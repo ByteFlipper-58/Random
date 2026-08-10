@@ -4,11 +4,14 @@ import android.app.Activity
 import android.os.Build
 import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.byteflipper.random.ui.theme.model.Theme
@@ -48,9 +51,15 @@ fun RandomTheme(
     )
     val animatedColorScheme = animateColorScheme(targetColorScheme = colorScheme)
 
-    MaterialTheme(
-        colorScheme = animatedColorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalRandomColorScheme provides animatedColorScheme) {
+        MaterialTheme(
+            colorScheme = animatedColorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
+}
+
+internal val LocalRandomColorScheme = staticCompositionLocalOf<ColorScheme> {
+    error("RandomTheme is not present")
 }

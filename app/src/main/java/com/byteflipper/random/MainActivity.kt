@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             activity = this,
             splashScreen = splashScreen,
             settingsRepository = settingsRepository
-        ).start()
+        ).start(animateSplash = savedInstanceState == null)
         trackStartupSessionStart(
             savedInstanceState = savedInstanceState,
             inAppReviewManager = inAppReviewManager

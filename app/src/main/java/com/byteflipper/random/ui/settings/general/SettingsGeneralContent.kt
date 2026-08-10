@@ -146,15 +146,15 @@ fun SettingsGeneralContent(
 
 private fun AppLanguage.labelResId(): Int = when (this) {
     AppLanguage.System -> R.string.language_system
-    AppLanguage.English -> R.string.language_english
-    AppLanguage.Russian -> R.string.language_russian
-    AppLanguage.Ukrainian -> R.string.language_ukrainian
-    AppLanguage.Belarusian -> R.string.language_belarusian
-    AppLanguage.Polish -> R.string.language_polish
-    AppLanguage.Kazakh -> R.string.language_kazakh
-    AppLanguage.Hindi -> R.string.language_hindi
-    AppLanguage.Spanish -> R.string.language_spanish
-    AppLanguage.French -> R.string.language_french
+    AppLanguage.English -> R.string.language_native_english
+    AppLanguage.Russian -> R.string.language_native_russian
+    AppLanguage.Ukrainian -> R.string.language_native_ukrainian
+    AppLanguage.Belarusian -> R.string.language_native_belarusian
+    AppLanguage.Polish -> R.string.language_native_polish
+    AppLanguage.Kazakh -> R.string.language_native_kazakh
+    AppLanguage.Hindi -> R.string.language_native_hindi
+    AppLanguage.Spanish -> R.string.language_native_spanish
+    AppLanguage.French -> R.string.language_native_french
 }
 
 

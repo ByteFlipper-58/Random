@@ -13,6 +13,7 @@
     </style>
 
     <style name="Splash" parent="Theme.SplashScreen">
+        <item name="android:windowBackground">@color/splash_bg_light</item>
         <item name="windowSplashScreenBackground">@color/splash_bg_light</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
