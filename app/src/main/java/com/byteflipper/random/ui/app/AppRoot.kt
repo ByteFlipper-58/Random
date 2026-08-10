@@ -5,77 +5,68 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
-import com.byteflipper.random.data.preset.ListPreset
-import com.byteflipper.random.data.settings.Settings
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import com.byteflipper.random.data.settings.Settings as AppSettings
 import com.byteflipper.random.data.settings.ThemeMode
+import com.byteflipper.random.navigation.About
+import com.byteflipper.random.navigation.Coin
+import com.byteflipper.random.navigation.Dice
+import com.byteflipper.random.navigation.Home
+import com.byteflipper.random.navigation.ListEditor
+import com.byteflipper.random.navigation.Lot
 import com.byteflipper.random.navigation.NavTransitions
+import com.byteflipper.random.navigation.Numbers
+import com.byteflipper.random.navigation.People
+import com.byteflipper.random.navigation.PeoplePicker
+import com.byteflipper.random.navigation.Settings
+import com.byteflipper.random.navigation.SettingsAppearance
+import com.byteflipper.random.navigation.SettingsGeneral
+import com.byteflipper.random.navigation.Setup
+import com.byteflipper.random.navigation.Teams
+import com.byteflipper.random.navigation.Wheel
+import com.byteflipper.random.navigation.rememberNavigationState
+import com.byteflipper.random.navigation.rememberNavigator
 import com.byteflipper.random.ui.about.AboutScreen
 import com.byteflipper.random.ui.coin.CoinScreen
+import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.ui.components.SystemHapticsManager
 import com.byteflipper.random.ui.dice.DiceScreen
 import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.lists.ListScreen
+import com.byteflipper.random.ui.lists.ListViewModel
 import com.byteflipper.random.ui.lot.LotScreen
 import com.byteflipper.random.ui.numbers.NumbersScreen
 import com.byteflipper.random.ui.people.PeopleScreen
+import com.byteflipper.random.ui.settings.SettingsScreen
 import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
 import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
-import com.byteflipper.random.ui.settings.SettingsScreen
-import com.byteflipper.random.ui.theme.RandomTheme
-import com.byteflipper.random.ui.theme.model.Theme
-import com.byteflipper.random.ui.components.LocalHapticsManager
-import com.byteflipper.random.ui.components.SystemHapticsManager
 import com.byteflipper.random.ui.setup.SetupScreen
 import com.byteflipper.random.ui.teams.PeoplePickerScreen
 import com.byteflipper.random.ui.teams.TeamsScreen
+import com.byteflipper.random.ui.teams.TeamsViewModel
+import com.byteflipper.random.ui.theme.RandomTheme
+import com.byteflipper.random.ui.theme.model.Theme
 import com.byteflipper.random.ui.wheel.WheelScreen
-
-object AppRoutes {
-    const val ListPresetNameKey: String = "list_preset_name"
-    const val ListPresetItemsKey: String = "list_preset_items"
-    const val Setup: String = "setup"
-    const val Home: String = "home"
-    const val Numbers: String = "numbers"
-    const val List: String = "list"
-    const val ListWithId: String = "list/{id}"
-    const val Dice: String = "dice"
-    const val Lot: String = "lot"
-    const val Coin: String = "coin"
-    const val Wheel: String = "wheel"
-    const val Teams: String = "teams"
-    const val TeamsWithId: String = "teams/{id}"
-    const val TeamMembersPicker: String = "team_members_picker"
-    const val People: String = "people"
-    const val Settings: String = "settings"
-    const val SettingsGeneral: String = "settings_general"
-    const val SettingsAppearance: String = "settings_appearance"
-    const val About: String = "about"
-
-    fun list(id: Long): String = "list/$id"
-    fun teams(id: Long): String = "teams/$id"
-}
 
 @Composable
 fun AppRoot() {
-    val viewModel: AppViewModel = hiltViewModel()
+    val appViewModel: AppViewModel = hiltViewModel()
     val context = LocalContext.current
-    val navController = rememberNavController()
-    val initialSettings: Settings? by viewModel.initialSettings.collectAsStateWithLifecycle()
-    val settings: Settings by viewModel.settingsFlow.collectAsStateWithLifecycle(
-        initialValue = initialSettings ?: Settings()
+    val initialSettings: AppSettings? by appViewModel.initialSettings.collectAsStateWithLifecycle()
+    val settings: AppSettings by appViewModel.settingsFlow.collectAsStateWithLifecycle(
+        initialValue = initialSettings ?: AppSettings()
     )
 
-    // Ensure we don't render anything until settings are loaded to prevent flash
     if (initialSettings == null) return
 
     val darkTheme = when (settings.themeMode) {
@@ -83,6 +74,10 @@ fun AppRoot() {
         ThemeMode.Light -> false
         ThemeMode.Dark -> true
     }
+    val navigationState = rememberNavigationState(
+        initialKey = if (settings.setupCompleted) Home else Setup
+    )
+    val navigator = rememberNavigator(navigationState)
 
     RandomTheme(
         theme = if (settings.dynamicColors) Theme.DYNAMIC else Theme.BLUE,
@@ -94,199 +89,99 @@ fun AppRoot() {
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
-                fun openPresetList(preset: ListPreset) {
-                    navController.currentBackStackEntry?.savedStateHandle?.apply {
-                        set(AppRoutes.ListPresetNameKey, preset.name)
-                        set(AppRoutes.ListPresetItemsKey, ArrayList(preset.items))
-                    }
-                    navController.navigate(AppRoutes.list(preset.id))
-                }
-
-                val startDestination = if (settings.setupCompleted) AppRoutes.Home else AppRoutes.Setup
-                NavHost(navController = navController, startDestination = startDestination) {
-                    composable(AppRoutes.Setup) {
-                        SetupScreen(onSetupComplete = {
-                            navController.navigate(AppRoutes.Home) {
-                                popUpTo(AppRoutes.Setup) { inclusive = true }
-                            }
-                        })
-                    }
-                    composable(AppRoutes.Home) {
-                        HomeScreen(
-                            onOpenNumbers = { navController.navigate(AppRoutes.Numbers) },
-                            onOpenList = { navController.navigate(AppRoutes.List) },
-                            onOpenListPreset = ::openPresetList,
-                            onOpenTeamPreset = { id -> navController.navigate(AppRoutes.teams(id)) },
-                            onOpenDice = { navController.navigate(AppRoutes.Dice) },
-                            onOpenLot = { navController.navigate(AppRoutes.Lot) },
-                            onOpenCoin = { navController.navigate(AppRoutes.Coin) },
-                            onOpenWheel = { navController.navigate(AppRoutes.Wheel) },
-                            onOpenTeams = { navController.navigate(AppRoutes.Teams) },
-                            onOpenSettings = { navController.navigate(AppRoutes.Settings) },
-                            onOpenAbout = { navController.navigate(AppRoutes.About) }
-                        )
-                    }
-                    composable(
-                        route = AppRoutes.Numbers,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { NumbersScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.Lot,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { LotScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.Dice,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { DiceScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.Coin,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { CoinScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.Wheel,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { WheelScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.Teams,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) {
-                        TeamsScreen(
-                            onBack = { navController.popBackStack() },
-                            onManagePeople = { navController.navigate(AppRoutes.People) },
-                            onPickMembers = { navController.navigate(AppRoutes.TeamMembersPicker) }
-                        )
-                    }
-                    composable(
-                        route = AppRoutes.TeamsWithId,
-                        arguments = listOf(navArgument("id") { type = NavType.LongType }),
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) {
-                        TeamsScreen(
-                            onBack = { navController.popBackStack() },
-                            onManagePeople = { navController.navigate(AppRoutes.People) },
-                            onPickMembers = { navController.navigate(AppRoutes.TeamMembersPicker) }
-                        )
-                    }
-                    composable(
-                        route = AppRoutes.TeamMembersPicker,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) {
-                        // Reuse the Teams destination's ViewModel so a pick lands directly in its selection.
-                        val teamsEntry = remember { navController.previousBackStackEntry }
-                            ?: return@composable
-                        PeoplePickerScreen(
-                            teamsViewModel = hiltViewModel(teamsEntry),
-                            onBack = { navController.popBackStack() }
-                        )
-                    }
-                    composable(
-                        route = AppRoutes.People,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { PeopleScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.Settings,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) {
-                        SettingsScreen(
-                            onBack = { navController.popBackStack() },
-                            onOpenGeneral = { navController.navigate(AppRoutes.SettingsGeneral) },
-                            onOpenAppearance = { navController.navigate(AppRoutes.SettingsAppearance) }
-                        )
-                    }
-                    composable(
-                        route = AppRoutes.SettingsGeneral,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { SettingsGeneralScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.SettingsAppearance,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { SettingsAppearanceScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.About,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { AboutScreen(onBack = { navController.popBackStack() }) }
-                    composable(
-                        route = AppRoutes.List,
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) {
-                        ListScreen(
-                            onBack = { navController.popBackStack() },
-                            onOpenListById = { id ->
-                                navController.navigate(AppRoutes.list(id)) {
-                                    popUpTo(AppRoutes.Home) { inclusive = false }
+                NavDisplay(
+                    backStack = navigationState.backStack,
+                    onBack = { navigator.goBack() },
+                    entryDecorators = listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
+                    transitionSpec = { NavTransitions.forward() },
+                    popTransitionSpec = { NavTransitions.backward() },
+                    predictivePopTransitionSpec = { NavTransitions.backward() },
+                    entryProvider = entryProvider {
+                        entry<Setup> {
+                            SetupScreen(onSetupComplete = { navigator.replaceRoot(Home) })
+                        }
+                        entry<Home> {
+                            HomeScreen(
+                                appViewModel = appViewModel,
+                                onOpenNumbers = { navigator.navigate(Numbers) },
+                                onOpenList = { navigator.navigate(ListEditor()) },
+                                onOpenListPreset = { preset -> navigator.navigate(ListEditor(preset.id)) },
+                                onOpenTeamPreset = { id -> navigator.navigate(Teams(id)) },
+                                onOpenDice = { navigator.navigate(Dice) },
+                                onOpenLot = { navigator.navigate(Lot) },
+                                onOpenCoin = { navigator.navigate(Coin) },
+                                onOpenWheel = { navigator.navigate(Wheel) },
+                                onOpenTeams = { navigator.navigate(Teams()) },
+                                onOpenSettings = { navigator.navigate(Settings) },
+                                onOpenAbout = { navigator.navigate(About) }
+                            )
+                        }
+                        entry<Numbers> { NumbersScreen(onBack = { navigator.goBack() }) }
+                        entry<Lot> { LotScreen(onBack = { navigator.goBack() }) }
+                        entry<Dice> { DiceScreen(onBack = { navigator.goBack() }) }
+                        entry<Coin> { CoinScreen(onBack = { navigator.goBack() }) }
+                        entry<Wheel> { WheelScreen(onBack = { navigator.goBack() }) }
+                        entry<Teams> { key ->
+                            val teamsViewModel = hiltViewModel<TeamsViewModel, TeamsViewModel.Factory>(
+                                creationCallback = { factory -> factory.create(key.id) }
+                            )
+                            val pendingSelection = navigator.pendingTeamSelection(key)
+                            LaunchedEffect(key, pendingSelection) {
+                                pendingSelection?.let {
+                                    teamsViewModel.setPersonSelection(it)
+                                    navigator.consumeTeamSelection(key)
                                 }
                             }
-                        )
-                    }
-                    composable(
-                        route = AppRoutes.ListWithId,
-                        arguments = listOf(navArgument("id") { type = NavType.LongType }),
-                        enterTransition = NavTransitions.enter,
-                        exitTransition = NavTransitions.exit,
-                        popEnterTransition = NavTransitions.popEnter,
-                        popExitTransition = NavTransitions.popExit
-                    ) { backStackEntry ->
-                        val id = backStackEntry.arguments?.getLong("id")
-                        val initialPreset = remember(id) {
-                            val previousStateHandle = navController.previousBackStackEntry?.savedStateHandle
-                            val name = previousStateHandle?.get<String>(AppRoutes.ListPresetNameKey)
-                            val items = previousStateHandle?.get<ArrayList<String>>(AppRoutes.ListPresetItemsKey)
-                            if (id != null && name != null && items != null) {
-                                ListPreset(id = id, name = name, items = items)
-                            } else {
-                                null
-                            }
+                            TeamsScreen(
+                                viewModel = teamsViewModel,
+                                onBack = { navigator.goBack() },
+                                onManagePeople = { navigator.navigate(People) },
+                                onPickMembers = {
+                                    navigator.navigate(
+                                        PeoplePicker(
+                                            parent = key,
+                                            selectedMemberIds = teamsViewModel.uiState.value.editor.selectedMemberIds
+                                        )
+                                    )
+                                }
+                            )
                         }
-                        ListScreen(
-                            onBack = { navController.popBackStack() },
-                            presetId = id,
-                            initialPreset = initialPreset,
-                            onOpenListById = { newId -> navController.navigate(AppRoutes.list(newId)) }
-                        )
+                        entry<PeoplePicker> { key ->
+                            PeoplePickerScreen(
+                                selectedMemberIds = key.selectedMemberIds,
+                                onSelectionChanged = { selectedIds ->
+                                    navigator.updatePeoplePickerSelection(key, selectedIds)
+                                },
+                                onBack = { navigator.goBack() }
+                            )
+                        }
+                        entry<People> { PeopleScreen(onBack = { navigator.goBack() }) }
+                        entry<Settings> {
+                            SettingsScreen(
+                                onBack = { navigator.goBack() },
+                                onOpenGeneral = { navigator.navigate(SettingsGeneral) },
+                                onOpenAppearance = { navigator.navigate(SettingsAppearance) }
+                            )
+                        }
+                        entry<SettingsGeneral> { SettingsGeneralScreen(onBack = { navigator.goBack() }) }
+                        entry<SettingsAppearance> { SettingsAppearanceScreen(onBack = { navigator.goBack() }) }
+                        entry<About> { AboutScreen(onBack = { navigator.goBack() }) }
+                        entry<ListEditor> { key ->
+                            val listViewModel = hiltViewModel<ListViewModel, ListViewModel.Factory>(
+                                creationCallback = { factory -> factory.create(key.id) }
+                            )
+                            ListScreen(
+                                viewModel = listViewModel,
+                                onBack = { navigator.goBack() },
+                                presetId = key.id,
+                                onOpenListById = navigator::openSavedList
+                            )
+                        }
                     }
-                }
+                )
             }
         }
     }

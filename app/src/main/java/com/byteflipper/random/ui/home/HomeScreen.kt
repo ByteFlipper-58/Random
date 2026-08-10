@@ -16,7 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
@@ -66,6 +66,7 @@ enum class MenuItemType {
 
 @Composable
 fun HomeScreen(
+    appViewModel: AppViewModel,
     onOpenNumbers: () -> Unit,
     onOpenList: () -> Unit,
     onOpenListPreset: (ListPreset) -> Unit,
@@ -79,7 +80,6 @@ fun HomeScreen(
     onOpenAbout: () -> Unit,
 ) {
     val viewModel: HomeViewModel = hiltViewModel()
-    val appViewModel: AppViewModel = hiltViewModel()
     val presetsViewModel: PresetsViewModel = hiltViewModel()
     val presets by viewModel.presets.collectAsStateWithLifecycle()
     val pendingSharedImport by appViewModel.pendingSharedImport.collectAsStateWithLifecycle()

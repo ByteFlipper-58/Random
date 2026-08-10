@@ -1,7 +1,6 @@
 package com.byteflipper.random.ui.lists
 
 import android.content.Context
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.preset.ListPreset
@@ -14,6 +13,9 @@ import com.byteflipper.random.utils.Constants.INSTANT_DELAY_MS
 import com.byteflipper.random.utils.Constants.MAX_GENERATE_COUNT
 import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
 import com.byteflipper.random.utils.Constants.MIN_GENERATE_COUNT
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -73,22 +75,24 @@ sealed interface ListUiEvent {
     data object RandomizeCardColor : ListUiEvent
 }
 
-@HiltViewModel
-class ListViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ListViewModel.Factory::class)
+class ListViewModel @AssistedInject constructor(
+    @Assisted private val presetId: Long?,
     @ApplicationContext private val appContext: Context,
     private val listPresetRepository: ListPresetRepository,
     private val settingsRepository: SettingsRepository,
-    private val savedStateHandle: SavedStateHandle,
     private val generateListResults: GenerateListResultsUseCase,
     private val sortListResults: SortListResultsUseCase,
     private val adsController: com.byteflipper.random.ads.AdsController
 ) : ViewModel(), GeneratorHostViewModel {
+    @AssistedFactory
+    interface Factory {
+        fun create(presetId: Long?): ListViewModel
+    }
+
     companion object {
         private const val EDITOR_AUTOSAVE_DEBOUNCE_MS = 750L
     }
-
-    private val presetId: Long? = savedStateHandle.get<Long?>("id")
-        ?: savedStateHandle.get<String>("id")?.toLongOrNull()
 
     private val _uiState = MutableStateFlow(ListUiState())
     val uiState: StateFlow<ListUiState> = _uiState.asStateFlow()

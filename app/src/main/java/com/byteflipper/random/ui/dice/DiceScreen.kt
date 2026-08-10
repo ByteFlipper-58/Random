@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.ui.dice.components.DiceFabControls
 import com.byteflipper.random.ui.dice.components.DiceOverlay

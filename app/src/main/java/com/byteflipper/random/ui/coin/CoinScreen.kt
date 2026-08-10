@@ -27,7 +27,7 @@ import com.byteflipper.random.ui.components.LocalHapticsManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.domain.coin.CoinSide
 import kotlin.random.Random

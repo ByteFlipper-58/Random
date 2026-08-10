@@ -6,7 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigationevent.compose.LocalNavigationEventDispatcherOwner
 import androidx.activity.viewModels
 import com.byteflipper.random.app.intent.SharedImportIntentHandler
 import com.byteflipper.random.app.startup.AppearanceController
@@ -64,7 +66,11 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setContent {
-            AppRoot()
+            CompositionLocalProvider(
+                LocalNavigationEventDispatcherOwner provides this@MainActivity
+            ) {
+                AppRoot()
+            }
         }
 
         intentHandler.handle(intent)

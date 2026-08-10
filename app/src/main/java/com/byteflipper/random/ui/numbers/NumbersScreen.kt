@@ -10,7 +10,7 @@ import com.byteflipper.random.R
 import com.byteflipper.random.ui.common.FlipGenerateScreenHost
 import com.byteflipper.random.ui.common.rememberGeneratorScreenRuntime
 import com.byteflipper.random.ui.common.rememberFlipGenerateController
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.ui.components.ShakeEffect
 import com.byteflipper.random.ui.numbers.components.NumbersConfigSheet

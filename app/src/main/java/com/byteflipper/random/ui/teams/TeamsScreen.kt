@@ -11,7 +11,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.confetti.ConfettiEffect
 import com.byteflipper.confetti.ConfettiMode
@@ -28,11 +27,11 @@ import com.byteflipper.random.ui.teams.components.TeamsFlipOverlay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeamsScreen(
+    viewModel: TeamsViewModel,
     onBack: () -> Unit,
     onManagePeople: () -> Unit,
     onPickMembers: () -> Unit
 ) {
-    val viewModel: TeamsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }

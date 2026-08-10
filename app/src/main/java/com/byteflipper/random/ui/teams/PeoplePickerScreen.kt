@@ -37,7 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.EmptyState
@@ -55,12 +55,12 @@ import com.byteflipper.random.ui.teams.components.PersonListRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PeoplePickerScreen(
-    teamsViewModel: TeamsViewModel,
+    selectedMemberIds: List<Long>,
+    onSelectionChanged: (List<Long>) -> Unit,
     onBack: () -> Unit
 ) {
     val peopleViewModel: PeopleViewModel = hiltViewModel()
     val peopleState by peopleViewModel.uiState.collectAsStateWithLifecycle()
-    val teamsState by teamsViewModel.uiState.collectAsStateWithLifecycle()
     val settings by peopleViewModel.settings.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -77,9 +77,9 @@ fun PeoplePickerScreen(
 
     var query by rememberSaveable { mutableStateOf("") }
     val normalizedQuery = query.trim()
-    val selectedIds = teamsState.editor.selectedMemberIds
-    val unselected = remember(teamsState.people, selectedIds) {
-        teamsState.people.filter { it.id !in selectedIds }
+    val selectedIds = selectedMemberIds
+    val unselected = remember(peopleState.people, selectedIds) {
+        peopleState.people.filter { it.id !in selectedIds }
     }
     val available = remember(unselected, normalizedQuery) {
         unselected.filter {
@@ -119,7 +119,7 @@ fun PeoplePickerScreen(
     ) { innerPadding ->
         // Nothing left to pick: searching makes no sense, so the whole screen becomes the empty state.
         if (unselected.isEmpty()) {
-            val hasPeople = teamsState.people.isNotEmpty()
+            val hasPeople = peopleState.people.isNotEmpty()
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -199,9 +199,9 @@ fun PeoplePickerScreen(
                         person = person,
                         actionIconRes = R.drawable.add_24px,
                         actionContentDescription = stringResource(R.string.add_member),
-                        onAction = { teamsViewModel.togglePersonSelection(person.id) },
+                        onAction = { onSelectionChanged(selectedIds + person.id) },
                         onClick = {
-                            teamsViewModel.togglePersonSelection(person.id)
+                            onSelectionChanged(selectedIds + person.id)
                             onBack()
                         }
                     )

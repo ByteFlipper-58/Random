@@ -6,7 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
 import com.byteflipper.random.ui.components.ShakeEffect
@@ -23,12 +22,12 @@ import com.byteflipper.random.ui.lists.components.ListSaveDialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
+    viewModel: ListViewModel,
     onBack: () -> Unit,
     presetId: Long? = null,
     initialPreset: ListPreset? = null,
     onOpenListById: (Long) -> Unit = {}
 ) {
-    val viewModel: ListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     val presets by viewModel.presets.collectAsStateWithLifecycle()

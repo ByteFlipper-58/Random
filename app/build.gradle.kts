@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.androidx.room)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
@@ -13,7 +12,7 @@ apply(plugin = "com.google.dagger.hilt.android")
 
 android {
     namespace = "com.byteflipper.random"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.byteflipper.random"
@@ -39,12 +38,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
-            freeCompilerArgs.add("-Xannotation-default-target=param-property")
-        }
-    }
     buildFeatures {
         compose = true
         buildConfig = true
@@ -52,6 +45,13 @@ android {
     androidResources {
         generateLocaleConfig = true
         localeFilters += listOf("en", "ru", "uk", "be", "pl", "kk", "hi", "es", "fr")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+        freeCompilerArgs.add("-Xannotation-default-target=param-property")
     }
 }
 
@@ -73,7 +73,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
@@ -98,7 +100,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.hilt.compiler)
 

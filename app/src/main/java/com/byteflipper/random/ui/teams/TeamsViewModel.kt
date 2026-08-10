@@ -2,7 +2,6 @@ package com.byteflipper.random.ui.teams
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.SavedStateHandle
 import com.byteflipper.random.R
 import com.byteflipper.random.data.person.PeopleRepository
 import com.byteflipper.random.data.person.Person
@@ -18,6 +17,9 @@ import com.byteflipper.random.utils.Constants.DEFAULT_DELAY_MS
 import com.byteflipper.random.utils.Constants.INSTANT_DELAY_MS
 import com.byteflipper.random.utils.Constants.MAX_DELAY_MS
 import com.byteflipper.random.utils.Constants.MIN_DELAY_MS
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,9 +61,9 @@ sealed interface TeamsUiEffect {
     data class ShowSnackbar(val messageRes: Int) : TeamsUiEffect
 }
 
-@HiltViewModel
-class TeamsViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = TeamsViewModel.Factory::class)
+class TeamsViewModel @AssistedInject constructor(
+    @Assisted private val presetId: Long?,
     private val peopleRepository: PeopleRepository,
     private val teamPresetRepository: TeamPresetRepository,
     private val settingsRepository: SettingsRepository,
@@ -69,8 +71,10 @@ class TeamsViewModel @Inject constructor(
     private val generateTeams: GenerateTeamsUseCase
 ) : ViewModel() {
 
-    private val presetId: Long? = savedStateHandle.get<Long?>("id")
-        ?: savedStateHandle.get<String>("id")?.toLongOrNull()
+    @AssistedFactory
+    interface Factory {
+        fun create(presetId: Long?): TeamsViewModel
+    }
 
     private val _uiState = MutableStateFlow(TeamsUiState())
     val uiState: StateFlow<TeamsUiState> = _uiState.asStateFlow()
@@ -183,6 +187,15 @@ class TeamsViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 editor = it.editor.copy(useDelay = useDelay),
+                generation = TeamGenerationState()
+            )
+        }
+    }
+
+    fun setPersonSelection(personIds: List<Long>) {
+        _uiState.update { state ->
+            state.copy(
+                editor = state.editor.copy(selectedMemberIds = personIds.distinct()).normalized(),
                 generation = TeamGenerationState()
             )
         }
