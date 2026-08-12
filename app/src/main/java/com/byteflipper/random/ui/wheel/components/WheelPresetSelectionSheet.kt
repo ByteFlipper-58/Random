@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.settings.HapticsIntensity
 import com.byteflipper.random.ui.components.LocalHapticsManager
+import com.byteflipper.random.ui.wheel.WHEEL_MIN_ITEMS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +37,7 @@ fun WheelPresetSelectionSheet(
     val listState = rememberWheelPresetSelectionListState()
     val hapticsManager = LocalHapticsManager.current
     val selectedCount = selectedIndices.size
-    val canConfirm = selectedCount in 2..itemLimit
+    val canConfirm = selectedCount in WHEEL_MIN_ITEMS..itemLimit
     val bottomBarOffset by animateDpAsState(
         targetValue = if (listState.isBottomBarVisible) 0.dp else 164.dp,
         animationSpec = spring(dampingRatio = 0.9f, stiffness = 600f),

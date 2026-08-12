@@ -6,6 +6,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.settings.HapticsIntensity
+import com.byteflipper.random.ui.wheel.WHEEL_MAX_ITEMS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,7 +23,7 @@ fun WheelEditorSheet(
     onSaveAsPreset: ((String) -> Unit)? = null,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 ) {
-    val wheelPresetLimit = 16
+    val wheelPresetLimit = WHEEL_MAX_ITEMS
     val controller = rememberWheelEditorSheetController(
         items = items,
         onUpdateItems = onUpdateItems,
@@ -42,12 +43,11 @@ fun WheelEditorSheet(
             onNewItemTextChange = { controller.newItemText = it },
             showPresetMenu = controller.showPresetMenu,
             onShowPresetMenuChange = { controller.showPresetMenu = it },
-            showTemplatesMenu = controller.showTemplatesMenu,
-            onShowTemplatesMenuChange = { controller.showTemplatesMenu = it },
+
             editingIndex = controller.editingIndex,
             editingText = controller.editingText,
             onEditingTextChange = { controller.editingText = it },
-            quickTemplates = controller.quickTemplates,
+
             onShowClearConfirm = { controller.showClearConfirm = true },
             onShowSaveDialog = controller::prepareSaveDialog,
             onAddItem = controller::addItem,
@@ -57,6 +57,7 @@ fun WheelEditorSheet(
             onCancelEdit = controller::cancelEdit,
             onLoadPresetClick = controller::beginLoadPreset,
             onLoadTemplate = controller::loadTemplate,
+            onLoadPeople = controller::loadPeople,
             canSaveAsPreset = onSaveAsPreset != null
         )
     }

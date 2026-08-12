@@ -52,7 +52,6 @@
     <string name="people">People</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">Spin</string>
     <string name="wheel_tap_to_spin">Tap the wheel to spin</string>
     <string name="wheel_all_options_used">All options used up</string>
     <string name="wheel_min_items">Add at least 2 items</string>
@@ -61,7 +60,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">Edit Items</string>
-    <string name="wheel_items_limit">%1$d/16 items</string>
+    <string name="wheel_items_limit">%1$d/%2$d items</string>
+    <string name="wheel_min_items_locked">At least 2 items are required</string>
     <string name="wheel_add_new_item">Add new item…</string>
     <string name="wheel_edit_item">Edit item %1$d</string>
     <string name="wheel_no_items">No items yet. Add some items to spin the wheel!</string>
@@ -492,4 +492,13 @@
     <string name="setup_welcome_description">Let\'s get the app ready for you.</string>
     <string name="setup_welcome_title">Welcome to Randify</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">Fortune wheel, %1$d options</string>
+    <string name="wheel_a11y_spin">spin the wheel</string>
+    <string name="wheel_a11y_result">Result: %1$s</string>
+    <string name="wheel_used_sector_style">Used sectors</string>
+    <string name="wheel_used_sector_dim">Keep as grey</string>
+    <string name="wheel_used_sector_remove">Remove from wheel</string>
+    <string name="people_source_all">All people</string>
 </resources>

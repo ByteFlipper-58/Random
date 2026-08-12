@@ -178,6 +178,23 @@ class ListViewModel @AssistedInject constructor(
         scheduleSaveCurrent()
     }
 
+    /**
+     * Appends items from a template, a preset or the people list.
+     *
+     * Appends rather than replaces: the list is autosaved into its preset, so swapping the contents
+     * with one tap would destroy data with no way back. Blank placeholder rows are dropped and
+     * duplicates are not added.
+     */
+    fun addItems(added: List<String>) {
+        val existing = _uiState.value.editorItems.filter { it.isNotBlank() }
+        val newOnes = added.map { it.trim() }
+            .filter { it.isNotEmpty() && it !in existing }
+
+        if (newOnes.isEmpty()) return
+
+        updateEditorItems(existing + newOnes)
+    }
+
     fun updateCountText(text: String) {
         _uiState.update { it.copy(countText = text) }
     }

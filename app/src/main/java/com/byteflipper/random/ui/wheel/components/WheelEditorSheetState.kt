@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.byteflipper.random.R
 import com.byteflipper.random.data.preset.ListPreset
+import com.byteflipper.random.ui.wheel.WHEEL_MIN_ITEMS
 
 @Composable
 internal fun rememberWheelEditorSheetController(
@@ -21,34 +22,9 @@ internal fun rememberWheelEditorSheetController(
         stringResource(R.string.item_1),
         stringResource(R.string.item_2)
     )
-    val quickTemplates = listOf(
-        stringResource(R.string.wheel_template_yes_no) to listOf(
-            stringResource(R.string.wheel_yes),
-            stringResource(R.string.wheel_no)
-        ),
-        stringResource(R.string.wheel_template_days) to listOf(
-            stringResource(R.string.wheel_monday),
-            stringResource(R.string.wheel_tuesday),
-            stringResource(R.string.wheel_wednesday),
-            stringResource(R.string.wheel_thursday),
-            stringResource(R.string.wheel_friday),
-            stringResource(R.string.wheel_saturday),
-            stringResource(R.string.wheel_sunday)
-        ),
-        stringResource(R.string.wheel_template_colors) to listOf(
-            stringResource(R.string.wheel_red),
-            stringResource(R.string.wheel_blue),
-            stringResource(R.string.wheel_green),
-            stringResource(R.string.wheel_yellow),
-            stringResource(R.string.wheel_orange),
-            stringResource(R.string.wheel_purple)
-        )
-    )
-
-    return remember(defaultItems, quickTemplates, onUpdateItems, onLoadPreset, wheelPresetLimit) {
+    return remember(defaultItems, onUpdateItems, onLoadPreset, wheelPresetLimit) {
         WheelEditorSheetController(
             defaultItems = defaultItems,
-            quickTemplates = quickTemplates,
             wheelPresetLimit = wheelPresetLimit,
             onUpdateItems = onUpdateItems,
             onLoadPreset = onLoadPreset
@@ -60,14 +36,12 @@ internal fun rememberWheelEditorSheetController(
 
 internal class WheelEditorSheetController(
     val defaultItems: List<String>,
-    val quickTemplates: List<Pair<String, List<String>>>,
     private val wheelPresetLimit: Int,
     private val onUpdateItems: (List<String>) -> Unit,
     private val onLoadPreset: (ListPreset) -> Unit
 ) {
     var newItemText by mutableStateOf("")
     var showPresetMenu by mutableStateOf(false)
-    var showTemplatesMenu by mutableStateOf(false)
     var showClearConfirm by mutableStateOf(false)
     var showSaveDialog by mutableStateOf(false)
     var savePresetName by mutableStateOf("")
@@ -96,7 +70,8 @@ internal class WheelEditorSheetController(
     }
 
     fun removeItem(index: Int) {
-        if (currentItems.size > 1) {
+        // Never go below the minimum: one sector is pointless and zero is a dead end.
+        if (currentItems.size > WHEEL_MIN_ITEMS) {
             onUpdateItems(currentItems.toMutableList().apply { removeAt(index) })
             if (editingIndex == index) {
                 editingIndex = -1
@@ -134,7 +109,17 @@ internal class WheelEditorSheetController(
 
     fun loadTemplate(template: List<String>) {
         onUpdateItems(template.take(wheelPresetLimit))
-        showTemplatesMenu = false
+    }
+
+    /**
+     * People arrive as an ordinary preset, so the whole wheel limit path (first N, random N, manual
+     * pick) works without a single new branch.
+     */
+    fun loadPeople(sourceName: String, names: List<String>) {
+        val items = names.map { it.trim() }.filter { it.isNotEmpty() }
+        if (items.isEmpty()) return
+
+        beginLoadPreset(ListPreset(name = sourceName, items = items))
     }
 
     fun beginLoadPreset(preset: ListPreset) {
@@ -176,7 +161,7 @@ internal class WheelEditorSheetController(
     fun confirmManualPresetSelection() {
         val preset = manualSelectionPreset ?: return
         val selectedItems = preset.items.filterIndexed { index, _ -> index in manualSelectionIndices }
-        if (selectedItems.size in 2..wheelPresetLimit) {
+        if (selectedItems.size in WHEEL_MIN_ITEMS..wheelPresetLimit) {
             loadPresetIntoWheel(preset, selectedItems)
         }
     }
@@ -187,6 +172,15 @@ internal class WheelEditorSheetController(
     }
 
     private fun loadPresetIntoWheel(preset: ListPreset, loadedItems: List<String>) {
+        // A preset made in another mode may hold a single item; taking it would sneak past the
+        // minimum.
+        if (loadedItems.size < WHEEL_MIN_ITEMS) {
+            oversizedPreset = null
+            manualSelectionPreset = null
+            manualSelectionIndices = emptySet()
+            return
+        }
+
         onLoadPreset(preset.copy(items = loadedItems))
         oversizedPreset = null
         manualSelectionPreset = null

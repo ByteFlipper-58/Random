@@ -89,6 +89,20 @@ enum class HapticsIntensity(val value: Int) {
     }
 }
 
+/** What to do with a wheel sector that has already come up while "no repeats" is on. */
+enum class WheelUsedSectorStyle(val value: Int) {
+    /** Stays on the wheel in grey, so the wheel is not re-laid out after every spin. */
+    Dim(0),
+
+    /** Leaves the wheel, and the remaining sectors spread over the freed space. */
+    Remove(1);
+
+    companion object {
+        fun fromValue(value: Int?): WheelUsedSectorStyle =
+            entries.firstOrNull { it.value == value } ?: Dim
+    }
+}
+
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.System,
     val dynamicColors: Boolean = true,
@@ -97,8 +111,15 @@ data class Settings(
     val hapticsEnabled: Boolean = true,
     val hapticsIntensity: HapticsIntensity = HapticsIntensity.Medium,
     val shakeToGenerateEnabled: Boolean = true,
-    val setupCompleted: Boolean = false
+    val setupCompleted: Boolean = false,
+    val wheelNoRepeats: Boolean = false,
+    val wheelSpinDurationMs: Int = WHEEL_SPIN_DURATION_DEFAULT_MS,
+    val wheelUsedSectorStyle: WheelUsedSectorStyle = WheelUsedSectorStyle.Dim
 )
+
+const val WHEEL_SPIN_DURATION_MIN_MS = 3000
+const val WHEEL_SPIN_DURATION_MAX_MS = 16000
+const val WHEEL_SPIN_DURATION_DEFAULT_MS = 5000
 
 data class ReviewPromptState(
     val firstSeenAtMs: Long = 0L,
@@ -122,6 +143,9 @@ class SettingsRepository @Inject constructor(
         val hapticsIntensity: Preferences.Key<Int> = intPreferencesKey("haptics_intensity")
         val shakeToGenerateEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("shake_to_generate_enabled")
         val setupCompleted: Preferences.Key<Boolean> = booleanPreferencesKey("setup_completed")
+        val wheelNoRepeats: Preferences.Key<Boolean> = booleanPreferencesKey("wheel_no_repeats")
+        val wheelSpinDurationMs: Preferences.Key<Int> = intPreferencesKey("wheel_spin_duration_ms")
+        val wheelUsedSectorStyle: Preferences.Key<Int> = intPreferencesKey("wheel_used_sector_style")
         val reviewFirstSeenAtMs: Preferences.Key<Long> = longPreferencesKey("review_first_seen_at_ms")
         val reviewSessionCount: Preferences.Key<Int> = intPreferencesKey("review_session_count")
         val reviewSuccessfulActionCount: Preferences.Key<Int> = intPreferencesKey("review_successful_action_count")
@@ -143,7 +167,11 @@ class SettingsRepository @Inject constructor(
             hapticsEnabled = prefs[Keys.hapticsEnabled] ?: true,
             hapticsIntensity = HapticsIntensity.fromValue(prefs[Keys.hapticsIntensity]),
             shakeToGenerateEnabled = prefs[Keys.shakeToGenerateEnabled] ?: true,
-            setupCompleted = prefs[Keys.setupCompleted] ?: false
+            setupCompleted = prefs[Keys.setupCompleted] ?: false,
+            wheelNoRepeats = prefs[Keys.wheelNoRepeats] ?: false,
+            wheelSpinDurationMs = (prefs[Keys.wheelSpinDurationMs] ?: WHEEL_SPIN_DURATION_DEFAULT_MS)
+                .coerceIn(WHEEL_SPIN_DURATION_MIN_MS, WHEEL_SPIN_DURATION_MAX_MS),
+            wheelUsedSectorStyle = WheelUsedSectorStyle.fromValue(prefs[Keys.wheelUsedSectorStyle])
         )
     }
 
@@ -192,6 +220,25 @@ class SettingsRepository @Inject constructor(
     suspend fun setShakeToGenerateEnabled(enabled: Boolean) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.shakeToGenerateEnabled] = enabled
+        }
+    }
+
+    suspend fun setWheelNoRepeats(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.wheelNoRepeats] = enabled
+        }
+    }
+
+    suspend fun setWheelUsedSectorStyle(style: WheelUsedSectorStyle) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.wheelUsedSectorStyle] = style.value
+        }
+    }
+
+    suspend fun setWheelSpinDurationMs(durationMs: Int) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.wheelSpinDurationMs] =
+                durationMs.coerceIn(WHEEL_SPIN_DURATION_MIN_MS, WHEEL_SPIN_DURATION_MAX_MS)
         }
     }
 

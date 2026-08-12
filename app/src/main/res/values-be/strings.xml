@@ -34,7 +34,6 @@
     <string name="wheel">Кола фартуны</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">Круціць</string>
     <string name="wheel_tap_to_spin">Націсніце на кола</string>
     <string name="wheel_all_options_used">Усе варыянты выкарыстаны</string>
     <string name="wheel_min_items">Дадайце мінімум 2 элементы</string>
@@ -43,7 +42,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">Рэдагаванне</string>
-    <string name="wheel_items_limit">%1$d/16 элементаў</string>
+    <string name="wheel_items_limit">%1$d/%2$d элементаў</string>
+    <string name="wheel_min_items_locked">Патрэбна мінімум 2 элементы</string>
     <string name="wheel_add_new_item">Дадаць элемент…</string>
     <string name="wheel_edit_item">Змяніць элемент %1$d</string>
     <string name="wheel_no_items">Пакуль пуста. Дадайце элементы, каб круціць кола!</string>
@@ -301,4 +301,13 @@
     <string name="setup_welcome_description">Падрыхтуем праграму для цябе.</string>
     <string name="setup_welcome_title">Сардэчна запрашаем у Randify</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">Кола фартуны, варыянтаў: %1$d</string>
+    <string name="wheel_a11y_spin">круціць кола</string>
+    <string name="wheel_a11y_result">Выпала: %1$s</string>
+    <string name="wheel_used_sector_style">Адыграныя секцыі</string>
+    <string name="wheel_used_sector_dim">Пакідаць сярымі</string>
+    <string name="wheel_used_sector_remove">Прыбіраць з кола</string>
+    <string name="people_source_all">Усе людзі</string>
 </resources>

@@ -21,6 +21,11 @@ internal fun DrawScope.drawWheelBackdrop(center: Offset, radius: Float) {
         center = center
     )
 
+    val shadowCenter = Offset(
+        x = center.x + radius * WheelDrawRatios.SHADOW_OFFSET_X,
+        y = center.y + radius * WheelDrawRatios.SHADOW_OFFSET_Y
+    )
+
     drawCircle(
         brush = Brush.radialGradient(
             colors = listOf(
@@ -28,11 +33,11 @@ internal fun DrawScope.drawWheelBackdrop(center: Offset, radius: Float) {
                 Color.Black.copy(alpha = 0.1f),
                 Color.Transparent
             ),
-            center = Offset(center.x + 6f, center.y + 8f),
+            center = shadowCenter,
             radius = radius * 1.1f
         ),
-        radius = radius + 15f,
-        center = Offset(center.x + 6f, center.y + 8f)
+        radius = radius + radius * WheelDrawRatios.SHADOW_SPREAD,
+        center = shadowCenter
     )
 }
 
@@ -67,7 +72,10 @@ internal fun DrawScope.drawWheelHub(center: Offset, radius: Float) {
     drawCircle(
         color = Color.Black.copy(alpha = 0.2f),
         radius = radius * 0.17f,
-        center = Offset(center.x + 1f, center.y + 2f)
+        center = Offset(
+            x = center.x + radius * WheelDrawRatios.HUB_SHADOW_OFFSET_X,
+            y = center.y + radius * WheelDrawRatios.HUB_SHADOW_OFFSET_Y
+        )
     )
 
     drawCircle(

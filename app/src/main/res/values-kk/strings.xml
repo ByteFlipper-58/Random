@@ -34,7 +34,6 @@
     <string name="wheel">Фортуна дөңгелегі</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">Айналдыру</string>
     <string name="wheel_tap_to_spin">Айналдыру үшін басыңыз</string>
     <string name="wheel_all_options_used">Барлық нұсқалар қолданылды</string>
     <string name="wheel_min_items">Ең аз 2 элемент қосыңыз</string>
@@ -43,7 +42,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">Өңдеу</string>
-    <string name="wheel_items_limit">%1$d/16 элемент</string>
+    <string name="wheel_items_limit">%1$d/%2$d элемент</string>
+    <string name="wheel_min_items_locked">Кемінде 2 элемент қажет</string>
     <string name="wheel_add_new_item">Элемент қосу…</string>
     <string name="wheel_edit_item">%1$d элементін өңдеу</string>
     <string name="wheel_no_items">Әзірше бос. Дөңгелекті айналдыру үшін элементтер қосыңыз!</string>
@@ -301,4 +301,13 @@
     <string name="setup_welcome_description">Қолданбаны сіз үшін дайындайық.</string>
     <string name="setup_welcome_title">Randify-ке қош келдіңіз</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">Фортуна дөңгелегі, %1$d нұсқа</string>
+    <string name="wheel_a11y_spin">дөңгелекті айналдыру</string>
+    <string name="wheel_a11y_result">Нәтиже: %1$s</string>
+    <string name="wheel_used_sector_style">Ойналған секциялар</string>
+    <string name="wheel_used_sector_dim">Сұр күйде қалдыру</string>
+    <string name="wheel_used_sector_remove">Дөңгелектен алып тастау</string>
+    <string name="people_source_all">Барлық адамдар</string>
 </resources>

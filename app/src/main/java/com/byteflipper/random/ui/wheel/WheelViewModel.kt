@@ -6,6 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.preset.ListPresetRepository
 import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.data.settings.WHEEL_SPIN_DURATION_DEFAULT_MS
+import com.byteflipper.random.data.settings.WHEEL_SPIN_DURATION_MAX_MS
+import com.byteflipper.random.data.settings.WHEEL_SPIN_DURATION_MIN_MS
+import com.byteflipper.random.data.settings.WheelUsedSectorStyle
 import com.byteflipper.random.ui.common.defaultRandomItems
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,6 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,13 +29,26 @@ data class WheelUiState(
     val items: List<String> = emptyList(),
     val excludedIndices: Set<Int> = emptySet(),
     val noRepeats: Boolean = false,
-    val spinDuration: Int = 5000,
+    val usedSectorStyle: WheelUsedSectorStyle = WheelUsedSectorStyle.Dim,
+    val spinDuration: Int = WHEEL_SPIN_DURATION_DEFAULT_MS,
     val lastResult: String? = null,
     val lastResultIndex: Int? = null,
     val isSpinning: Boolean = false,
-    val targetRotation: Float = 0f,
+    /**
+     * The final round has been played: the winner was picked out of the last [WHEEL_MIN_ITEMS]
+     * sectors and is not excluded. There is nothing left to spin without a reset.
+     */
+    val needsReset: Boolean = false,
+    /** Current wheel rotation, kept here to survive the composable being recreated. */
+    val rotation: Float = 0f,
     val showEditorSheet: Boolean = false,
     val showSettingsSheet: Boolean = false
+)
+
+/** Result of [WheelViewModel.spin]: the winner is known up front, the angle only leads to it. */
+data class WheelSpin(
+    val winnerIndex: Int,
+    val targetRotation: Float
 )
 
 @HiltViewModel
@@ -56,13 +75,37 @@ class WheelViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(WheelUiState(items = appContext.defaultRandomItems()))
     val uiState: StateFlow<WheelUiState> = _uiState.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            settingsRepository.settingsFlow
+                .map {
+                    Triple(it.wheelNoRepeats, it.wheelSpinDurationMs, it.wheelUsedSectorStyle)
+                }
+                .distinctUntilChanged()
+                .collect { (noRepeats, durationMs, usedSectorStyle) ->
+                    _uiState.update {
+                        it.copy(
+                            noRepeats = noRepeats,
+                            usedSectorStyle = usedSectorStyle,
+                            spinDuration = durationMs.coerceIn(
+                                WHEEL_SPIN_DURATION_MIN_MS,
+                                WHEEL_SPIN_DURATION_MAX_MS
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
     fun onEvent(event: WheelUiEvent) {
         when (event) {
             is WheelUiEvent.UpdateItems -> updateItems(event.items)
             is WheelUiEvent.SetNoRepeats -> setNoRepeats(event.enabled)
+            is WheelUiEvent.SetUsedSectorStyle -> setUsedSectorStyle(event.style)
             is WheelUiEvent.SetSpinDuration -> setSpinDuration(event.durationMs)
             is WheelUiEvent.LoadPreset -> loadPreset(event.preset)
-            is WheelUiEvent.SetResultByRotation -> setResultByRotation(event.rotation)
+            is WheelUiEvent.CommitSpin -> commitSpin(event.winnerIndex, event.finalRotation)
+            is WheelUiEvent.CancelSpin -> cancelSpin(event.currentRotation)
             WheelUiEvent.Reset -> reset()
             WheelUiEvent.ToggleEditorSheet -> _uiState.update { it.copy(showEditorSheet = !it.showEditorSheet) }
             WheelUiEvent.ToggleSettingsSheet -> _uiState.update { it.copy(showSettingsSheet = !it.showSettingsSheet) }
@@ -73,106 +116,153 @@ class WheelViewModel @Inject constructor(
         val currentItems = _uiState.value.items
         // Only reset excluded if items actually changed
         if (items != currentItems) {
-            _uiState.update { it.copy(items = items, excludedIndices = emptySet(), lastResult = null, lastResultIndex = null) }
+            _uiState.update {
+                it.copy(
+                    items = items,
+                    excludedIndices = emptySet(),
+                    lastResult = null,
+                    lastResultIndex = null,
+                    needsReset = false
+                )
+            }
         }
     }
 
     private fun setNoRepeats(enabled: Boolean) {
-        _uiState.update { it.copy(noRepeats = enabled) }
+        // Turning "no repeats" off clears the final round as well, otherwise the wheel would stay
+        // blocked for no visible reason.
+        _uiState.update { it.copy(noRepeats = enabled, needsReset = it.needsReset && enabled) }
+        viewModelScope.launch { settingsRepository.setWheelNoRepeats(enabled) }
+    }
+
+    private fun setUsedSectorStyle(style: WheelUsedSectorStyle) {
+        _uiState.update { it.copy(usedSectorStyle = style) }
+        viewModelScope.launch { settingsRepository.setWheelUsedSectorStyle(style) }
     }
 
     private fun setSpinDuration(durationMs: Int) {
-        _uiState.update { it.copy(spinDuration = durationMs.coerceIn(3000, 16000)) }
+        val coerced = durationMs.coerceIn(WHEEL_SPIN_DURATION_MIN_MS, WHEEL_SPIN_DURATION_MAX_MS)
+        _uiState.update { it.copy(spinDuration = coerced) }
+        viewModelScope.launch { settingsRepository.setWheelSpinDurationMs(coerced) }
     }
 
     private fun loadPreset(preset: ListPreset) {
-        _uiState.update { 
+        _uiState.update {
             it.copy(
-                items = preset.items, 
-                excludedIndices = emptySet(), 
-                lastResult = null, 
-                lastResultIndex = null
-            ) 
+                items = preset.items,
+                excludedIndices = emptySet(),
+                lastResult = null,
+                lastResultIndex = null,
+                needsReset = false
+            )
         }
-        viewModelScope.launch {
-            listPresetRepository.markUsed(preset.id)
+        // A synthetic preset built from people has id = 0 and no row in the table.
+        if (preset.id != 0L) {
+            viewModelScope.launch {
+                listPresetRepository.markUsed(preset.id)
+            }
         }
     }
 
-    fun spin(): Pair<Int, Float>? {
+    /**
+     * Picks the winner and the angle that puts it under the pointer.
+     *
+     * [currentRotation] is the actual animated angle, so the target is always ahead of it.
+     * [fullTurns] and [clockwise] only shape the path and come from the gesture velocity on a
+     * fling; the winner is still chosen here and up front.
+     */
+    fun spin(
+        currentRotation: Float,
+        fullTurns: Int,
+        clockwise: Boolean = true
+    ): WheelSpin? {
         val state = _uiState.value
-        val availableIndices = state.items.indices.filter { it !in state.excludedIndices }
-        
-        if (availableIndices.isEmpty()) return null
-        
-        val winnerIndex = availableIndices[Random.nextInt(availableIndices.size)]
-        
-        // Calculate rotation: multiple full rotations + angle to land on winner
-        val itemCount = state.items.size - state.excludedIndices.size
-        val anglePerItem = 360f / itemCount
-        
-        // Find visual index of winner among visible items
-        val visibleItems = state.items.indices.filter { it !in state.excludedIndices }
-        val visualIndex = visibleItems.indexOf(winnerIndex)
-        
-        // Calculate rotation to land on winner sector
-        // Formula in WheelScreen: sectorIndex = floor((360 - rotation) / anglePerItem)
-        // So to get visualIndex: (360 - rotation) / anglePerItem = visualIndex
-        // Therefore: rotation = 360 - visualIndex * anglePerItem
-        // Add random offset within sector (10% to 90% of sector to stay safely inside)
-        val sectorStartAngle = visualIndex * anglePerItem
-        val randomInSector = anglePerItem * (0.1f + Random.nextFloat() * 0.8f)
-        val adjustedAngle = sectorStartAngle + randomInSector
-        val baseRotation = ((360f - adjustedAngle) % 360f + 360f) % 360f
-        
-        // Add multiple full rotations for effect
-        val fullRotations = Random.nextInt(5, 10) * 360f
-        
-        val targetRotation = state.targetRotation + fullRotations + baseRotation
-        
-        _uiState.update { it.copy(targetRotation = targetRotation, isSpinning = true) }
-        
-        return Pair(winnerIndex, targetRotation)
+        if (state.isSpinning || state.needsReset) return null
+
+        val visibleIndices = state.items.indices.filter { it !in state.excludedIndices }
+        if (visibleIndices.isEmpty()) return null
+
+        val winnerIndex = visibleIndices[Random.nextInt(visibleIndices.size)]
+
+        // Where the winner sits depends on the used sector style, so ask for the same layout the
+        // wheel is drawn from.
+        val sectors = wheelSectors(
+            items = state.items,
+            excludedIndices = state.excludedIndices,
+            usedSectorStyle = state.usedSectorStyle
+        )
+        val sectorPosition = sectors.indexOfFirst { it.index == winnerIndex }
+        if (sectorPosition < 0) return null
+
+        // Stop within 10..90% of the sector to stay clear of rounding at its edges.
+        val sectorFraction = 0.1f + Random.nextFloat() * 0.8f
+        val rotationInTurn = WheelGeometry.rotationForSector(
+            sectorIndex = sectorPosition,
+            itemCount = sectors.size,
+            sectorFraction = sectorFraction
+        )
+        val targetRotation = WheelGeometry.animationTarget(
+            from = currentRotation,
+            fullTurns = fullTurns,
+            targetRotationInTurn = rotationInTurn,
+            clockwise = clockwise
+        )
+
+        _uiState.update { it.copy(isSpinning = true, rotation = currentRotation) }
+
+        return WheelSpin(winnerIndex = winnerIndex, targetRotation = targetRotation)
     }
 
-    private fun setResultByRotation(rotation: Float) {
+    /**
+     * Commits the result by the index chosen in [spin].
+     * By index and not by value: duplicate items would otherwise exclude the wrong sector.
+     */
+    private fun commitSpin(winnerIndex: Int, finalRotation: Float) {
         val state = _uiState.value
-        val visibleItems = state.items.filterIndexed { index, _ -> index !in state.excludedIndices }
-        
-        if (visibleItems.isEmpty()) return
-        
-        val itemCount = visibleItems.size
-        val anglePerItem = 360f / itemCount
-        
-        // Используем ту же формулу, что и в WheelScreen для определения сектора
-        val normalizedRotation = ((rotation % 360f) + 360f) % 360f
-        val adjustedRotation = ((360f - normalizedRotation) % 360f + 360f) % 360f
-        val sectorIndex = (adjustedRotation / anglePerItem).toInt() % itemCount
-        
-        val result = visibleItems.getOrNull(sectorIndex) ?: return
-        
-        // Находим оригинальный индекс в полном списке items
-        val originalIndex = state.items.indexOf(result)
-        if (originalIndex == -1) return
-        
-        val newExcluded = if (state.noRepeats) {
-            state.excludedIndices + originalIndex
+        val result = state.items.getOrNull(winnerIndex)
+
+        if (result == null) {
+            _uiState.update { it.copy(isSpinning = false, rotation = finalRotation) }
+            return
+        }
+
+        // The wheel must not be scraped down to a single sector: once excluding would leave fewer
+        // than the minimum, the winner is announced but stays on the wheel. That is the final round.
+        val visibleCount = state.items.size - state.excludedIndices.size
+        val isFinalRound = state.noRepeats && visibleCount - 1 < WHEEL_MIN_ITEMS
+
+        val newExcluded = if (state.noRepeats && !isFinalRound) {
+            state.excludedIndices + winnerIndex
         } else {
             state.excludedIndices
         }
-        
-        _uiState.update { 
+
+        _uiState.update {
             it.copy(
-                lastResult = result, 
-                lastResultIndex = originalIndex, 
+                lastResult = result,
+                lastResultIndex = winnerIndex,
                 excludedIndices = newExcluded,
-                isSpinning = false
-            ) 
+                needsReset = isFinalRound,
+                isSpinning = false,
+                rotation = finalRotation
+            )
         }
     }
 
+    /** The animation was cut short (leaving the screen, configuration change): never stay stuck. */
+    private fun cancelSpin(currentRotation: Float) {
+        _uiState.update { it.copy(isSpinning = false, rotation = currentRotation) }
+    }
+
     private fun reset() {
-        _uiState.update { it.copy(excludedIndices = emptySet(), lastResult = null, lastResultIndex = null) }
+        _uiState.update {
+            it.copy(
+                excludedIndices = emptySet(),
+                lastResult = null,
+                lastResultIndex = null,
+                needsReset = false
+            )
+        }
     }
 
     fun saveAsPreset(name: String) {
@@ -195,11 +285,12 @@ class WheelViewModel @Inject constructor(
 sealed interface WheelUiEvent {
     data class UpdateItems(val items: List<String>) : WheelUiEvent
     data class SetNoRepeats(val enabled: Boolean) : WheelUiEvent
+    data class SetUsedSectorStyle(val style: WheelUsedSectorStyle) : WheelUiEvent
     data class SetSpinDuration(val durationMs: Int) : WheelUiEvent
     data class LoadPreset(val preset: ListPreset) : WheelUiEvent
-    data class SetResultByRotation(val rotation: Float) : WheelUiEvent
+    data class CommitSpin(val winnerIndex: Int, val finalRotation: Float) : WheelUiEvent
+    data class CancelSpin(val currentRotation: Float) : WheelUiEvent
     data object Reset : WheelUiEvent
     data object ToggleEditorSheet : WheelUiEvent
     data object ToggleSettingsSheet : WheelUiEvent
 }
-

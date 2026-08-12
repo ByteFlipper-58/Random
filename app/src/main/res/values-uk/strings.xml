@@ -34,7 +34,6 @@
     <string name="wheel">Колесо фортуни</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">Крутити</string>
     <string name="wheel_tap_to_spin">Натисніть на колесо</string>
     <string name="wheel_all_options_used">Усі варіанти використані</string>
     <string name="wheel_min_items">Додайте мінімум 2 елементи</string>
@@ -43,7 +42,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">Редагування</string>
-    <string name="wheel_items_limit">%1$d/16 елементів</string>
+    <string name="wheel_items_limit">%1$d/%2$d елементів</string>
+    <string name="wheel_min_items_locked">Потрібно мінімум 2 елементи</string>
     <string name="wheel_add_new_item">Додати елемент…</string>
     <string name="wheel_edit_item">Змінити елемент %1$d</string>
     <string name="wheel_no_items">Поки що порожньо. Додайте елементи, щоб крутити колесо!</string>
@@ -301,4 +301,13 @@
     <string name="setup_welcome_description">Підготуємо програму для тебе.</string>
     <string name="setup_welcome_title">Ласкаво просимо в Randify</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">Колесо фортуни, варіантів: %1$d</string>
+    <string name="wheel_a11y_spin">крутити колесо</string>
+    <string name="wheel_a11y_result">Випало: %1$s</string>
+    <string name="wheel_used_sector_style">Відіграні секції</string>
+    <string name="wheel_used_sector_dim">Залишати сірими</string>
+    <string name="wheel_used_sector_remove">Прибирати з колеса</string>
+    <string name="people_source_all">Всі люди</string>
 </resources>

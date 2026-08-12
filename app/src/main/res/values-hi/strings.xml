@@ -34,7 +34,6 @@
     <string name="wheel">भाग्य का पहिया</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">घुमाएं</string>
     <string name="wheel_tap_to_spin">घुमाने के लिए पहिये पर टैप करें</string>
     <string name="wheel_all_options_used">सभी विकल्प उपयोग किए गए</string>
     <string name="wheel_min_items">कम से कम 2 आइटम जोड़ें</string>
@@ -43,7 +42,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">आइटम संपादित करें</string>
-    <string name="wheel_items_limit">%1$d/16 आइटम</string>
+    <string name="wheel_items_limit">%1$d/%2$d आइटम</string>
+    <string name="wheel_min_items_locked">कम से कम 2 आइटम आवश्यक हैं</string>
     <string name="wheel_add_new_item">नया आइटम जोड़ें…</string>
     <string name="wheel_edit_item">आइटम %1$d संपादित करें</string>
     <string name="wheel_no_items">अभी कोई आइटम नहीं है। पहिया घुमाने के लिए कुछ आइटम जोड़ें!</string>
@@ -301,4 +301,13 @@
     <string name="setup_welcome_description">आइए आपके लिए ऐप तैयार करें।</string>
     <string name="setup_welcome_title">Randify में आपका स्वागत है</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">भाग्य का पहिया, %1$d विकल्प</string>
+    <string name="wheel_a11y_spin">पहिया घुमाएं</string>
+    <string name="wheel_a11y_result">परिणाम: %1$s</string>
+    <string name="wheel_used_sector_style">उपयोग किए गए भाग</string>
+    <string name="wheel_used_sector_dim">धूसर रखें</string>
+    <string name="wheel_used_sector_remove">पहिये से हटाएं</string>
+    <string name="people_source_all">सभी लोग</string>
 </resources>

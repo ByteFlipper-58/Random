@@ -34,7 +34,6 @@
     <string name="wheel">Ruleta de la Fortuna</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">Girar</string>
     <string name="wheel_tap_to_spin">Toca la ruleta para girar</string>
     <string name="wheel_all_options_used">Todas las opciones usadas</string>
     <string name="wheel_min_items">Añade al menos 2 elementos</string>
@@ -43,7 +42,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">Editar elementos</string>
-    <string name="wheel_items_limit">%1$d/16 elementos</string>
+    <string name="wheel_items_limit">%1$d/%2$d elementos</string>
+    <string name="wheel_min_items_locked">Se requieren al menos 2 elementos</string>
     <string name="wheel_add_new_item">Añadir nuevo elemento…</string>
     <string name="wheel_edit_item">Editar elemento %1$d</string>
     <string name="wheel_no_items">No hay elementos aún. ¡Añade algunos para girar!</string>
@@ -301,4 +301,13 @@
     <string name="setup_welcome_description">Preparemos la app para ti.</string>
     <string name="setup_welcome_title">Bienvenido a Randify</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">Ruleta de la Fortuna, %1$d opciones</string>
+    <string name="wheel_a11y_spin">girar la ruleta</string>
+    <string name="wheel_a11y_result">Resultado: %1$s</string>
+    <string name="wheel_used_sector_style">Secciones usadas</string>
+    <string name="wheel_used_sector_dim">Dejar en gris</string>
+    <string name="wheel_used_sector_remove">Quitar de la ruleta</string>
+    <string name="people_source_all">Todas las personas</string>
 </resources>

@@ -34,7 +34,6 @@
     <string name="wheel">Roue de la fortune</string>
 
     <!-- Wheel screen -->
-    <string name="wheel_spin">Tourner</string>
     <string name="wheel_tap_to_spin">Appuyez pour tourner</string>
     <string name="wheel_all_options_used">Toutes les options utilisées</string>
     <string name="wheel_min_items">Ajoutez au moins 2 éléments</string>
@@ -43,7 +42,8 @@
     
     <!-- Wheel Editor -->
     <string name="wheel_edit_items">Modifier les éléments</string>
-    <string name="wheel_items_limit">%1$d/16 éléments</string>
+    <string name="wheel_items_limit">%1$d/%2$d éléments</string>
+    <string name="wheel_min_items_locked">Au moins 2 éléments sont requis</string>
     <string name="wheel_add_new_item">Ajouter un élément…</string>
     <string name="wheel_edit_item">Modifier l\'élément %1$d</string>
     <string name="wheel_no_items">Rien pour l\'instant. Ajoutez des éléments pour tourner !</string>
@@ -301,4 +301,13 @@
     <string name="setup_welcome_description">Préparons l\'application pour vous.</string>
     <string name="setup_welcome_title">Bienvenue sur Randify</string>
 
+
+    <!-- Wheel accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="wheel_a11y_wheel">Roue de la fortune, %1$d options</string>
+    <string name="wheel_a11y_spin">faire tourner la roue</string>
+    <string name="wheel_a11y_result">Résultat : %1$s</string>
+    <string name="wheel_used_sector_style">Sections utilisées</string>
+    <string name="wheel_used_sector_dim">Laisser en gris</string>
+    <string name="wheel_used_sector_remove">Retirer de la roue</string>
+    <string name="people_source_all">Toutes les personnes</string>
 </resources>

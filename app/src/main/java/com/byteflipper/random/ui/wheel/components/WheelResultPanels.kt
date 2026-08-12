@@ -14,10 +14,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -28,26 +33,39 @@ import com.byteflipper.random.R
 internal fun WheelResultPanel(
     isSpinning: Boolean,
     lastResult: String?,
-    currentSectorText: String,
+    currentSectorText: State<String>,
     modifier: Modifier = Modifier
 ) {
-    val resultScale = animateFloatAsState(
+    // The font size is animated rather than Modifier.scale, which takes no part in layout and let
+    // an enlarged winner run past the edges and get clipped on long words.
+    val baseFontSize = MaterialTheme.typography.headlineMedium.fontSize
+    val fontScale by animateFloatAsState(
         targetValue = if (!isSpinning && lastResult != null) 1.3f else 1f,
         animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing),
-        label = "result_scale"
+        label = "result_font_scale"
     )
+
+    // TalkBack does not announce text changes on its own. The live region is attached to the final
+    // result only: while spinning the sector changes dozens of times a second, which would turn
+    // the announcements into noise.
+    val resultAnnouncement = lastResult
+        ?.takeIf { !isSpinning }
+        ?.let { stringResource(R.string.wheel_a11y_result, it) }
 
     Box(
         modifier = modifier
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        val displayText = if (isSpinning) currentSectorText else lastResult.orEmpty()
+        // The sector value is read only while spinning, so the panel is not recomposed for nothing.
+        val displayText = if (isSpinning) currentSectorText.value else lastResult.orEmpty()
 
         if (displayText.isNotEmpty()) {
             Text(
                 text = if (!isSpinning && lastResult != null) "🎉 $displayText" else displayText,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontSize = baseFontSize * fontScale
+                ),
                 fontWeight = if (!isSpinning && lastResult != null) FontWeight.Bold else FontWeight.Medium,
                 color = if (!isSpinning && lastResult != null) {
                     MaterialTheme.colorScheme.primary
@@ -60,8 +78,17 @@ internal fun WheelResultPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-                    .scale(resultScale.value)
                     .animateContentSize()
+                    .then(
+                        if (resultAnnouncement != null) {
+                            Modifier.semantics {
+                                liveRegion = LiveRegionMode.Polite
+                                contentDescription = resultAnnouncement
+                            }
+                        } else {
+                            Modifier
+                        }
+                    )
             )
         } else {
             Text(

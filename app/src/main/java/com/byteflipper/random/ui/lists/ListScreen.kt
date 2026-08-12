@@ -86,6 +86,8 @@ fun ListScreen(
     ListScaffold(
         onBack = onBack,
         title = topTitle,
+        presets = presets,
+        onAddItems = viewModel::addItems,
         onShowSave = topSave,
         onShowSaveResults = topSaveResults,
         onShowRename = topRename,

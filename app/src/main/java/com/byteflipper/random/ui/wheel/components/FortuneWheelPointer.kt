@@ -15,20 +15,26 @@ internal fun FortuneWheelPointer(modifier: Modifier = Modifier) {
         val w = size.width
         val h = size.height
 
+        // Every offset is a fraction of the pointer size rather than a pixel value, or the outline
+        // and the bevel shrink to a hairline on dense screens.
+        val edgeInset = w * WheelPointerRatios.EDGE_INSET_X
+        val shoulderY = h * WheelPointerRatios.SHOULDER_Y
+        val shadowOffset = w * WheelPointerRatios.SHADOW_OFFSET_X
+
         val shadowPath = Path().apply {
-            moveTo(w / 2 + 3f, h)
-            lineTo(3f, 10f)
-            lineTo(w / 2 + 3f, 0f)
-            lineTo(w, 10f)
+            moveTo(w / 2 + shadowOffset, h)
+            lineTo(shadowOffset, shoulderY)
+            lineTo(w / 2 + shadowOffset, 0f)
+            lineTo(w, shoulderY)
             close()
         }
         drawPath(shadowPath, Color.Black.copy(alpha = 0.3f))
 
         val pointerPath = Path().apply {
             moveTo(w / 2, h)
-            lineTo(3f, 10f)
+            lineTo(edgeInset, shoulderY)
             lineTo(w / 2, 0f)
-            lineTo(w - 3f, 10f)
+            lineTo(w - edgeInset, shoulderY)
             close()
         }
         drawPath(
@@ -46,9 +52,9 @@ internal fun FortuneWheelPointer(modifier: Modifier = Modifier) {
 
         val leftHighlight = Path().apply {
             moveTo(w / 2, h)
-            lineTo(3f, 10f)
+            lineTo(edgeInset, shoulderY)
             lineTo(w / 2, 0f)
-            lineTo(w / 2 - 2f, 5f)
+            lineTo(w / 2 - w * WheelPointerRatios.HIGHLIGHT_INSET_X, h * WheelPointerRatios.HIGHLIGHT_Y)
             close()
         }
         drawPath(leftHighlight, Color.White.copy(alpha = 0.25f))
@@ -62,16 +68,21 @@ internal fun FortuneWheelPointer(modifier: Modifier = Modifier) {
                     Color(0xFFFFD700)
                 )
             ),
-            style = Stroke(width = 2.5f)
+            style = Stroke(width = w * WheelPointerRatios.OUTLINE_WIDTH)
         )
 
+        val innerInset = w * WheelPointerRatios.INNER_INSET_X
         val innerLine = Path().apply {
-            moveTo(w / 2, h - 8f)
-            lineTo(8f, 12f)
-            lineTo(w / 2, 4f)
-            lineTo(w - 8f, 12f)
+            moveTo(w / 2, h - h * WheelPointerRatios.INNER_BOTTOM_Y)
+            lineTo(innerInset, h * WheelPointerRatios.INNER_SHOULDER_Y)
+            lineTo(w / 2, h * WheelPointerRatios.INNER_TOP_Y)
+            lineTo(w - innerInset, h * WheelPointerRatios.INNER_SHOULDER_Y)
             close()
         }
-        drawPath(innerLine, Color.White.copy(alpha = 0.15f), style = Stroke(width = 1f))
+        drawPath(
+            path = innerLine,
+            color = Color.White.copy(alpha = 0.15f),
+            style = Stroke(width = w * WheelPointerRatios.INNER_WIDTH)
+        )
     }
 }
