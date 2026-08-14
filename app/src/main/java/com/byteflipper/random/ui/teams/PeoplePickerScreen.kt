@@ -77,7 +77,7 @@ fun PeoplePickerScreen(
 
     var query by rememberSaveable { mutableStateOf("") }
     val normalizedQuery = query.trim()
-    val selectedIds = selectedMemberIds
+    var selectedIds by rememberSaveable(selectedMemberIds) { mutableStateOf(selectedMemberIds) }
     val unselected = remember(peopleState.people, selectedIds) {
         peopleState.people.filter { it.id !in selectedIds }
     }
@@ -87,13 +87,21 @@ fun PeoplePickerScreen(
         }
     }
 
+    var isBackHandled by remember { mutableStateOf(false) }
+    val safeBack = {
+        if (!isBackHandled) {
+            isBackHandled = true
+            onBack()
+        }
+    }
+
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(R.string.pick_members_title)) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = safeBack) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_back_24px),
                             contentDescription = stringResource(R.string.back)
@@ -199,10 +207,15 @@ fun PeoplePickerScreen(
                         person = person,
                         actionIconRes = R.drawable.add_24px,
                         actionContentDescription = stringResource(R.string.add_member),
-                        onAction = { onSelectionChanged(selectedIds + person.id) },
+                        onAction = {
+                            val updated = (selectedIds + person.id).distinct()
+                            selectedIds = updated
+                            onSelectionChanged(updated)
+                        },
                         onClick = {
-                            onSelectionChanged(selectedIds + person.id)
-                            onBack()
+                            val updated = (selectedIds + person.id).distinct()
+                            selectedIds = updated
+                            onSelectionChanged(updated)
                         }
                     )
                 }

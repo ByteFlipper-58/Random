@@ -50,10 +50,6 @@ class NavigatorTest {
         navigator.updatePeoplePickerSelection(picker, listOf(1L, 2L, 2L))
 
         assertEquals(listOf(1L, 2L), navigator.pendingTeamSelection(teams))
-        assertEquals(
-            PeoplePicker(parent = teams, selectedMemberIds = listOf(1L, 2L)),
-            state.backStack.last()
-        )
         assertTrue(navigator.goBack())
         assertEquals(listOf(Home, teams), state.backStack)
         assertEquals(listOf(1L, 2L), navigator.consumeTeamSelection(teams))

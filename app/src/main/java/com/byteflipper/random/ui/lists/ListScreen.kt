@@ -5,6 +5,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
@@ -49,12 +51,17 @@ fun ListScreen(
         hapticsManager = runtime.hapticsManager
     )
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     // Shake-to-generate integration
     ShakeEffect(
         enabled = settings.shakeToGenerateEnabled,
         hapticsEnabled = settings.hapticsEnabled,
         hapticsIntensity = settings.hapticsIntensity,
         onShake = {
+            keyboardController?.hide()
+            focusManager.clearFocus()
             generateController.handleListGeneration(
                 uiState = uiState,
                 viewModel = viewModel,
@@ -97,6 +104,8 @@ fun ListScreen(
                 size = settings.fabSize,
                 onConfigClick = { viewModel.toggleConfigDialog() },
                 onGenerateClick = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
                     generateController.handleListGeneration(
                         uiState = uiState,
                         viewModel = viewModel,

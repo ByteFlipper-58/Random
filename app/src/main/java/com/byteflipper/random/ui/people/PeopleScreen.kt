@@ -1,5 +1,8 @@
 package com.byteflipper.random.ui.people
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +24,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
@@ -32,6 +37,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
@@ -49,17 +55,27 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
@@ -327,17 +343,49 @@ fun PersonEditorSheet(
     onSave: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val nameFocusRequester = remember { FocusRequester() }
+    val birthYearFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
+    var isSaving by remember { mutableStateOf(false) }
+    val saveButtonScale by animateFloatAsState(
+        targetValue = if (isSaving) 0.93f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium),
+        label = "save_btn_scale"
+    )
+
+    LaunchedEffect(Unit) {
+        delay(220)
+        nameFocusRequester.requestFocus()
+    }
+
+    val handleSave: () -> Unit = {
+        scope.launch {
+            isSaving = true
+            delay(100)
+            isSaving = false
+            onSave()
+            if (state.personId == null) {
+                delay(80)
+                nameFocusRequester.requestFocus()
+            }
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = sheetState,
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        contentWindowInsets = { WindowInsets(0, 0, 0, 0) }
     ) {
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .imePadding()
                 .navigationBarsPadding()
+                .imePadding()
                 .verticalScroll(scrollState)
                 .padding(horizontal = 20.dp)
                 .padding(bottom = 28.dp)
@@ -353,16 +401,32 @@ fun PersonEditorSheet(
             OutlinedTextField(
                 value = state.name,
                 onValueChange = onNameChange,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(nameFocusRequester),
                 label = { Text(text = stringResource(R.string.person_name)) },
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        birthYearFocusRequester.requestFocus()
+                    }
+                )
             )
             Spacer(modifier = Modifier.height(16.dp))
             BirthDateField(
                 birthYearText = state.birthYearText,
                 birthDateEpochDay = state.birthDateEpochDay,
                 onBirthYearChange = onBirthYearChange,
-                onBirthDateChange = onBirthDateChange
+                onBirthDateChange = onBirthDateChange,
+                focusRequester = birthYearFocusRequester,
+                onDone = {
+                    keyboardController?.hide()
+                    handleSave()
+                }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -404,10 +468,11 @@ fun PersonEditorSheet(
                         )
                     }
                     FilledTonalButton(
-                        onClick = onSave,
+                        onClick = handleSave,
                         modifier = Modifier
                             .weight(1f)
-                            .height(58.dp),
+                            .height(58.dp)
+                            .scale(saveButtonScale),
                         shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.filledTonalButtonColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -428,10 +493,11 @@ fun PersonEditorSheet(
                 }
             } else {
                 FilledTonalButton(
-                    onClick = onSave,
+                    onClick = handleSave,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(58.dp),
+                        .height(58.dp)
+                        .scale(saveButtonScale),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -460,7 +526,9 @@ private fun BirthDateField(
     birthYearText: String,
     birthDateEpochDay: Long?,
     onBirthYearChange: (String) -> Unit,
-    onBirthDateChange: (Long?) -> Unit
+    onBirthDateChange: (Long?) -> Unit,
+    focusRequester: FocusRequester? = null,
+    onDone: (() -> Unit)? = null
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val hasFullDate = birthDateEpochDay != null
@@ -472,7 +540,9 @@ private fun BirthDateField(
             birthYearText
         },
         onValueChange = onBirthYearChange,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(if (focusRequester != null) Modifier.focusRequester(focusRequester) else Modifier),
         label = {
             Text(
                 text = stringResource(
@@ -482,6 +552,15 @@ private fun BirthDateField(
         },
         singleLine = true,
         readOnly = hasFullDate,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                onDone?.invoke()
+            }
+        ),
         trailingIcon = {
             IconButton(onClick = { showDatePicker = true }) {
                 Icon(

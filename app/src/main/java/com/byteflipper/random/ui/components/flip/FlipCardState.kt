@@ -30,6 +30,9 @@ class FlipCardState internal constructor() {
     val exitTy = Animatable(0f)
     val exitScale = Animatable(1f)
 
+    // Spin dynamic compression scale
+    val spinScale = Animatable(1f)
+
     // Text alphas
     val frontTextAlpha = Animatable(1f)
     val backTextAlpha = Animatable(1f)

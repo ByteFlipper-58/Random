@@ -65,8 +65,8 @@ fun ListFlipOverlay(
     val screenWidthDp = configuration.screenWidthDp.dp
     val screenHeightDp = configuration.screenHeightDp.dp
     val maxCardWidth = (screenWidthDp - 32.dp).coerceAtLeast(200.dp)
-    val maxCardHeight = (screenHeightDp - 64.dp).coerceAtLeast(300.dp)
-    val effectiveCount = if (isGenerating) 1 else uiState.results.size
+    val maxCardHeight = (screenHeightDp - 160.dp).coerceIn(300.dp, 580.dp)
+    val effectiveCount = if (isGenerating || uiState.results.isEmpty()) 1 else uiState.results.size
     val baseScale = when {
         effectiveCount <= 10 -> 1.0
         effectiveCount <= 25 -> 1.15

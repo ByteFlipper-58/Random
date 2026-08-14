@@ -62,9 +62,9 @@ fun NumbersFlipOverlay(
     val screenWidthDp = configuration.screenWidthDp.dp
     val screenHeightDp = configuration.screenHeightDp.dp
     val maxCardWidth = (screenWidthDp - 32.dp).coerceAtLeast(200.dp)
-    val maxCardHeight = (screenHeightDp - 64.dp).coerceAtLeast(300.dp)
-    val resultsCountForSizing = maxOf(uiState.frontValues.size, uiState.backValues.size)
-    val effectiveCount = if (isGenerating) 1 else resultsCountForSizing
+    val maxCardHeight = (screenHeightDp - 160.dp).coerceIn(300.dp, 580.dp)
+    val resultsCountForSizing = if (isGenerating) 1 else maxOf(uiState.frontValues.size, uiState.backValues.size)
+    val effectiveCount = if (resultsCountForSizing > 0) resultsCountForSizing else 1
     val basePx = computeCardBaseSizeDp(effectiveCount)
     val dynamicMin = 240.coerceAtMost(maxCardWidth.value.toInt())
     val targetCardSize = basePx.coerceIn(dynamicMin, maxCardWidth.value.toInt()).dp

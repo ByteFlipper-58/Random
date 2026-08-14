@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
@@ -25,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.zIndex
 import kotlin.math.PI
 import kotlin.math.hypot
 import kotlin.math.max
@@ -33,7 +34,6 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.input.pointer.pointerInput
@@ -48,8 +48,8 @@ fun FlipCardOverlay(
     modifier: Modifier = Modifier,
     cardSize: Dp = 280.dp,
     cardHeight: Dp? = null,
-    frontContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.primaryContainer,
-    backContainerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.secondaryContainer,
+    frontContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
+    backContainerColor: Color = MaterialTheme.colorScheme.secondaryContainer,
     onLongPress: (() -> Unit)? = null,
     frontContent: @Composable () -> Unit,
     backContent: @Composable () -> Unit,
@@ -62,6 +62,7 @@ fun FlipCardOverlay(
         state.exitTx.snapTo(0f)
         state.exitTy.snapTo(0f)
         state.exitScale.snapTo(1f)
+        state.spinScale.snapTo(1f)
     }
 
     BackHandler(enabled = state.isVisible && !state.isClosing) {
@@ -69,11 +70,15 @@ fun FlipCardOverlay(
     }
 
     if (state.isVisible || state.scrimProgress.value > 0.01f) {
-        val overlayClickInteraction = androidx.compose.runtime.remember { MutableInteractionSource() }
         val scrimSurfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
 
         Box(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .onGloballyPositioned { coords ->
+                    state.overlaySize = coords.size
+                    state.overlayTopLeftInRoot = coords.positionInRoot()
+                },
             contentAlignment = Alignment.Center
         ) {
             // 1. Scrim Visuals
@@ -91,13 +96,8 @@ fun FlipCardOverlay(
                                  }
                              },
                              shouldIgnore = { offset ->
-                                 // Ignore touches inside card bounds.
-                                 // Also ignore if bounds are not yet established (empty).
-                                 // If empty, we assume Card is not ready, so we don't consume Down?
-                                 // Or if empty, we assume Card is full screen? No.
-                                 // Safest: If empty, card is not visible?
-                                 // If !isEmpty and contains -> Ignore.
-                                 !state.cardBoundsInRoot.isEmpty && state.cardBoundsInRoot.contains(offset)
+                                 val rootPoint = offset + state.overlayTopLeftInRoot
+                                 !state.cardBoundsInRoot.isEmpty && state.cardBoundsInRoot.contains(rootPoint)
                              }
                          )
                     }
@@ -135,7 +135,7 @@ private fun FlipCardScrim(state: FlipCardState, anchorInRoot: Offset, scrimSurfa
         val radius = max(1f, state.scrimProgress.value * maxRadius * 1.2f)
         val alpha = 0.85f * state.scrimProgress.value
 
-        Canvas(modifier = androidx.compose.ui.Modifier.fillMaxSize()) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
             drawCircle(
                 brush = Brush.radialGradient(
                     colors = listOf(
@@ -179,11 +179,15 @@ private fun FlipCardContent(
                     .width(cardSize)
                     .height(cardHeight) else Modifier.size(cardSize)
             )
-            .pointerInput(onLongPress) {
-                detectTapGestures(
-                    onLongPress = { onLongPress?.invoke() }
-                )
-            }
+            .then(
+                if (onLongPress != null) {
+                    Modifier.pointerInput(onLongPress) {
+                        detectTapGestures(
+                            onLongPress = { onLongPress() }
+                        )
+                    }
+                } else Modifier
+            )
             .onGloballyPositioned { coords ->
                 state.cardBoundsInRoot = coords.boundsInRoot()
                 state.cardCenterInRoot = state.cardBoundsInRoot.center
@@ -193,7 +197,7 @@ private fun FlipCardContent(
 
                 rotationY = currentRotation
                 rotationZ = state.exitRotationZ.value
-                val totalScale = scaleEffect * state.exitScale.value
+                val totalScale = scaleEffect * state.exitScale.value * state.spinScale.value
                 scaleX = totalScale
                 scaleY = totalScale
                 translationX = state.exitTx.value
@@ -205,6 +209,7 @@ private fun FlipCardContent(
         Card(
             modifier = Modifier
                 .fillMaxSize()
+                .zIndex(if (showFront) 0f else 1f)
                 .graphicsLayer { rotationY = 180f }
                 .alpha(if (showFront) 0f else 1f),
             colors = CardDefaults.cardColors(
@@ -224,8 +229,9 @@ private fun FlipCardContent(
         }
 
         Card(
-            modifier = androidx.compose.ui.Modifier
+            modifier = Modifier
                 .fillMaxSize()
+                .zIndex(if (showFront) 1f else 0f)
                 .alpha(if (showFront) 1f else 0f),
             colors = CardDefaults.cardColors(
                 containerColor = frontContainerColor
@@ -233,8 +239,8 @@ private fun FlipCardContent(
             elevation = CardDefaults.cardElevation(defaultElevation = FlipCardDefaults.CardElevation),
             shape = FlipCardDefaults.CardShape
         ) {
-            androidx.compose.foundation.layout.Box(
-                modifier = androidx.compose.ui.Modifier
+            Box(
+                modifier = Modifier
                     .fillMaxSize()
                     .alpha(state.frontTextAlpha.value),
                 contentAlignment = Alignment.Center
@@ -247,7 +253,7 @@ private fun FlipCardContent(
 
 private suspend fun PointerInputScope.detectTapOutside(
     onTapOutside: () -> Unit,
-    shouldIgnore: (androidx.compose.ui.geometry.Offset) -> Boolean
+    shouldIgnore: (Offset) -> Boolean
 ) {
     awaitEachGesture {
         val down = awaitFirstDown()

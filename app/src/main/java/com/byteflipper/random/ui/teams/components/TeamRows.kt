@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -90,7 +91,7 @@ fun SummaryRowCard(
         modifier = modifier
             .fillMaxWidth()
             .height(88.dp)
-            .clickable(onClick = onClick),
+            .clip(ShapesTokens.CardShape),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.72f)),
         shape = ShapesTokens.CardShape
@@ -98,6 +99,8 @@ fun SummaryRowCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
+                .clip(ShapesTokens.CardShape)
+                .clickable(onClick = onClick)
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)

@@ -287,8 +287,12 @@ class TeamsViewModel @AssistedInject constructor(
         }
     }
 
-    fun prepareGeneration(): Boolean {
-        val validation = validateCurrentConfig() ?: return false
+    fun validateGeneration(): Boolean {
+        return validateCurrentConfig() != null
+    }
+
+    fun executeGeneration() {
+        val validation = validateCurrentConfig() ?: return
         val state = _uiState.value
         val peopleById = state.people.associateBy { it.id }
         val participants = state.editor.selectedMemberIds.mapNotNull { personId -> peopleById[personId] }
@@ -316,6 +320,11 @@ class TeamsViewModel @AssistedInject constructor(
                 teamPresetRepository.markUsed(presetId)
             }
         }
+    }
+
+    fun prepareGeneration(): Boolean {
+        if (!validateGeneration()) return false
+        executeGeneration()
         return true
     }
 

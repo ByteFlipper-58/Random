@@ -6,6 +6,8 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,7 +67,8 @@ fun PresetCard(
     },
     modifier: Modifier = Modifier
 ) {
-    var isPressed by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
     val colorScheme = MaterialTheme.colorScheme
     val resolvedSubtitle = subtitle ?: stringResource(R.string.preset_items_count, preset.items.size)
 
@@ -107,21 +110,7 @@ fun PresetCard(
         modifier = modifier
             .fillMaxWidth()
             .height(88.dp)
-            .clip(ShapesTokens.CardShape)
-            .combinedClickable(
-                onClick = {
-                    isPressed = true
-                    onPresetClick(preset)
-                    isPressed = false
-                },
-                onLongClick = onPresetLongClick?.let { callback ->
-                    {
-                        isPressed = true
-                        callback(preset)
-                        isPressed = false
-                    }
-                }
-            ),
+            .clip(ShapesTokens.CardShape),
         shape = ShapesTokens.CardShape,
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
@@ -134,6 +123,19 @@ fun PresetCard(
         Row(
             modifier = Modifier
                 .fillMaxSize()
+                .clip(ShapesTokens.CardShape)
+                .combinedClickable(
+                    interactionSource = interactionSource,
+                    indication = androidx.compose.material3.ripple(bounded = true),
+                    onClick = {
+                        onPresetClick(preset)
+                    },
+                    onLongClick = onPresetLongClick?.let { callback ->
+                        {
+                            callback(preset)
+                        }
+                    }
+                )
                 .padding(horizontal = 20.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)

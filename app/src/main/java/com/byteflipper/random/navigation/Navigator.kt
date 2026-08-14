@@ -18,7 +18,7 @@ class Navigator internal constructor(
     fun goBack(): Boolean {
         if (state.backStack.size <= 1) return false
         val top = state.backStack.lastOrNull()
-        if (top is PeoplePicker) {
+        if (top is PeoplePicker && !teamSelectionResults.containsKey(top.parent)) {
             teamSelectionResults[top.parent] = top.selectedMemberIds
         }
         state.backStack.removeLast()
@@ -46,9 +46,8 @@ class Navigator internal constructor(
     }
 
     fun updatePeoplePickerSelection(picker: PeoplePicker, selectedMemberIds: List<Long>) {
-        val updatedPicker = picker.copy(selectedMemberIds = selectedMemberIds.distinct())
-        teamSelectionResults[picker.parent] = updatedPicker.selectedMemberIds
-        replaceTop(updatedPicker)
+        val updatedIds = selectedMemberIds.distinct()
+        teamSelectionResults[picker.parent] = updatedIds
     }
 
     fun pendingTeamSelection(parent: Teams): List<Long>? = teamSelectionResults[parent]

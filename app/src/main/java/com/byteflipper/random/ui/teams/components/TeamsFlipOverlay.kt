@@ -5,44 +5,40 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.Animatable
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -55,7 +51,7 @@ import com.byteflipper.random.ui.components.flip.FlipCardOverlay
 import com.byteflipper.random.ui.components.flip.FlipCardState
 import com.byteflipper.random.ui.theme.CardContentTheme
 import com.byteflipper.random.ui.theme.getRainbowColors
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
@@ -71,6 +67,7 @@ fun TeamsFlipOverlay(
     if (result == null && !flipState.isVisible && flipState.scrimProgress.value <= 0.01f) return
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val rainbowColors = getRainbowColors()
     val animatedColor = remember { Animatable(Color.Transparent) }
     val targetColor = remember(cardColorSeed, result) {
@@ -87,30 +84,107 @@ fun TeamsFlipOverlay(
     }
 
     val configuration = LocalConfiguration.current
-    val maxCardWidth = (configuration.screenWidthDp.dp - 32.dp).coerceAtLeast(220.dp)
-    val maxCardHeight = (configuration.screenHeightDp.dp - 64.dp).coerceAtLeast(320.dp)
-    val effectiveTeamsCount = if (isGenerating) 1 else (result?.teams?.size ?: 1)
-    val targetCardWidth = when {
-        effectiveTeamsCount <= 2 -> 310.dp
-        effectiveTeamsCount <= 4 -> 324.dp
-        else -> 336.dp
-    }.coerceAtMost(maxCardWidth)
-    val targetCardHeight = when {
-        effectiveTeamsCount <= 2 -> 430.dp
-        effectiveTeamsCount <= 4 -> 520.dp
-        else -> 610.dp
-    }.coerceIn(320.dp.coerceAtMost(maxCardHeight), maxCardHeight)
+    val screenWidthDp = configuration.screenWidthDp.dp
+    val screenHeightDp = configuration.screenHeightDp.dp
+    val maxCardWidth = (screenWidthDp - 32.dp).coerceAtLeast(240.dp)
+    val maxCardHeight = (screenHeightDp - 160.dp).coerceIn(320.dp, 580.dp)
+
+    val teams = result?.teams.orEmpty()
+    val teamsCount = teams.size
+    val leftOutCount = result?.leftOutMembers?.size ?: 0
+
+    val minHeight = 320.dp.coerceAtMost(maxCardHeight)
+    val initialCardWidth = 304.dp.coerceAtMost(maxCardWidth)
+    val initialCardHeight = 320.dp.coerceIn(minHeight, maxCardHeight)
+
+    val targetCardWidth = if (isGenerating || result == null) {
+        initialCardWidth
+    } else {
+        when {
+            teamsCount <= 2 -> 304.dp
+            teamsCount <= 4 -> 324.dp
+            teamsCount <= 6 -> 338.dp
+            else -> 348.dp
+        }.coerceAtMost(maxCardWidth)
+    }
+
+    val targetCardHeight = remember(result, isGenerating, maxCardHeight) {
+        if (isGenerating || result == null) {
+            initialCardHeight
+        } else {
+            var contentHeight = 62.dp + 104.dp + 26.dp
+            teams.forEach { team ->
+                val memberCount = team.members.size
+                val maxNameLen = team.members.maxOfOrNull { it.displayName.length } ?: 1
+                val estLines = when {
+                    memberCount <= 1 -> 1
+                    memberCount <= 2 && maxNameLen <= 12 -> 1
+                    memberCount <= 3 && maxNameLen <= 16 -> 2
+                    memberCount <= 4 -> 2
+                    memberCount <= 6 -> 3
+                    else -> (memberCount + 1) / 2
+                }
+                val blockHeight = 40.dp + (estLines * 22).dp + 20.dp + 10.dp
+                contentHeight += blockHeight
+            }
+            if (leftOutCount > 0) {
+                val estLines = maxOf(1, (leftOutCount + 1) / 2)
+                val leftOutHeight = 40.dp + (estLines * 20).dp + 20.dp + 10.dp
+                contentHeight += leftOutHeight
+            }
+            contentHeight.coerceIn(minHeight, maxCardHeight)
+        }
+    }
 
     val animatedCardWidth by animateDpAsState(
         targetValue = targetCardWidth,
-        animationSpec = spring(dampingRatio = 0.82f, stiffness = Spring.StiffnessLow),
+        animationSpec = spring(
+            dampingRatio = 0.8f,
+            stiffness = if (isGenerating) Spring.StiffnessMedium else Spring.StiffnessLow
+        ),
         label = "teams_overlay_width"
     )
     val animatedCardHeight by animateDpAsState(
         targetValue = targetCardHeight,
-        animationSpec = spring(dampingRatio = 0.82f, stiffness = Spring.StiffnessLow),
+        animationSpec = spring(
+            dampingRatio = 0.8f,
+            stiffness = if (isGenerating) Spring.StiffnessMedium else Spring.StiffnessLow
+        ),
         label = "teams_overlay_height"
     )
+
+    fun copyResultsToClipboard(generatedResult: TeamGenerationResult) {
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(
+            ClipData.newPlainText(
+                context.getString(R.string.team_results_title),
+                formatTeamResultForClipboard(context, generatedResult)
+            )
+        )
+        scope.launch {
+            snackbarHostState.showSnackbar(context.getString(R.string.copied_to_clipboard))
+        }
+    }
+
+    fun shareResults(generatedResult: TeamGenerationResult) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(
+                Intent.EXTRA_TEXT,
+                formatTeamResultForClipboard(context, generatedResult)
+            )
+            putExtra(
+                Intent.EXTRA_SUBJECT,
+                context.getString(R.string.team_results_title)
+            )
+        }
+        context.startActivity(
+            Intent.createChooser(
+                shareIntent,
+                context.getString(R.string.share_results)
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+    }
 
     FlipCardOverlay(
         state = flipState,
@@ -122,20 +196,15 @@ fun TeamsFlipOverlay(
         backContainerColor = animatedColor.value,
         onLongPress = {
             val generatedResult = result ?: return@FlipCardOverlay
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setPrimaryClip(
-                ClipData.newPlainText(
-                    context.getString(R.string.team_results_title),
-                    formatTeamResultForClipboard(context, generatedResult)
-                )
-            )
+            copyResultsToClipboard(generatedResult)
         },
         frontContent = {
             CardContentTheme {
                 TeamsResultsDisplay(
                     result = result,
                     cardColor = animatedColor.value,
-                    isGenerating = isGenerating
+                    onCopy = { result?.let(::copyResultsToClipboard) },
+                    onShare = { result?.let(::shareResults) }
                 )
             }
         },
@@ -144,7 +213,8 @@ fun TeamsFlipOverlay(
                 TeamsResultsDisplay(
                     result = result,
                     cardColor = animatedColor.value,
-                    isGenerating = isGenerating
+                    onCopy = { result?.let(::copyResultsToClipboard) },
+                    onShare = { result?.let(::shareResults) }
                 )
             }
         },
@@ -162,27 +232,18 @@ fun TeamsFlipOverlay(
 private fun TeamsResultsDisplay(
     result: TeamGenerationResult?,
     cardColor: Color,
-    isGenerating: Boolean
+    onCopy: () -> Unit,
+    onShare: () -> Unit
 ) {
-    if (result == null || isGenerating) return
+    if (result == null) return
 
-    val context = LocalContext.current
     val textColor = contrastColorFor(cardColor)
-    var visibleTeams by remember(result) { mutableIntStateOf(0) }
-
-    LaunchedEffect(result) {
-        visibleTeams = 0
-        result.teams.forEachIndexed { index, _ ->
-            delay(110)
-            visibleTeams = index + 1
-        }
-    }
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 18.dp),
-        contentPadding = PaddingValues(bottom = 12.dp),
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        contentPadding = PaddingValues(bottom = 6.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
@@ -201,84 +262,26 @@ private fun TeamsResultsDisplay(
             )
         }
         items(result.teams, key = { it.index }) { team ->
-            AnimatedVisibility(
-                visible = visibleTeams >= team.index + 1,
-                enter = expandVertically(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
-                ) + fadeIn() + scaleIn(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMediumLow
-                    ),
-                    initialScale = 0.94f
-                ),
-                exit = shrinkVertically() + fadeOut()
-            ) {
-                TeamResultBlock(
-                    team = team,
-                    splitMode = result.splitMode,
+            TeamResultBlock(
+                team = team,
+                splitMode = result.splitMode,
+                textColor = textColor
+            )
+        }
+        if (result.leftOutMembers.isNotEmpty()) {
+            item {
+                LeftOutResultBlock(
+                    names = result.leftOutMembers.map { it.displayName },
                     textColor = textColor
                 )
             }
         }
-        if (result.leftOutMembers.isNotEmpty()) {
-            item {
-                AnimatedVisibility(
-                    visible = visibleTeams >= result.teams.size,
-                    enter = expandVertically(
-                        animationSpec = spring(
-                            dampingRatio = Spring.DampingRatioMediumBouncy,
-                            stiffness = Spring.StiffnessLow
-                        )
-                    ) + fadeIn()
-                ) {
-                    LeftOutResultBlock(
-                        names = result.leftOutMembers.map { it.displayName },
-                        textColor = textColor
-                    )
-                }
-            }
-        }
         item {
-            AnimatedVisibility(
-                visible = visibleTeams >= result.teams.size,
-                enter = fadeIn(tween(220))
-            ) {
-                ResultActionsRow(
-                    textColor = textColor,
-                    onCopy = {
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        clipboard.setPrimaryClip(
-                            ClipData.newPlainText(
-                                context.getString(R.string.team_results_title),
-                                formatTeamResultForClipboard(context, result)
-                            )
-                        )
-                    },
-                    onShare = {
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(
-                                Intent.EXTRA_TEXT,
-                                formatTeamResultForClipboard(context, result)
-                            )
-                            putExtra(
-                                Intent.EXTRA_SUBJECT,
-                                context.getString(R.string.team_results_title)
-                            )
-                        }
-                        context.startActivity(
-                            Intent.createChooser(
-                                shareIntent,
-                                context.getString(R.string.share_results)
-                            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        )
-                    }
-                )
-            }
+            ResultActionsRow(
+                textColor = textColor,
+                onCopy = onCopy,
+                onShare = onShare
+            )
         }
     }
 }
@@ -290,15 +293,15 @@ private fun LeftOutResultBlock(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(18.dp),
         color = textColor.copy(alpha = 0.1f),
         border = BorderStroke(1.dp, textColor.copy(alpha = 0.14f))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
                 text = stringResource(R.string.left_out_members_title),
@@ -315,7 +318,8 @@ private fun LeftOutResultBlock(
                 text = names.joinToString(" • "),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
-                    lineHeight = 22.sp
+                    fontSize = 16.sp,
+                    lineHeight = 20.sp
                 ),
                 color = textColor
             )
@@ -332,33 +336,52 @@ private fun ResultActionsRow(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(top = 6.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        OutlinedButton(
+        Button(
             onClick = onCopy,
             modifier = Modifier.fillMaxWidth(),
-            border = BorderStroke(1.dp, textColor.copy(alpha = 0.22f))
+            colors = ButtonDefaults.buttonColors(
+                containerColor = textColor.copy(alpha = 0.18f),
+                contentColor = textColor
+            ),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.dp, textColor.copy(alpha = 0.25f))
         ) {
             Icon(
-                painter = androidx.compose.ui.res.painterResource(R.drawable.content_copy_24px),
+                painter = painterResource(R.drawable.content_copy_24px),
                 contentDescription = null,
                 tint = textColor
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "  " + stringResource(R.string.copy_results),
-                color = textColor
+                text = stringResource(R.string.copy_results),
+                color = textColor,
+                fontWeight = FontWeight.SemiBold
             )
         }
-        FilledTonalButton(
+        Button(
             onClick = onShare,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = textColor.copy(alpha = 0.12f),
+                contentColor = textColor
+            ),
+            shape = RoundedCornerShape(14.dp),
+            border = BorderStroke(1.dp, textColor.copy(alpha = 0.18f))
         ) {
             Icon(
-                painter = androidx.compose.ui.res.painterResource(R.drawable.share_24px),
-                contentDescription = null
+                painter = painterResource(R.drawable.share_24px),
+                contentDescription = null,
+                tint = textColor
             )
-            Text(text = "  " + stringResource(R.string.share_results))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.share_results),
+                color = textColor,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
@@ -369,23 +392,26 @@ private fun TeamResultBlock(
     splitMode: TeamSplitMode,
     textColor: Color
 ) {
+    val maxMemberNameLen = team.members.maxOfOrNull { it.displayName.length } ?: 1
     val memberFontSize = when {
-        team.members.size <= 2 -> 27.sp
-        team.members.size <= 4 -> 23.sp
-        else -> 19.sp
+        team.members.size <= 2 && maxMemberNameLen <= 12 -> 20.sp
+        team.members.size <= 3 && maxMemberNameLen <= 18 -> 18.sp
+        team.members.size <= 5 -> 16.sp
+        else -> 15.sp
     }
+    val lineHeight = memberFontSize * 1.25f
 
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
-        color = textColor.copy(alpha = 0.14f),
+        shape = RoundedCornerShape(18.dp),
+        color = textColor.copy(alpha = 0.12f),
         border = BorderStroke(1.dp, textColor.copy(alpha = 0.18f))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
                 text = teamTitle(team.index, splitMode),
@@ -403,7 +429,7 @@ private fun TeamResultBlock(
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontWeight = FontWeight.SemiBold,
                     fontSize = memberFontSize,
-                    lineHeight = memberFontSize * 1.18f
+                    lineHeight = lineHeight
                 ),
                 color = textColor
             )

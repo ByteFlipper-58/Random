@@ -44,6 +44,8 @@ fun TeamsScreen(
     var mainFabCenter by remember { mutableStateOf(Offset.Zero) }
     var showConfetti by remember { mutableStateOf(false) }
     val hapticsManager = LocalHapticsManager.current
+    val keyboardController = androidx.compose.ui.platform.LocalSoftwareKeyboardController.current
+    val focusManager = androidx.compose.ui.platform.LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -56,11 +58,14 @@ fun TeamsScreen(
     }
 
     fun launchGeneration() {
-        if (!viewModel.prepareGeneration()) return
+        keyboardController?.hide()
+        focusManager.clearFocus()
+        if (!viewModel.validateGeneration()) return
         controller.fabCenterInRoot = mainFabCenter
         controller.runGenerateSpin(
             effectiveDelayMs = viewModel.getEffectiveDelayMs(),
             onReveal = {
+                viewModel.executeGeneration()
                 if (settings.hapticsEnabled) {
                     hapticsManager?.performPress(settings.hapticsIntensity)
                 }

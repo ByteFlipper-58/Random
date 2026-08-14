@@ -31,7 +31,6 @@ internal fun FlipGenerateScreenHost(
             .background(MaterialTheme.colorScheme.background)
             .blur((8f * controller.flipController.scrimProgress.value).dp)
             .consumeWindowInsets(innerPadding)
-            .padding(horizontal = 16.dp)
 
         content(contentModifier, innerPadding)
         overlay()

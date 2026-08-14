@@ -4,6 +4,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import com.byteflipper.random.R
@@ -38,11 +40,16 @@ fun NumbersScreen(onBack: () -> Unit) {
         hapticsManager = runtime.hapticsManager
     )
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     ShakeEffect(
         enabled = settings.shakeToGenerateEnabled,
         hapticsEnabled = settings.hapticsEnabled,
         hapticsIntensity = settings.hapticsIntensity,
         onShake = {
+            keyboardController?.hide()
+            focusManager.clearFocus()
             controller.handleNumberGeneration(
                 uiState = uiState,
                 viewModel = viewModel,
@@ -67,6 +74,8 @@ fun NumbersScreen(onBack: () -> Unit) {
                 size = settings.fabSize,
                 onConfigClick = { viewModel.onEvent(NumbersUiEvent.SetConfigDialogVisible(true)) },
                 onGenerateClick = {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
                     controller.handleNumberGeneration(
                         uiState = uiState,
                         viewModel = viewModel,

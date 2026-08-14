@@ -69,6 +69,15 @@ class FlipCardController internal constructor(
             state.frontTextAlpha.animateTo(0f, tween(FlipCardDefaults.FlipHideTextMs))
             state.backTextAlpha.animateTo(0f, tween(FlipCardDefaults.FlipHideTextMs))
 
+            // Shrink card initially, then spring expand back on reveal
+            val shrinkDuration = min(180, (inputDelayMs * 0.35f).toInt()).coerceAtLeast(60)
+            scope.launch {
+                state.spinScale.animateTo(
+                    targetValue = 0.80f,
+                    animationSpec = tween(durationMillis = shrinkDuration, easing = FastOutSlowInEasing)
+                )
+            }
+
             // Rotation params based on delay
             val norm = (inputDelayMs - 1000).toFloat() / (60000 - 1000).toFloat()
             val weight = sqrt(1f - norm.coerceIn(0f, 1f))
@@ -123,6 +132,15 @@ class FlipCardController internal constructor(
 
                 if (!revealed && inputDelayMs - elapsedMs <= revealTime) {
                     onReveal(targetIsFront)
+                    scope.launch {
+                        state.spinScale.animateTo(
+                            targetValue = 1f,
+                            animationSpec = spring(
+                                dampingRatio = 0.65f,
+                                stiffness = 220f
+                            )
+                        )
+                    }
                     if (targetIsFront) {
                         scope.launch {
                             delay(FlipCardDefaults.RevealDelayMs.toLong())
@@ -194,6 +212,7 @@ internal fun startCloseInternal(
         state.isClosing = false
         state.lastStopAngle = 0f
         state.cardRotation.snapTo(0f)
+        state.spinScale.snapTo(1f)
         state.frontTextAlpha.snapTo(1f)
         state.backTextAlpha.snapTo(1f)
 
