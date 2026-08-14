@@ -310,4 +310,25 @@
     <string name="wheel_used_sector_dim">Zostawiaj szare</string>
     <string name="wheel_used_sector_remove">Usuwaj z koła</string>
     <string name="people_source_all">Wszyscy ludzie</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Wybór palcem</string>
+    <string name="finger_touch_hint">Dotknij i przytrzymaj palce na ekranie</string>
+    <string name="finger_min_required">Przyłóż co najmniej 2 palce</string>
+    <string name="finger_mode_winner">Zwycięzca</string>
+    <string name="finger_mode_teams">Drużyny</string>
+    <string name="finger_mode_order">Kolejność</string>
+    <string name="finger_settings">Ustawienia wyboru palcem</string>
+    <string name="finger_winner_count">Liczba zwycięzców</string>
+    <string name="finger_team_count">Liczba drużyn</string>
+    <string name="finger_hold_duration">Czas przytrzymania</string>
+    <string name="finger_hold_result">Zatrzymaj wynik na ekranie</string>
+    <string name="finger_hold_result_desc">Nie resetuj ekranu natychmiast po wybraniu</string>
+    <string name="finger_result_duration">Czas wyświetlania wyniku</string>
+    <string name="finger_result_banner_winner">Zwycięzca wybrany! ★</string>
+    <string name="finger_result_banner_teams">Drużyny podzielone! 👥</string>
+    <string name="finger_result_banner_order">Kolejność ustalona! 🔢</string>
+    <string name="finger_result_showing">Wyświetlanie wyniku: %1$d sek</string>
+    <string name="finger_team_label">Drużyna %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

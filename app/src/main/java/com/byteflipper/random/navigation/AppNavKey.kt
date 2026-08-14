@@ -30,6 +30,9 @@ data object Coin : AppNavKey
 data object Wheel : AppNavKey
 
 @Serializable
+data object Finger : AppNavKey
+
+@Serializable
 data class Teams(val id: Long? = null) : AppNavKey
 
 @Serializable

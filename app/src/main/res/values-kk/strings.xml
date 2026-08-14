@@ -310,4 +310,25 @@
     <string name="wheel_used_sector_dim">Сұр күйде қалдыру</string>
     <string name="wheel_used_sector_remove">Дөңгелектен алып тастау</string>
     <string name="people_source_all">Барлық адамдар</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Саусақпен таңдау</string>
+    <string name="finger_touch_hint">Экранға саусақтарыңызды тигізіп ұстап тұрыңыз</string>
+    <string name="finger_min_required">Кемінде 2 саусақ салыңыз</string>
+    <string name="finger_mode_winner">Жеңімпаз</string>
+    <string name="finger_mode_teams">Командалар</string>
+    <string name="finger_mode_order">Кезек</string>
+    <string name="finger_settings">Саусақпен таңдау баптаулары</string>
+    <string name="finger_winner_count">Жеңімпаздар саны</string>
+    <string name="finger_team_count">Командалар саны</string>
+    <string name="finger_hold_duration">Ұстап тұру уақыты</string>
+    <string name="finger_hold_result">Нәтижені экранда ұстап тұру</string>
+    <string name="finger_hold_result_desc">Таңдау жасалғаннан кейін экранды бірден тазаламау</string>
+    <string name="finger_result_duration">Нәтижені көрсету уақыты</string>
+    <string name="finger_result_banner_winner">Жеңімпаз таңдалды! ★</string>
+    <string name="finger_result_banner_teams">Топтар құрылды! 👥</string>
+    <string name="finger_result_banner_order">Кезек анықталды! 🔢</string>
+    <string name="finger_result_showing">Нәтижені көрсету: %1$d сек</string>
+    <string name="finger_team_label">%1$d-команда</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

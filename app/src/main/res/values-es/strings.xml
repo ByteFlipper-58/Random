@@ -310,4 +310,25 @@
     <string name="wheel_used_sector_dim">Dejar en gris</string>
     <string name="wheel_used_sector_remove">Quitar de la ruleta</string>
     <string name="people_source_all">Todas las personas</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Selector de dedo</string>
+    <string name="finger_touch_hint">Toca y mantén los dedos en la pantalla</string>
+    <string name="finger_min_required">Coloca al menos 2 dedos para empezar</string>
+    <string name="finger_mode_winner">Ganador</string>
+    <string name="finger_mode_teams">Equipos</string>
+    <string name="finger_mode_order">Turno</string>
+    <string name="finger_settings">Ajustes de selector de dedo</string>
+    <string name="finger_winner_count">Número de ganadores</string>
+    <string name="finger_team_count">Número de equipos</string>
+    <string name="finger_hold_duration">Tiempo de espera</string>
+    <string name="finger_hold_result">Mantener resultado en pantalla</string>
+    <string name="finger_hold_result_desc">No reiniciar la pantalla inmediatamente tras la selección</string>
+    <string name="finger_result_duration">Duración de visualización del resultado</string>
+    <string name="finger_result_banner_winner">¡Ganador seleccionado! ★</string>
+    <string name="finger_result_banner_teams">¡Equipos distribuidos! 👥</string>
+    <string name="finger_result_banner_order">¡Orden determinado! 🔢</string>
+    <string name="finger_result_showing">Mostrando resultado: %1$d seg</string>
+    <string name="finger_team_label">Equipo %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

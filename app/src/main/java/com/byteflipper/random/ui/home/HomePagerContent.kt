@@ -1,17 +1,18 @@
 package com.byteflipper.random.ui.home
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.lerp
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.ui.app.PendingSharedImport
+import com.byteflipper.random.ui.presets.PresetsContent
 import com.byteflipper.random.ui.presets.PresetsExternalAction
 import com.byteflipper.random.ui.presets.PresetsSelectionUiState
 import com.byteflipper.random.ui.presets.PresetsViewModel
@@ -20,7 +21,7 @@ import kotlin.math.absoluteValue
 @Composable
 internal fun HomePagerContent(
     pagerState: PagerState,
-    innerPadding: androidx.compose.foundation.layout.PaddingValues,
+    innerPadding: PaddingValues,
     menuItems: List<MenuItemType>,
     showPresetsSearch: Boolean,
     isPresetsFilterInteracting: Boolean,
@@ -36,6 +37,7 @@ internal fun HomePagerContent(
     onOpenCoin: () -> Unit,
     onOpenWheel: () -> Unit,
     onOpenTeams: () -> Unit,
+    onOpenFinger: () -> Unit,
     onOpenPreset: (ListPreset) -> Unit,
     onOpenTeamPreset: (Long) -> Unit,
     onSharedImportConsumed: (Long) -> Unit,
@@ -77,10 +79,11 @@ internal fun HomePagerContent(
                 onOpenLot = onOpenLot,
                 onOpenCoin = onOpenCoin,
                 onOpenWheel = onOpenWheel,
-                onOpenTeams = onOpenTeams
+                onOpenTeams = onOpenTeams,
+                onOpenFinger = onOpenFinger
             )
 
-            HomeTab.Presets -> com.byteflipper.random.ui.presets.PresetsContent(
+            HomeTab.Presets -> PresetsContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .graphicsLayer {

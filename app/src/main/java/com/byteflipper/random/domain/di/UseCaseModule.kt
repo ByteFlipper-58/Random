@@ -6,6 +6,7 @@ import com.byteflipper.random.domain.coin.usecase.TossCoinUseCase
 import com.byteflipper.random.domain.dice.usecase.RollDiceUseCase
 import com.byteflipper.random.domain.lot.usecase.ValidateLotInputsUseCase
 import com.byteflipper.random.domain.lot.usecase.GenerateMarkedIndicesUseCase
+import com.byteflipper.random.domain.finger.usecase.GenerateFingerOutcomeUseCase
 import com.byteflipper.random.domain.lists.usecase.GenerateListResultsUseCase
 import com.byteflipper.random.domain.lists.usecase.SortListResultsUseCase
 import com.byteflipper.random.domain.team.usecase.GenerateTeamsUseCase
@@ -59,6 +60,8 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideValidateTeamPresetInputsUseCase(): ValidateTeamPresetInputsUseCase = ValidateTeamPresetInputsUseCase()
+
+    @Provides
+    @Singleton
+    fun provideGenerateFingerOutcomeUseCase(): GenerateFingerOutcomeUseCase = GenerateFingerOutcomeUseCase()
 }
-
-

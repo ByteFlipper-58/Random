@@ -490,4 +490,25 @@
     <string name="wheel_used_sector_dim">Оставлять серыми</string>
     <string name="wheel_used_sector_remove">Убирать с колеса</string>
     <string name="people_source_all">Все люди</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Выбор пальцем</string>
+    <string name="finger_touch_hint">Прикоснитесь пальцами к экрану</string>
+    <string name="finger_min_required">Приложите минимум 2 пальца</string>
+    <string name="finger_mode_winner">Победитель</string>
+    <string name="finger_mode_teams">Команды</string>
+    <string name="finger_mode_order">Очередь</string>
+    <string name="finger_settings">Настройки выбора пальцем</string>
+    <string name="finger_winner_count">Количество победителей</string>
+    <string name="finger_team_count">Количество команд</string>
+    <string name="finger_hold_duration">Время удержания</string>
+    <string name="finger_hold_result">Удерживать результат</string>
+    <string name="finger_hold_result_desc">Не сбрасывать экран сразу после выбора</string>
+    <string name="finger_result_duration">Время показа результата</string>
+    <string name="finger_result_banner_winner">Победитель выбран! ★</string>
+    <string name="finger_result_banner_teams">Команды сформированы! 👥</string>
+    <string name="finger_result_banner_order">Очередность определена! 🔢</string>
+    <string name="finger_result_showing">Показ результата: %1$d сек</string>
+    <string name="finger_team_label">Команда %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

@@ -20,6 +20,7 @@ class AdsController(
     private var coinCount: Int = 0
     private var diceRollCount: Int = 0
     private var wheelSpinCount: Int = 0
+    private var fingerOutcomeCount: Int = 0
 
     fun onNumbersOrListsGenerated(activity: Activity) {
         handleSuccessfulAction(activity, nextCount = {
@@ -54,6 +55,13 @@ class AdsController(
             wheelSpinCount += 1
             wheelSpinCount
         }, interstitialFrequency = 8)
+    }
+
+    fun onFingerOutcome(activity: Activity) {
+        handleSuccessfulAction(activity, nextCount = {
+            fingerOutcomeCount += 1
+            fingerOutcomeCount
+        }, interstitialFrequency = 6)
     }
 
     private fun handleSuccessfulAction(

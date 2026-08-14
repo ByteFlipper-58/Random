@@ -310,4 +310,25 @@
     <string name="wheel_used_sector_dim">Laisser en gris</string>
     <string name="wheel_used_sector_remove">Retirer de la roue</string>
     <string name="people_source_all">Toutes les personnes</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Sélecteur de doigt</string>
+    <string name="finger_touch_hint">Touchez et maintenez vos doigts sur l\'écran</string>
+    <string name="finger_min_required">Posez au moins 2 doigts pour commencer</string>
+    <string name="finger_mode_winner">Gagnant</string>
+    <string name="finger_mode_teams">Équipes</string>
+    <string name="finger_mode_order">Ordre</string>
+    <string name="finger_settings">Paramètres du sélecteur de doigt</string>
+    <string name="finger_winner_count">Nombre de gagnants</string>
+    <string name="finger_team_count">Nombre d\'équipes</string>
+    <string name="finger_hold_duration">Durée de maintien</string>
+    <string name="finger_hold_result">Garder le résultat à l\'écran</string>
+    <string name="finger_hold_result_desc">Ne pas réinitialiser l\'écran immédiatement après la sélection</string>
+    <string name="finger_result_duration">Durée d\'affichage du résultat</string>
+    <string name="finger_result_banner_winner">Gagnant sélectionné ! ★</string>
+    <string name="finger_result_banner_teams">Équipes réparties ! 👥</string>
+    <string name="finger_result_banner_order">Ordre déterminé ! 🔢</string>
+    <string name="finger_result_showing">Affichage du résultat : %1$d s</string>
+    <string name="finger_team_label">Équipe %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

@@ -501,4 +501,25 @@
     <string name="wheel_used_sector_dim">Keep as grey</string>
     <string name="wheel_used_sector_remove">Remove from wheel</string>
     <string name="people_source_all">All people</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Finger Chooser</string>
+    <string name="finger_touch_hint">Touch and hold fingers on screen</string>
+    <string name="finger_min_required">Place at least 2 fingers to start</string>
+    <string name="finger_mode_winner">Winner</string>
+    <string name="finger_mode_teams">Teams</string>
+    <string name="finger_mode_order">Order</string>
+    <string name="finger_settings">Finger Chooser Settings</string>
+    <string name="finger_winner_count">Number of winners</string>
+    <string name="finger_team_count">Number of teams</string>
+    <string name="finger_hold_duration">Hold duration</string>
+    <string name="finger_hold_result">Hold result on screen</string>
+    <string name="finger_hold_result_desc">Keep the outcome visible after fingers are released</string>
+    <string name="finger_result_duration">Result display duration</string>
+    <string name="finger_result_banner_winner">Winner selected! ★</string>
+    <string name="finger_result_banner_teams">Teams distributed! 👥</string>
+    <string name="finger_result_banner_order">Order determined! 🔢</string>
+    <string name="finger_result_showing">Result lock: %1$d sec</string>
+    <string name="finger_team_label">Team %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

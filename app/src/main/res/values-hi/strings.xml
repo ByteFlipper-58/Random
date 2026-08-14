@@ -310,4 +310,25 @@
     <string name="wheel_used_sector_dim">धूसर रखें</string>
     <string name="wheel_used_sector_remove">पहिये से हटाएं</string>
     <string name="people_source_all">सभी लोग</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">उंगली चयनकर्ता</string>
+    <string name="finger_touch_hint">स्क्रीन पर उंगलियां रखें और दबाए रखें</string>
+    <string name="finger_min_required">शुरू करने के लिए कम से कम 2 उंगलियां रखें</string>
+    <string name="finger_mode_winner">विजेता</string>
+    <string name="finger_mode_teams">टीमें</string>
+    <string name="finger_mode_order">क्रम</string>
+    <string name="finger_settings">उंगली चयनकर्ता सेटिंग्स</string>
+    <string name="finger_winner_count">विजेताओं की संख्या</string>
+    <string name="finger_team_count">टीमों की संख्या</string>
+    <string name="finger_hold_duration">पकड़ अवधि</string>
+    <string name="finger_hold_result">परिणाम स्क्रीन पर रखें</string>
+    <string name="finger_hold_result_desc">उंगलियां उठाने के बाद भी परिणाम दिखाएं</string>
+    <string name="finger_result_duration">परिणाम प्रदर्शन अवधि</string>
+    <string name="finger_result_banner_winner">विजेता चुना गया! ★</string>
+    <string name="finger_result_banner_teams">टीमें बन गईं! 👥</string>
+    <string name="finger_result_banner_order">क्रम तय हो गया! 🔢</string>
+    <string name="finger_result_showing">परिणाम प्रदर्शन: %1$d सेकंड</string>
+    <string name="finger_team_label">टीम %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>

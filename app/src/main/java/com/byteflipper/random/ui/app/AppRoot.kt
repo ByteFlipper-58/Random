@@ -21,6 +21,7 @@ import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.navigation.About
 import com.byteflipper.random.navigation.Coin
 import com.byteflipper.random.navigation.Dice
+import com.byteflipper.random.navigation.Finger
 import com.byteflipper.random.navigation.Home
 import com.byteflipper.random.navigation.ListEditor
 import com.byteflipper.random.navigation.Lot
@@ -41,6 +42,7 @@ import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.components.SystemHapticsManager
 import com.byteflipper.random.ui.dice.DiceScreen
+import com.byteflipper.random.ui.finger.FingerScreen
 import com.byteflipper.random.ui.home.HomeScreen
 import com.byteflipper.random.ui.lists.ListScreen
 import com.byteflipper.random.ui.lists.ListViewModel
@@ -115,6 +117,7 @@ fun AppRoot() {
                                 onOpenCoin = { navigator.navigate(Coin) },
                                 onOpenWheel = { navigator.navigate(Wheel) },
                                 onOpenTeams = { navigator.navigate(Teams()) },
+                                onOpenFinger = { navigator.navigate(Finger) },
                                 onOpenSettings = { navigator.navigate(Settings) },
                                 onOpenAbout = { navigator.navigate(About) }
                             )
@@ -124,6 +127,7 @@ fun AppRoot() {
                         entry<Dice> { DiceScreen(onBack = { navigator.goBack() }) }
                         entry<Coin> { CoinScreen(onBack = { navigator.goBack() }) }
                         entry<Wheel> { WheelScreen(onBack = { navigator.goBack() }) }
+                        entry<Finger> { FingerScreen(onBack = { navigator.goBack() }) }
                         entry<Teams> { key ->
                             val teamsViewModel = hiltViewModel<TeamsViewModel, TeamsViewModel.Factory>(
                                 creationCallback = { factory -> factory.create(key.id) }

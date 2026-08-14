@@ -114,12 +114,33 @@ data class Settings(
     val setupCompleted: Boolean = false,
     val wheelNoRepeats: Boolean = false,
     val wheelSpinDurationMs: Int = WHEEL_SPIN_DURATION_DEFAULT_MS,
-    val wheelUsedSectorStyle: WheelUsedSectorStyle = WheelUsedSectorStyle.Dim
+    val wheelUsedSectorStyle: WheelUsedSectorStyle = WheelUsedSectorStyle.Dim,
+    val fingerWinnerCount: Int = FINGER_WINNER_COUNT_DEFAULT,
+    val fingerTeamCount: Int = FINGER_TEAM_COUNT_DEFAULT,
+    val fingerHoldDurationMs: Long = FINGER_HOLD_DURATION_DEFAULT_MS,
+    val fingerHoldResultEnabled: Boolean = true,
+    val fingerResultHoldDurationSeconds: Int = FINGER_RESULT_HOLD_SECONDS_DEFAULT
 )
 
 const val WHEEL_SPIN_DURATION_MIN_MS = 3000
 const val WHEEL_SPIN_DURATION_MAX_MS = 16000
 const val WHEEL_SPIN_DURATION_DEFAULT_MS = 5000
+
+const val FINGER_WINNER_COUNT_DEFAULT = 1
+const val FINGER_WINNER_COUNT_MIN = 1
+const val FINGER_WINNER_COUNT_MAX = 5
+
+const val FINGER_TEAM_COUNT_DEFAULT = 2
+const val FINGER_TEAM_COUNT_MIN = 2
+const val FINGER_TEAM_COUNT_MAX = 4
+
+const val FINGER_HOLD_DURATION_DEFAULT_MS = 2500L
+const val FINGER_HOLD_DURATION_MIN_MS = 1000L
+const val FINGER_HOLD_DURATION_MAX_MS = 5000L
+
+const val FINGER_RESULT_HOLD_SECONDS_DEFAULT = 3
+const val FINGER_RESULT_HOLD_SECONDS_MIN = 1
+const val FINGER_RESULT_HOLD_SECONDS_MAX = 10
 
 data class ReviewPromptState(
     val firstSeenAtMs: Long = 0L,
@@ -146,6 +167,11 @@ class SettingsRepository @Inject constructor(
         val wheelNoRepeats: Preferences.Key<Boolean> = booleanPreferencesKey("wheel_no_repeats")
         val wheelSpinDurationMs: Preferences.Key<Int> = intPreferencesKey("wheel_spin_duration_ms")
         val wheelUsedSectorStyle: Preferences.Key<Int> = intPreferencesKey("wheel_used_sector_style")
+        val fingerWinnerCount: Preferences.Key<Int> = intPreferencesKey("finger_winner_count")
+        val fingerTeamCount: Preferences.Key<Int> = intPreferencesKey("finger_team_count")
+        val fingerHoldDurationMs: Preferences.Key<Long> = longPreferencesKey("finger_hold_duration_ms")
+        val fingerHoldResultEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("finger_hold_result_enabled")
+        val fingerResultHoldDurationSeconds: Preferences.Key<Int> = intPreferencesKey("finger_result_hold_duration_seconds")
         val reviewFirstSeenAtMs: Preferences.Key<Long> = longPreferencesKey("review_first_seen_at_ms")
         val reviewSessionCount: Preferences.Key<Int> = intPreferencesKey("review_session_count")
         val reviewSuccessfulActionCount: Preferences.Key<Int> = intPreferencesKey("review_successful_action_count")
@@ -171,7 +197,16 @@ class SettingsRepository @Inject constructor(
             wheelNoRepeats = prefs[Keys.wheelNoRepeats] ?: false,
             wheelSpinDurationMs = (prefs[Keys.wheelSpinDurationMs] ?: WHEEL_SPIN_DURATION_DEFAULT_MS)
                 .coerceIn(WHEEL_SPIN_DURATION_MIN_MS, WHEEL_SPIN_DURATION_MAX_MS),
-            wheelUsedSectorStyle = WheelUsedSectorStyle.fromValue(prefs[Keys.wheelUsedSectorStyle])
+            wheelUsedSectorStyle = WheelUsedSectorStyle.fromValue(prefs[Keys.wheelUsedSectorStyle]),
+            fingerWinnerCount = (prefs[Keys.fingerWinnerCount] ?: FINGER_WINNER_COUNT_DEFAULT)
+                .coerceIn(FINGER_WINNER_COUNT_MIN, FINGER_WINNER_COUNT_MAX),
+            fingerTeamCount = (prefs[Keys.fingerTeamCount] ?: FINGER_TEAM_COUNT_DEFAULT)
+                .coerceIn(FINGER_TEAM_COUNT_MIN, FINGER_TEAM_COUNT_MAX),
+            fingerHoldDurationMs = (prefs[Keys.fingerHoldDurationMs] ?: FINGER_HOLD_DURATION_DEFAULT_MS)
+                .coerceIn(FINGER_HOLD_DURATION_MIN_MS, FINGER_HOLD_DURATION_MAX_MS),
+            fingerHoldResultEnabled = prefs[Keys.fingerHoldResultEnabled] ?: true,
+            fingerResultHoldDurationSeconds = (prefs[Keys.fingerResultHoldDurationSeconds] ?: FINGER_RESULT_HOLD_SECONDS_DEFAULT)
+                .coerceIn(FINGER_RESULT_HOLD_SECONDS_MIN, FINGER_RESULT_HOLD_SECONDS_MAX)
         )
     }
 
@@ -239,6 +274,36 @@ class SettingsRepository @Inject constructor(
         appContext.dataStore.edit { prefs ->
             prefs[Keys.wheelSpinDurationMs] =
                 durationMs.coerceIn(WHEEL_SPIN_DURATION_MIN_MS, WHEEL_SPIN_DURATION_MAX_MS)
+        }
+    }
+
+    suspend fun setFingerWinnerCount(count: Int) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.fingerWinnerCount] = count.coerceIn(FINGER_WINNER_COUNT_MIN, FINGER_WINNER_COUNT_MAX)
+        }
+    }
+
+    suspend fun setFingerTeamCount(count: Int) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.fingerTeamCount] = count.coerceIn(FINGER_TEAM_COUNT_MIN, FINGER_TEAM_COUNT_MAX)
+        }
+    }
+
+    suspend fun setFingerHoldDurationMs(durationMs: Long) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.fingerHoldDurationMs] = durationMs.coerceIn(FINGER_HOLD_DURATION_MIN_MS, FINGER_HOLD_DURATION_MAX_MS)
+        }
+    }
+
+    suspend fun setFingerHoldResultEnabled(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.fingerHoldResultEnabled] = enabled
+        }
+    }
+
+    suspend fun setFingerResultHoldDurationSeconds(seconds: Int) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.fingerResultHoldDurationSeconds] = seconds.coerceIn(FINGER_RESULT_HOLD_SECONDS_MIN, FINGER_RESULT_HOLD_SECONDS_MAX)
         }
     }
 

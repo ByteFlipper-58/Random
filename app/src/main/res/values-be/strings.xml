@@ -310,4 +310,25 @@
     <string name="wheel_used_sector_dim">Пакідаць сярымі</string>
     <string name="wheel_used_sector_remove">Прыбіраць з кола</string>
     <string name="people_source_all">Усе людзі</string>
+
+    <!-- Finger Chooser -->
+    <string name="finger">Выбар пальцам</string>
+    <string name="finger_touch_hint">Дакраніцеся пальцамі да экрана</string>
+    <string name="finger_min_required">Прыкладзіце як мінімум 2 пальцы</string>
+    <string name="finger_mode_winner">Пераможца</string>
+    <string name="finger_mode_teams">Каманды</string>
+    <string name="finger_mode_order">Чарга</string>
+    <string name="finger_settings">Налады выбару пальцам</string>
+    <string name="finger_winner_count">Колькасць пераможцаў</string>
+    <string name="finger_team_count">Колькасць каманд</string>
+    <string name="finger_hold_duration">Час утрымання</string>
+    <string name="finger_hold_result">Утрымліваць вынік</string>
+    <string name="finger_hold_result_desc">Не скідаць экран адразу пасля выбару</string>
+    <string name="finger_result_duration">Час паказу выніку</string>
+    <string name="finger_result_banner_winner">Пераможца абраны! ★</string>
+    <string name="finger_result_banner_teams">Каманды сфарміраваны! 👥</string>
+    <string name="finger_result_banner_order">Чарга вызначана! 🔢</string>
+    <string name="finger_result_showing">Паказ выніку: %1$d сек</string>
+    <string name="finger_team_label">Каманда %1$d</string>
+    <string name="finger_order_label">#%1$d</string>
 </resources>
