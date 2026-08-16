@@ -522,4 +522,61 @@
     <string name="finger_result_showing">Result lock: %1$d sec</string>
     <string name="finger_team_label">Team %1$d</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">Ball of Fate</string>
+    <string name="ball_hint">Ask a question, then shake or tap the ball</string>
+    <string name="ball_thinking">The ball is thinking…</string>
+    <string name="ball_answers">Answers</string>
+    <string name="ball_answers_editor">Ball answers</string>
+    <string name="ball_answers_source">Answer set</string>
+    <string name="ball_answers_source_classic">Classic 20 answers</string>
+    <string name="ball_answers_source_custom">My answers</string>
+    <string name="ball_answers_count">Answers: %1$d</string>
+    <string name="ball_answers_new">Add answer</string>
+    <string name="ball_answers_min">At least %1$d answers needed</string>
+    <string name="ball_answers_count_of">Answers: %1$d of %2$d</string>
+    <string name="ball_answers_limit">The die has %1$d faces, so that is every answer the ball can carry</string>
+    <string name="ball_answers_trimmed">Only the first %1$d answers were kept</string>
+    <string name="ball_answers_face">Face %1$d</string>
+    <string name="ball_no_repeats">No answer twice in a row</string>
+    <string name="ball_no_repeats_desc">The next answer always differs from the previous one</string>
+    <string name="ball_tilt">Tilt control</string>
+    <string name="ball_tilt_desc">The liquid follows how you hold the device</string>
+    <string name="ball_quality">Graphics quality</string>
+    <string name="ball_quality_desc">Lower quality means smoother motion and less battery use</string>
+    <string name="ball_quality_auto">Automatic</string>
+    <string name="ball_quality_high">High</string>
+    <string name="ball_quality_balanced">Balanced</string>
+    <string name="ball_quality_battery">Battery saving</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">Ball of Fate. Shake the device or swipe to spin it.</string>
+    <string name="ball_a11y_ask">ask the ball</string>
+    <string name="ball_a11y_answer">The ball answers: %1$s</string>
+    <!--
+      The canonical Magic 8-Ball die: 10 affirmative answers, then 5 non-committal, then 5 negative.
+      The order matters, the tone of an answer is derived from its index.
+    -->
+    <string-array name="ball_classic_answers">
+        <item>It is certain</item>
+        <item>It is decidedly so</item>
+        <item>Without a doubt</item>
+        <item>Yes, definitely</item>
+        <item>You may rely on it</item>
+        <item>As I see it, yes</item>
+        <item>Most likely</item>
+        <item>Outlook good</item>
+        <item>Yes</item>
+        <item>Signs point to yes</item>
+        <item>Reply hazy, try again</item>
+        <item>Ask again later</item>
+        <item>Better not tell you now</item>
+        <item>Cannot predict now</item>
+        <item>Concentrate and ask again</item>
+        <item>Don\'t count on it</item>
+        <item>My reply is no</item>
+        <item>My sources say no</item>
+        <item>Outlook not so good</item>
+        <item>Very doubtful</item>
+    </string-array>
 </resources>

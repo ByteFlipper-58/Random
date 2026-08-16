@@ -331,4 +331,61 @@
     <string name="finger_result_showing">Wyświetlanie wyniku: %1$d sek</string>
     <string name="finger_team_label">Drużyna %1$d</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">Kula Losu</string>
+    <string name="ball_hint">Zadaj pytanie, a potem potrząśnij kulą lub jej dotknij</string>
+    <string name="ball_thinking">Kula myśli…</string>
+    <string name="ball_answers">Odpowiedzi</string>
+    <string name="ball_answers_editor">Odpowiedzi kuli</string>
+    <string name="ball_answers_source">Zestaw odpowiedzi</string>
+    <string name="ball_answers_source_classic">Klasyczne 20 odpowiedzi</string>
+    <string name="ball_answers_source_custom">Moje odpowiedzi</string>
+    <string name="ball_answers_count">Odpowiedzi: %1$d</string>
+    <string name="ball_answers_new">Dodaj odpowiedź</string>
+    <string name="ball_answers_min">Potrzebne są co najmniej %1$d odpowiedzi</string>
+    <string name="ball_answers_count_of">Odpowiedzi: %1$d z %2$d</string>
+    <string name="ball_answers_limit">Kostka ma %1$d ścianek, więc więcej odpowiedzi się nie zmieści</string>
+    <string name="ball_answers_trimmed">Zachowano tylko pierwsze %1$d odpowiedzi</string>
+    <string name="ball_answers_face">Ścianka %1$d</string>
+    <string name="ball_no_repeats">Bez powtórzeń pod rząd</string>
+    <string name="ball_no_repeats_desc">Następna odpowiedź zawsze różni się od poprzedniej</string>
+    <string name="ball_tilt">Sterowanie pochyleniem</string>
+    <string name="ball_tilt_desc">Ciecz podąża za pochyleniem urządzenia</string>
+    <string name="ball_quality">Jakość grafiki</string>
+    <string name="ball_quality_desc">Niższa jakość to płynniejszy obraz i mniejsze zużycie baterii</string>
+    <string name="ball_quality_auto">Automatycznie</string>
+    <string name="ball_quality_high">Wysoka</string>
+    <string name="ball_quality_balanced">Zbalansowana</string>
+    <string name="ball_quality_battery">Oszczędzanie baterii</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">Kula Losu. Potrząśnij urządzeniem lub przesuń palcem, aby ją zakręcić.</string>
+    <string name="ball_a11y_ask">zapytaj kulę</string>
+    <string name="ball_a11y_answer">Kula odpowiada: %1$s</string>
+    <!--
+      Kanoniczny zestaw Magic 8-Ball: 10 odpowiedzi twierdzących, potem 5 niezobowiązujących i 5
+      przeczących. Kolejność ma znaczenie — ton odpowiedzi wynika z jej indeksu.
+    -->
+    <string-array name="ball_classic_answers">
+        <item>To pewne</item>
+        <item>Zdecydowanie tak</item>
+        <item>Bez wątpienia</item>
+        <item>Tak, na pewno</item>
+        <item>Możesz na to liczyć</item>
+        <item>Moim zdaniem tak</item>
+        <item>Najprawdopodobniej</item>
+        <item>Widoki są dobre</item>
+        <item>Tak</item>
+        <item>Znaki wskazują na tak</item>
+        <item>Odpowiedź niejasna, spróbuj ponownie</item>
+        <item>Zapytaj później</item>
+        <item>Lepiej ci teraz nie mówić</item>
+        <item>Nie mogę teraz przewidzieć</item>
+        <item>Skup się i zapytaj ponownie</item>
+        <item>Nie licz na to</item>
+        <item>Moja odpowiedź to nie</item>
+        <item>Moje źródła mówią nie</item>
+        <item>Widoki nie są najlepsze</item>
+        <item>Bardzo wątpliwe</item>
+    </string-array>
 </resources>

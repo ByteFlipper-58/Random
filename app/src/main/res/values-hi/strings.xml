@@ -331,4 +331,61 @@
     <string name="finger_result_showing">परिणाम प्रदर्शन: %1$d सेकंड</string>
     <string name="finger_team_label">टीम %1$d</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">भाग्य का गोला</string>
+    <string name="ball_hint">सवाल पूछें, फिर गोले को हिलाएँ या उस पर टैप करें</string>
+    <string name="ball_thinking">गोला सोच रहा है…</string>
+    <string name="ball_answers">उत्तर</string>
+    <string name="ball_answers_editor">गोले के उत्तर</string>
+    <string name="ball_answers_source">उत्तरों का सेट</string>
+    <string name="ball_answers_source_classic">क्लासिक 20 उत्तर</string>
+    <string name="ball_answers_source_custom">मेरे उत्तर</string>
+    <string name="ball_answers_count">उत्तर: %1$d</string>
+    <string name="ball_answers_new">उत्तर जोड़ें</string>
+    <string name="ball_answers_min">कम से कम %1$d उत्तर चाहिए</string>
+    <string name="ball_answers_count_of">उत्तर: %1$d / %2$d</string>
+    <string name="ball_answers_limit">पासे में %1$d फलक हैं, इससे ज़्यादा उत्तर गेंद में नहीं आएंगे</string>
+    <string name="ball_answers_trimmed">केवल पहले %1$d उत्तर रखे गए</string>
+    <string name="ball_answers_face">फलक %1$d</string>
+    <string name="ball_no_repeats">लगातार दोहराव नहीं</string>
+    <string name="ball_no_repeats_desc">अगला उत्तर हमेशा पिछले उत्तर से अलग होगा</string>
+    <string name="ball_tilt">झुकाव से नियंत्रण</string>
+    <string name="ball_tilt_desc">तरल डिवाइस के झुकाव के साथ बहता है</string>
+    <string name="ball_quality">ग्राफ़िक्स गुणवत्ता</string>
+    <string name="ball_quality_desc">कम गुणवत्ता से चलन ज़्यादा स्मूद और बैटरी की खपत कम</string>
+    <string name="ball_quality_auto">स्वचालित</string>
+    <string name="ball_quality_high">उच्च</string>
+    <string name="ball_quality_balanced">संतुलित</string>
+    <string name="ball_quality_battery">बैटरी बचत</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">भाग्य का गोला। घुमाने के लिए डिवाइस हिलाएँ या स्क्रीन पर स्वाइप करें।</string>
+    <string name="ball_a11y_ask">गोले से पूछें</string>
+    <string name="ball_a11y_answer">गोला कहता है: %1$s</string>
+    <!--
+      Magic 8-Ball का मानक सेट: 10 सकारात्मक उत्तर, फिर 5 तटस्थ और 5 नकारात्मक। क्रम मायने रखता
+      है — उत्तर का भाव उसके इंडेक्स से तय होता है।
+    -->
+    <string-array name="ball_classic_answers">
+        <item>यह निश्चित है</item>
+        <item>निस्संदेह ऐसा ही है</item>
+        <item>बिना किसी संदेह</item>
+        <item>हाँ, ज़रूर</item>
+        <item>आप इस पर भरोसा कर सकते हैं</item>
+        <item>जैसा मैं देखता हूँ, हाँ</item>
+        <item>अत्यधिक संभावना है</item>
+        <item>संभावनाएँ अच्छी हैं</item>
+        <item>हाँ</item>
+        <item>संकेत हाँ की ओर हैं</item>
+        <item>उत्तर धुँधला है, फिर कोशिश करें</item>
+        <item>बाद में फिर पूछें</item>
+        <item>अभी बताना ठीक नहीं</item>
+        <item>अभी भविष्यवाणी नहीं कर सकता</item>
+        <item>ध्यान लगाकर फिर पूछें</item>
+        <item>इस पर भरोसा न करें</item>
+        <item>मेरा उत्तर है नहीं</item>
+        <item>मेरे स्रोत कहते हैं नहीं</item>
+        <item>संभावनाएँ अच्छी नहीं हैं</item>
+        <item>बहुत संदिग्ध</item>
+    </string-array>
 </resources>

@@ -331,4 +331,61 @@
     <string name="finger_result_showing">Mostrando resultado: %1$d seg</string>
     <string name="finger_team_label">Equipo %1$d</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">Bola del Destino</string>
+    <string name="ball_hint">Haz una pregunta y luego agita la bola o tócala</string>
+    <string name="ball_thinking">La bola está pensando…</string>
+    <string name="ball_answers">Respuestas</string>
+    <string name="ball_answers_editor">Respuestas de la bola</string>
+    <string name="ball_answers_source">Conjunto de respuestas</string>
+    <string name="ball_answers_source_classic">Las 20 respuestas clásicas</string>
+    <string name="ball_answers_source_custom">Mis respuestas</string>
+    <string name="ball_answers_count">Respuestas: %1$d</string>
+    <string name="ball_answers_new">Añadir respuesta</string>
+    <string name="ball_answers_min">Se necesitan al menos %1$d respuestas</string>
+    <string name="ball_answers_count_of">Respuestas: %1$d de %2$d</string>
+    <string name="ball_answers_limit">El dado tiene %1$d caras, así que no caben más respuestas</string>
+    <string name="ball_answers_trimmed">Solo se conservaron las primeras %1$d respuestas</string>
+    <string name="ball_answers_face">Cara %1$d</string>
+    <string name="ball_no_repeats">Sin repetir dos veces seguidas</string>
+    <string name="ball_no_repeats_desc">La siguiente respuesta siempre será distinta de la anterior</string>
+    <string name="ball_tilt">Control por inclinación</string>
+    <string name="ball_tilt_desc">El líquido sigue la inclinación del dispositivo</string>
+    <string name="ball_quality">Calidad gráfica</string>
+    <string name="ball_quality_desc">Menos calidad significa más fluidez y menos consumo de batería</string>
+    <string name="ball_quality_auto">Automática</string>
+    <string name="ball_quality_high">Alta</string>
+    <string name="ball_quality_balanced">Equilibrada</string>
+    <string name="ball_quality_battery">Ahorro de batería</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">Bola del Destino. Agita el dispositivo o desliza el dedo para girarla.</string>
+    <string name="ball_a11y_ask">preguntar a la bola</string>
+    <string name="ball_a11y_answer">La bola responde: %1$s</string>
+    <!--
+      El juego canónico de la Magic 8-Ball: 10 respuestas afirmativas, luego 5 neutrales y 5
+      negativas. El orden importa: el tono de una respuesta se deduce de su índice.
+    -->
+    <string-array name="ball_classic_answers">
+        <item>Es cierto</item>
+        <item>Definitivamente sí</item>
+        <item>Sin duda alguna</item>
+        <item>Sí, por supuesto</item>
+        <item>Puedes confiar en ello</item>
+        <item>Según lo veo, sí</item>
+        <item>Lo más probable</item>
+        <item>Buenas perspectivas</item>
+        <item>Sí</item>
+        <item>Las señales apuntan a que sí</item>
+        <item>Respuesta confusa, prueba otra vez</item>
+        <item>Pregunta más tarde</item>
+        <item>Mejor no decírtelo ahora</item>
+        <item>No puedo predecirlo ahora</item>
+        <item>Concéntrate y vuelve a preguntar</item>
+        <item>No cuentes con ello</item>
+        <item>Mi respuesta es no</item>
+        <item>Mis fuentes dicen que no</item>
+        <item>Las perspectivas no son buenas</item>
+        <item>Muy dudoso</item>
+    </string-array>
 </resources>

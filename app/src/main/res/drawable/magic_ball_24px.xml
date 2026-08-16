@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+    android:tint="?attr/colorControlNormal">
+  <!-- Ball outline plus the triangular answer window; even-odd keeps the ring hollow. -->
+  <path
+      android:fillColor="@android:color/white"
+      android:fillType="evenOdd"
+      android:pathData="M80,480A400,400 0 1,1 880,480A400,400 0 1,1 80,480ZM160,480A320,320 0 1,0 800,480A320,320 0 1,0 160,480ZM480,280L650,570L310,570L480,280Z"/>
+</vector>

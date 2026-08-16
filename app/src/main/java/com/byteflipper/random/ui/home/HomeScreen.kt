@@ -37,7 +37,8 @@ enum class MenuItemType {
     COIN,
     WHEEL,
     TEAMS,
-    FINGER;
+    FINGER,
+    BALL;
 
     val iconRes: Int
         get() = when (this) {
@@ -49,6 +50,7 @@ enum class MenuItemType {
             WHEEL -> R.drawable.casino_24px
             TEAMS -> R.drawable.groups_24px
             FINGER -> R.drawable.touch_app_24px
+            BALL -> R.drawable.magic_ball_24px
         }
 
     val titleRes: Int
@@ -61,6 +63,7 @@ enum class MenuItemType {
             WHEEL -> R.string.wheel
             TEAMS -> R.string.teams
             FINGER -> R.string.finger
+            BALL -> R.string.ball
         }
 
     val supportsQuickAdd: Boolean
@@ -80,6 +83,7 @@ fun HomeScreen(
     onOpenWheel: () -> Unit,
     onOpenTeams: () -> Unit,
     onOpenFinger: () -> Unit,
+    onOpenBall: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
 ) {
@@ -244,6 +248,7 @@ fun HomeScreen(
                 onOpenWheel = onOpenWheel,
                 onOpenTeams = onOpenTeams,
                 onOpenFinger = onOpenFinger,
+                onOpenBall = onOpenBall,
                 onOpenPreset = onOpenListPreset,
                 onOpenTeamPreset = onOpenTeamPreset,
                 onSharedImportConsumed = appViewModel::clearSharedImport,

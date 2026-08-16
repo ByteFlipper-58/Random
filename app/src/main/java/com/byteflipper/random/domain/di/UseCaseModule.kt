@@ -1,5 +1,8 @@
 package com.byteflipper.random.domain.di
 
+import android.content.Context
+import com.byteflipper.random.domain.ball.data.BallAnswerProvider
+import com.byteflipper.random.domain.ball.usecase.AskBallUseCase
 import com.byteflipper.random.domain.numbers.usecase.GenerateNumbersUseCase
 import com.byteflipper.random.domain.numbers.usecase.ValidateNumberInputsUseCase
 import com.byteflipper.random.domain.coin.usecase.TossCoinUseCase
@@ -14,6 +17,7 @@ import com.byteflipper.random.domain.team.usecase.ValidateTeamPresetInputsUseCas
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -64,4 +68,13 @@ object UseCaseModule {
     @Provides
     @Singleton
     fun provideGenerateFingerOutcomeUseCase(): GenerateFingerOutcomeUseCase = GenerateFingerOutcomeUseCase()
+
+    @Provides
+    @Singleton
+    fun provideBallAnswerProvider(@ApplicationContext context: Context): BallAnswerProvider =
+        BallAnswerProvider(context)
+
+    @Provides
+    @Singleton
+    fun provideAskBallUseCase(): AskBallUseCase = AskBallUseCase()
 }

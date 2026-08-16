@@ -331,4 +331,61 @@
     <string name="finger_result_showing">Нәтижені көрсету: %1$d сек</string>
     <string name="finger_team_label">%1$d-команда</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">Тағдыр шары</string>
+    <string name="ball_hint">Сұрақ қойып, шарды шайқаңыз немесе түртіңіз</string>
+    <string name="ball_thinking">Шар ойлануда…</string>
+    <string name="ball_answers">Жауаптар</string>
+    <string name="ball_answers_editor">Шар жауаптары</string>
+    <string name="ball_answers_source">Жауаптар жиынтығы</string>
+    <string name="ball_answers_source_classic">Классикалық 20 жауап</string>
+    <string name="ball_answers_source_custom">Менің жауаптарым</string>
+    <string name="ball_answers_count">Жауаптар: %1$d</string>
+    <string name="ball_answers_new">Жауап қосу</string>
+    <string name="ball_answers_min">Кемінде %1$d жауап қажет</string>
+    <string name="ball_answers_count_of">Жауаптар: %1$d / %2$d</string>
+    <string name="ball_answers_limit">Сүйектің %1$d қыры бар — шар одан көп жауап сыйдырмайды</string>
+    <string name="ball_answers_trimmed">Тек алғашқы %1$d жауап қалдырылды</string>
+    <string name="ball_answers_face">%1$d-қыр</string>
+    <string name="ball_no_repeats">Қатарынан қайталанбау</string>
+    <string name="ball_no_repeats_desc">Келесі жауап әрқашан алдыңғысынан өзгеше болады</string>
+    <string name="ball_tilt">Еңкейтумен басқару</string>
+    <string name="ball_tilt_desc">Сұйықтық құрылғының еңкеюіне ілеседі</string>
+    <string name="ball_quality">Графика сапасы</string>
+    <string name="ball_quality_desc">Сапа төмен болса, қимыл тегіс және батарея аз жұмсалады</string>
+    <string name="ball_quality_auto">Автоматты</string>
+    <string name="ball_quality_high">Жоғары</string>
+    <string name="ball_quality_balanced">Теңдестірілген</string>
+    <string name="ball_quality_battery">Батареяны сақтау</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">Тағдыр шары. Айналдыру үшін құрылғыны шайқаңыз немесе экранды сипаңыз.</string>
+    <string name="ball_a11y_ask">шардан сұрау</string>
+    <string name="ball_a11y_answer">Шар жауабы: %1$s</string>
+    <!--
+      Magic 8-Ball канондық жиыны: 10 оң жауап, содан кейін 5 бейтарап және 5 теріс жауап.
+      Тәртіп маңызды: жауаптың реңкі оның индексінен шығады.
+    -->
+    <string-array name="ball_classic_answers">
+        <item>Күмән жоқ</item>
+        <item>Алдын ала белгіленген</item>
+        <item>Еш күмәнсіз</item>
+        <item>Әрине, иә</item>
+        <item>Сенуге болады</item>
+        <item>Менің көзқарасымша, иә</item>
+        <item>Ықтималдығы жоғары</item>
+        <item>Болашағы жақсы</item>
+        <item>Иә</item>
+        <item>Белгілер иә дейді</item>
+        <item>Әзірге түсініксіз, қайта көріңіз</item>
+        <item>Кейінірек сұраңыз</item>
+        <item>Қазір айтпай-ақ қоямын</item>
+        <item>Қазір болжау мүмкін емес</item>
+        <item>Ойланып, қайта сұраңыз</item>
+        <item>Оған сенбеңіз</item>
+        <item>Менің жауабым — жоқ</item>
+        <item>Дереккөздерім жоқ дейді</item>
+        <item>Болашағы аса жақсы емес</item>
+        <item>Өте күмәнді</item>
+    </string-array>
 </resources>

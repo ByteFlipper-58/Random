@@ -511,4 +511,61 @@
     <string name="finger_result_showing">Показ результата: %1$d сек</string>
     <string name="finger_team_label">Команда %1$d</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">Шар Судьбы</string>
+    <string name="ball_hint">Задайте вопрос и встряхните шар или коснитесь его</string>
+    <string name="ball_thinking">Шар думает…</string>
+    <string name="ball_answers">Ответы</string>
+    <string name="ball_answers_editor">Ответы шара</string>
+    <string name="ball_answers_source">Набор ответов</string>
+    <string name="ball_answers_source_classic">Классические 20 ответов</string>
+    <string name="ball_answers_source_custom">Мои ответы</string>
+    <string name="ball_answers_count">Ответов: %1$d</string>
+    <string name="ball_answers_new">Добавить ответ</string>
+    <string name="ball_answers_min">Нужно минимум %1$d ответа</string>
+    <string name="ball_answers_count_of">Ответов: %1$d из %2$d</string>
+    <string name="ball_answers_limit">У кубика %1$d граней — больше ответов шар не вместит</string>
+    <string name="ball_answers_trimmed">Оставлены только первые %1$d ответов</string>
+    <string name="ball_answers_face">Грань %1$d</string>
+    <string name="ball_no_repeats">Без повторов подряд</string>
+    <string name="ball_no_repeats_desc">Следующий ответ всегда отличается от предыдущего</string>
+    <string name="ball_tilt">Управление наклоном</string>
+    <string name="ball_tilt_desc">Жидкость следует за наклоном устройства</string>
+    <string name="ball_quality">Качество графики</string>
+    <string name="ball_quality_desc">Чем ниже качество, тем плавнее картинка и меньше расход батареи</string>
+    <string name="ball_quality_auto">Автоматически</string>
+    <string name="ball_quality_high">Высокое</string>
+    <string name="ball_quality_balanced">Сбалансированное</string>
+    <string name="ball_quality_battery">Экономия батареи</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">Шар Судьбы. Встряхните устройство или проведите по экрану, чтобы раскрутить его.</string>
+    <string name="ball_a11y_ask">спросить шар</string>
+    <string name="ball_a11y_answer">Шар отвечает: %1$s</string>
+    <!--
+      Канонический набор Magic 8-Ball: 10 положительных ответов, затем 5 нейтральных и 5
+      отрицательных. Порядок важен: тон ответа выводится из его индекса.
+    -->
+    <string-array name="ball_classic_answers">
+        <item>Бесспорно</item>
+        <item>Предрешено</item>
+        <item>Никаких сомнений</item>
+        <item>Определённо да</item>
+        <item>Можете быть уверены в этом</item>
+        <item>Мне кажется — да</item>
+        <item>Вероятнее всего</item>
+        <item>Хорошие перспективы</item>
+        <item>Да</item>
+        <item>Знаки говорят — да</item>
+        <item>Пока неясно, попробуйте снова</item>
+        <item>Спросите позже</item>
+        <item>Лучше не рассказывать</item>
+        <item>Сейчас нельзя предсказать</item>
+        <item>Сосредоточьтесь и спросите опять</item>
+        <item>Даже не думайте</item>
+        <item>Мой ответ — нет</item>
+        <item>По моим данным — нет</item>
+        <item>Перспективы не очень хорошие</item>
+        <item>Весьма сомнительно</item>
+    </string-array>
 </resources>

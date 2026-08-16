@@ -103,6 +103,21 @@ enum class WheelUsedSectorStyle(val value: Int) {
     }
 }
 
+/**
+ * How much the ball of fate is allowed to spend on a frame. [Auto] measures the first seconds and
+ * settles on a tier by itself; the rest pin it.
+ */
+enum class BallQuality(val value: Int) {
+    Auto(0),
+    High(1),
+    Balanced(2),
+    Battery(3);
+
+    companion object {
+        fun fromValue(value: Int?): BallQuality = entries.firstOrNull { it.value == value } ?: Auto
+    }
+}
+
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.System,
     val dynamicColors: Boolean = true,
@@ -119,8 +134,20 @@ data class Settings(
     val fingerTeamCount: Int = FINGER_TEAM_COUNT_DEFAULT,
     val fingerHoldDurationMs: Long = FINGER_HOLD_DURATION_DEFAULT_MS,
     val fingerHoldResultEnabled: Boolean = true,
-    val fingerResultHoldDurationSeconds: Int = FINGER_RESULT_HOLD_SECONDS_DEFAULT
+    val fingerResultHoldDurationSeconds: Int = FINGER_RESULT_HOLD_SECONDS_DEFAULT,
+    /** Preset row id, or [BALL_SOURCE_CLASSIC_ID] / [BALL_SOURCE_CUSTOM_ID]. */
+    val ballAnswerSourceId: Long = BALL_SOURCE_CLASSIC_ID,
+    val ballCustomAnswers: List<String> = emptyList(),
+    val ballNoRepeats: Boolean = true,
+    val ballTiltEnabled: Boolean = true,
+    val ballQuality: BallQuality = BallQuality.Auto
 )
+
+/** The bundled localised set of 20 answers. */
+const val BALL_SOURCE_CLASSIC_ID = 0L
+
+/** Answers typed into the ball's own editor, stored in [Settings.ballCustomAnswers]. */
+const val BALL_SOURCE_CUSTOM_ID = -1L
 
 const val WHEEL_SPIN_DURATION_MIN_MS = 3000
 const val WHEEL_SPIN_DURATION_MAX_MS = 16000
@@ -172,6 +199,11 @@ class SettingsRepository @Inject constructor(
         val fingerHoldDurationMs: Preferences.Key<Long> = longPreferencesKey("finger_hold_duration_ms")
         val fingerHoldResultEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("finger_hold_result_enabled")
         val fingerResultHoldDurationSeconds: Preferences.Key<Int> = intPreferencesKey("finger_result_hold_duration_seconds")
+        val ballAnswerSourceId: Preferences.Key<Long> = longPreferencesKey("ball_answer_source_id")
+        val ballCustomAnswers: Preferences.Key<String> = stringPreferencesKey("ball_custom_answers")
+        val ballNoRepeats: Preferences.Key<Boolean> = booleanPreferencesKey("ball_no_repeats")
+        val ballTiltEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("ball_tilt_enabled")
+        val ballQuality: Preferences.Key<Int> = intPreferencesKey("ball_quality")
         val reviewFirstSeenAtMs: Preferences.Key<Long> = longPreferencesKey("review_first_seen_at_ms")
         val reviewSessionCount: Preferences.Key<Int> = intPreferencesKey("review_session_count")
         val reviewSuccessfulActionCount: Preferences.Key<Int> = intPreferencesKey("review_successful_action_count")
@@ -206,7 +238,15 @@ class SettingsRepository @Inject constructor(
                 .coerceIn(FINGER_HOLD_DURATION_MIN_MS, FINGER_HOLD_DURATION_MAX_MS),
             fingerHoldResultEnabled = prefs[Keys.fingerHoldResultEnabled] ?: true,
             fingerResultHoldDurationSeconds = (prefs[Keys.fingerResultHoldDurationSeconds] ?: FINGER_RESULT_HOLD_SECONDS_DEFAULT)
-                .coerceIn(FINGER_RESULT_HOLD_SECONDS_MIN, FINGER_RESULT_HOLD_SECONDS_MAX)
+                .coerceIn(FINGER_RESULT_HOLD_SECONDS_MIN, FINGER_RESULT_HOLD_SECONDS_MAX),
+            ballAnswerSourceId = prefs[Keys.ballAnswerSourceId] ?: BALL_SOURCE_CLASSIC_ID,
+            ballCustomAnswers = prefs[Keys.ballCustomAnswers]
+                ?.split(Constants.ITEMS_SEPARATOR)
+                ?.filter { it.isNotBlank() }
+                ?: emptyList(),
+            ballNoRepeats = prefs[Keys.ballNoRepeats] ?: true,
+            ballTiltEnabled = prefs[Keys.ballTiltEnabled] ?: true,
+            ballQuality = BallQuality.fromValue(prefs[Keys.ballQuality])
         )
     }
 
@@ -304,6 +344,37 @@ class SettingsRepository @Inject constructor(
     suspend fun setFingerResultHoldDurationSeconds(seconds: Int) {
         appContext.dataStore.edit { prefs ->
             prefs[Keys.fingerResultHoldDurationSeconds] = seconds.coerceIn(FINGER_RESULT_HOLD_SECONDS_MIN, FINGER_RESULT_HOLD_SECONDS_MAX)
+        }
+    }
+
+    suspend fun setBallAnswerSourceId(sourceId: Long) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.ballAnswerSourceId] = sourceId
+        }
+    }
+
+    suspend fun setBallCustomAnswers(answers: List<String>) {
+        val joined = answers.filter { it.isNotBlank() }.joinToString(Constants.ITEMS_SEPARATOR)
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.ballCustomAnswers] = joined
+        }
+    }
+
+    suspend fun setBallNoRepeats(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.ballNoRepeats] = enabled
+        }
+    }
+
+    suspend fun setBallTiltEnabled(enabled: Boolean) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.ballTiltEnabled] = enabled
+        }
+    }
+
+    suspend fun setBallQuality(quality: BallQuality) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.ballQuality] = quality.value
         }
     }
 

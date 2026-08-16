@@ -19,6 +19,8 @@ import androidx.navigation3.ui.NavDisplay
 import com.byteflipper.random.data.settings.Settings as AppSettings
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.navigation.About
+import com.byteflipper.random.navigation.Ball
+import com.byteflipper.random.navigation.BallAnswers
 import com.byteflipper.random.navigation.Coin
 import com.byteflipper.random.navigation.Dice
 import com.byteflipper.random.navigation.Finger
@@ -38,6 +40,8 @@ import com.byteflipper.random.navigation.Wheel
 import com.byteflipper.random.navigation.rememberNavigationState
 import com.byteflipper.random.navigation.rememberNavigator
 import com.byteflipper.random.ui.about.AboutScreen
+import com.byteflipper.random.ui.ball.BallAnswersScreen
+import com.byteflipper.random.ui.ball.BallScreen
 import com.byteflipper.random.ui.coin.CoinScreen
 import com.byteflipper.random.ui.components.LocalHapticsManager
 import com.byteflipper.random.ui.components.SystemHapticsManager
@@ -118,6 +122,7 @@ fun AppRoot() {
                                 onOpenWheel = { navigator.navigate(Wheel) },
                                 onOpenTeams = { navigator.navigate(Teams()) },
                                 onOpenFinger = { navigator.navigate(Finger) },
+                                onOpenBall = { navigator.navigate(Ball) },
                                 onOpenSettings = { navigator.navigate(Settings) },
                                 onOpenAbout = { navigator.navigate(About) }
                             )
@@ -128,6 +133,15 @@ fun AppRoot() {
                         entry<Coin> { CoinScreen(onBack = { navigator.goBack() }) }
                         entry<Wheel> { WheelScreen(onBack = { navigator.goBack() }) }
                         entry<Finger> { FingerScreen(onBack = { navigator.goBack() }) }
+                        entry<Ball> {
+                            BallScreen(
+                                onBack = { navigator.goBack() },
+                                onOpenAnswers = { navigator.navigate(BallAnswers) }
+                            )
+                        }
+                        entry<BallAnswers> {
+                            BallAnswersScreen(onBack = { navigator.goBack() })
+                        }
                         entry<Teams> { key ->
                             val teamsViewModel = hiltViewModel<TeamsViewModel, TeamsViewModel.Factory>(
                                 creationCallback = { factory -> factory.create(key.id) }

@@ -38,6 +38,7 @@ internal fun HomePagerContent(
     onOpenWheel: () -> Unit,
     onOpenTeams: () -> Unit,
     onOpenFinger: () -> Unit,
+    onOpenBall: () -> Unit,
     onOpenPreset: (ListPreset) -> Unit,
     onOpenTeamPreset: (Long) -> Unit,
     onSharedImportConsumed: (Long) -> Unit,
@@ -80,7 +81,8 @@ internal fun HomePagerContent(
                 onOpenCoin = onOpenCoin,
                 onOpenWheel = onOpenWheel,
                 onOpenTeams = onOpenTeams,
-                onOpenFinger = onOpenFinger
+                onOpenFinger = onOpenFinger,
+                onOpenBall = onOpenBall
             )
 
             HomeTab.Presets -> PresetsContent(

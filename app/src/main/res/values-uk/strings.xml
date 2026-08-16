@@ -331,4 +331,61 @@
     <string name="finger_result_showing">Показ результату: %1$d сек</string>
     <string name="finger_team_label">Команда %1$d</string>
     <string name="finger_order_label">#%1$d</string>
+    <!-- Ball of Fate -->
+    <string name="ball">Куля Долі</string>
+    <string name="ball_hint">Поставте питання і струсніть кулю або торкніться її</string>
+    <string name="ball_thinking">Куля думає…</string>
+    <string name="ball_answers">Відповіді</string>
+    <string name="ball_answers_editor">Відповіді кулі</string>
+    <string name="ball_answers_source">Набір відповідей</string>
+    <string name="ball_answers_source_classic">Класичні 20 відповідей</string>
+    <string name="ball_answers_source_custom">Мої відповіді</string>
+    <string name="ball_answers_count">Відповідей: %1$d</string>
+    <string name="ball_answers_new">Додати відповідь</string>
+    <string name="ball_answers_min">Потрібно щонайменше %1$d відповіді</string>
+    <string name="ball_answers_count_of">Відповідей: %1$d із %2$d</string>
+    <string name="ball_answers_limit">У кубика %1$d граней — більше відповідей шар не вмістить</string>
+    <string name="ball_answers_trimmed">Залишено лише перші %1$d відповідей</string>
+    <string name="ball_answers_face">Грань %1$d</string>
+    <string name="ball_no_repeats">Без повторів підряд</string>
+    <string name="ball_no_repeats_desc">Наступна відповідь завжди відрізняється від попередньої</string>
+    <string name="ball_tilt">Керування нахилом</string>
+    <string name="ball_tilt_desc">Рідина слідує за нахилом пристрою</string>
+    <string name="ball_quality">Якість графіки</string>
+    <string name="ball_quality_desc">Чим нижча якість, тим плавніша картинка і менші витрати батареї</string>
+    <string name="ball_quality_auto">Автоматично</string>
+    <string name="ball_quality_high">Висока</string>
+    <string name="ball_quality_balanced">Збалансована</string>
+    <string name="ball_quality_battery">Економія батареї</string>
+
+    <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="ball_a11y_ball">Куля Долі. Струсніть пристрій або проведіть по екрану, щоб розкрутити її.</string>
+    <string name="ball_a11y_ask">запитати кулю</string>
+    <string name="ball_a11y_answer">Куля відповідає: %1$s</string>
+    <!--
+      Канонічний набір Magic 8-Ball: 10 позитивних відповідей, потім 5 нейтральних і 5
+      негативних. Порядок важливий: тон відповіді визначається її індексом.
+    -->
+    <string-array name="ball_classic_answers">
+        <item>Безсумнівно</item>
+        <item>Наперед визначено</item>
+        <item>Жодних сумнівів</item>
+        <item>Безумовно так</item>
+        <item>Можете бути впевнені</item>
+        <item>Як я бачу — так</item>
+        <item>Найімовірніше</item>
+        <item>Хороші перспективи</item>
+        <item>Так</item>
+        <item>Знаки вказують — так</item>
+        <item>Поки неясно, спробуйте ще</item>
+        <item>Запитайте пізніше</item>
+        <item>Краще не казати зараз</item>
+        <item>Зараз не можу передбачити</item>
+        <item>Зосередьтеся і запитайте знову</item>
+        <item>Навіть не думайте</item>
+        <item>Моя відповідь — ні</item>
+        <item>За моїми даними — ні</item>
+        <item>Перспективи не дуже</item>
+        <item>Дуже сумнівно</item>
+    </string-array>
 </resources>

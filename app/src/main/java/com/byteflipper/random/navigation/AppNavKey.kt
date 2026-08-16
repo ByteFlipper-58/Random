@@ -33,6 +33,13 @@ data object Wheel : AppNavKey
 data object Finger : AppNavKey
 
 @Serializable
+data object Ball : AppNavKey
+
+/** The ball's answers editor: which set it follows, and what the answers say. */
+@Serializable
+data object BallAnswers : AppNavKey
+
+@Serializable
 data class Teams(val id: Long? = null) : AppNavKey
 
 @Serializable
