@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.ball.gl
+package com.byteflipper.random.ui.gl
 
 import android.content.Context
 import android.opengl.GLES30
@@ -44,7 +44,7 @@ class GlProgram private constructor(private val handle: Int) {
          * Builds a program out of two `res/raw` GLSL files, from a cached binary when there is one.
          *
          * The interior shader takes a driver a second or two to compile the first time, and that wait
-         * was the wait before the ball appeared. A linked binary is the same program without the
+         * can dominate the first frame. A linked binary is the same program without the
          * compile, so every open after the first skips it — and because the key covers both sources
          * *and* the driver's own name and version, an edited shader or an updated driver simply misses
          * and compiles again.

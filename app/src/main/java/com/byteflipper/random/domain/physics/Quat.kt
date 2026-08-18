@@ -1,4 +1,4 @@
-package com.byteflipper.random.domain.ball.physics
+package com.byteflipper.random.domain.physics
 
 import kotlin.math.abs
 import kotlin.math.acos
@@ -7,8 +7,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * Unit quaternion used for every orientation in the ball: the shell, the die, and the reveal
- * controller's target.
+ * Unit quaternion shared by the physical generators for rigid-body orientation.
  *
  * Stored as (w, x, y, z) and kept normalised — [times] and [integrated] renormalise, so drift never
  * accumulates over a long shake.

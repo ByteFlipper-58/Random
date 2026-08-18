@@ -258,6 +258,15 @@
     <string name="tails">Tails</string>
     <string name="distribute">Distribute</string>
 
+    <!-- Dice: the 3D tray -->
+    <string name="dice_3d">3D dice</string>
+    <string name="dice_3d_desc">Real cubes that tumble across the tray and land on a face</string>
+
+    <!-- Dice tray accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="dice_a11y_tray">Dice tray. Shake the device or tap to roll.</string>
+    <string name="dice_a11y_roll">roll the dice</string>
+    <string name="dice_a11y_result">Rolled: %1$s</string>
+
     <!-- Teams / People -->
     <string name="team_preset_section">Preset</string>
     <string name="members_editor_section">Members</string>
@@ -396,6 +405,7 @@
     <string name="fab_size_small">S (Small)</string>
     <string name="fab_size_small_desc">Compact size</string>
     <string name="general">General</string>
+    <string name="graphics">Graphics</string>
     <string name="language">Language</string>
     <string name="language_description">Choose app language</string>
     <string name="language_english">English</string>
@@ -420,6 +430,7 @@
     <string name="light_theme">Light</string>
     <string name="settings_appearance_subtitle">Theme, dynamic colors, FAB size</string>
     <string name="settings_general_subtitle">Language and vibration</string>
+    <string name="settings_graphics_subtitle">Quality of the Ball of Fate and 3D dice</string>
     <string name="system_theme">System</string>
     <string name="theme">Theme</string>
     <string name="theme_description">Choose app theme</string>
@@ -436,6 +447,14 @@
     <string name="shake_to_generate_description">Shake device to generate random values</string>
     <string name="shake_to_generate_description_on">Shake device to generate on Numbers, Dice, and List screens</string>
     <string name="shake_to_generate_description_off">Shake to generate is disabled</string>
+
+    <!-- Settings: graphics. One tier for every 3D scene — the ball of fate and the dice tray. -->
+    <string name="quality">Graphics quality</string>
+    <string name="quality_desc">Lower quality means smoother motion and less battery use</string>
+    <string name="quality_auto">Automatic</string>
+    <string name="quality_high">High</string>
+    <string name="quality_balanced">Balanced</string>
+    <string name="quality_battery">Battery saving</string>
 
     <!-- About screen -->
     <string name="about_app">About App</string>
@@ -542,12 +561,6 @@
     <string name="ball_no_repeats_desc">The next answer always differs from the previous one</string>
     <string name="ball_tilt">Tilt control</string>
     <string name="ball_tilt_desc">The liquid follows how you hold the device</string>
-    <string name="ball_quality">Graphics quality</string>
-    <string name="ball_quality_desc">Lower quality means smoother motion and less battery use</string>
-    <string name="ball_quality_auto">Automatic</string>
-    <string name="ball_quality_high">High</string>
-    <string name="ball_quality_balanced">Balanced</string>
-    <string name="ball_quality_battery">Battery saving</string>
 
     <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
     <string name="ball_a11y_ball">Ball of Fate. Shake the device or swipe to spin it.</string>

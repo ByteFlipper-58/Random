@@ -60,5 +60,9 @@ data object SettingsGeneral : AppNavKey
 @Serializable
 data object SettingsAppearance : AppNavKey
 
+/** How much a frame of any 3D scene in the app may cost. */
+@Serializable
+data object SettingsGraphics : AppNavKey
+
 @Serializable
 data object About : AppNavKey

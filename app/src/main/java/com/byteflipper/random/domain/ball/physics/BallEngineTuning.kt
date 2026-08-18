@@ -1,7 +1,7 @@
 package com.byteflipper.random.domain.ball.physics
 
-/** How much work the simulation and the interior pass are allowed to do. */
-enum class BallQualityTier { HIGH, BALANCED, BATTERY }
+import com.byteflipper.random.domain.physics.SimulationQualityTier
+import com.byteflipper.random.domain.physics.Vec3
 
 /**
  * Every number the ball's simulation leans on, in one place.
@@ -12,7 +12,7 @@ enum class BallQualityTier { HIGH, BALANCED, BATTERY }
  */
 data class BallEngineTuning(
     /** Which tier these numbers came from, so the frame meter knows what it is measuring. */
-    val tier: BallQualityTier,
+    val tier: SimulationQualityTier,
     val particleCount: Int,
     val bubbleCount: Int,
     val maxSubstepsPerFrame: Int,
@@ -324,8 +324,8 @@ data class BallEngineTuning(
          */
         const val WETNESS_DECAY = 1f
 
-        fun forTier(tier: BallQualityTier): BallEngineTuning = when (tier) {
-            BallQualityTier.HIGH -> BallEngineTuning(
+        fun forTier(tier: SimulationQualityTier): BallEngineTuning = when (tier) {
+            SimulationQualityTier.HIGH -> BallEngineTuning(
                 tier = tier,
                 particleCount = 384,
                 bubbleCount = 12,
@@ -333,7 +333,7 @@ data class BallEngineTuning(
                 marchSteps = 64,
                 shadowProbes = 5
             )
-            BallQualityTier.BALANCED -> BallEngineTuning(
+            SimulationQualityTier.BALANCED -> BallEngineTuning(
                 tier = tier,
                 particleCount = 256,
                 bubbleCount = 8,
@@ -341,7 +341,7 @@ data class BallEngineTuning(
                 marchSteps = 44,
                 shadowProbes = 3
             )
-            BallQualityTier.BATTERY -> BallEngineTuning(
+            SimulationQualityTier.BATTERY -> BallEngineTuning(
                 tier = tier,
                 particleCount = 128,
                 bubbleCount = 5,

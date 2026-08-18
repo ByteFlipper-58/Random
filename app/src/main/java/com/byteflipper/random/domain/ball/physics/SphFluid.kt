@@ -1,5 +1,6 @@
 package com.byteflipper.random.domain.ball.physics
 
+import com.byteflipper.random.domain.physics.Vec3
 import java.util.Arrays
 import kotlin.math.PI
 import kotlin.math.ceil

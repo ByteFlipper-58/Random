@@ -104,17 +104,20 @@ enum class WheelUsedSectorStyle(val value: Int) {
 }
 
 /**
- * How much the ball of fate is allowed to spend on a frame. [Auto] measures the first seconds and
- * settles on a tier by itself; the rest pin it.
+ * How much a simulated generator is allowed to spend on a frame. [Auto] measures the first seconds
+ * and settles on a tier by itself; the rest pin it.
+ *
+ * Shared by the ball of fate and the 3D dice tray: both answer the same question about the same
+ * device, and one scale the player already understands beats two that mean the same thing.
  */
-enum class BallQuality(val value: Int) {
+enum class SimulationQuality(val value: Int) {
     Auto(0),
     High(1),
     Balanced(2),
     Battery(3);
 
     companion object {
-        fun fromValue(value: Int?): BallQuality = entries.firstOrNull { it.value == value } ?: Auto
+        fun fromValue(value: Int?): SimulationQuality = entries.firstOrNull { it.value == value } ?: Auto
     }
 }
 
@@ -140,7 +143,10 @@ data class Settings(
     val ballCustomAnswers: List<String> = emptyList(),
     val ballNoRepeats: Boolean = true,
     val ballTiltEnabled: Boolean = true,
-    val ballQuality: BallQuality = BallQuality.Auto
+    /** Off by default: the flat dice are what everyone opening the screen has used until now. */
+    val dice3dEnabled: Boolean = false,
+    /** One tier for every 3D scene in the app — the ball of fate and the dice tray both read it. */
+    val graphicsQuality: SimulationQuality = SimulationQuality.Auto
 )
 
 /** The bundled localised set of 20 answers. */
@@ -203,7 +209,8 @@ class SettingsRepository @Inject constructor(
         val ballCustomAnswers: Preferences.Key<String> = stringPreferencesKey("ball_custom_answers")
         val ballNoRepeats: Preferences.Key<Boolean> = booleanPreferencesKey("ball_no_repeats")
         val ballTiltEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("ball_tilt_enabled")
-        val ballQuality: Preferences.Key<Int> = intPreferencesKey("ball_quality")
+        val dice3dEnabled: Preferences.Key<Boolean> = booleanPreferencesKey("dice_3d_enabled")
+        val graphicsQuality: Preferences.Key<Int> = intPreferencesKey("graphics_quality")
         val reviewFirstSeenAtMs: Preferences.Key<Long> = longPreferencesKey("review_first_seen_at_ms")
         val reviewSessionCount: Preferences.Key<Int> = intPreferencesKey("review_session_count")
         val reviewSuccessfulActionCount: Preferences.Key<Int> = intPreferencesKey("review_successful_action_count")
@@ -246,7 +253,8 @@ class SettingsRepository @Inject constructor(
                 ?: emptyList(),
             ballNoRepeats = prefs[Keys.ballNoRepeats] ?: true,
             ballTiltEnabled = prefs[Keys.ballTiltEnabled] ?: true,
-            ballQuality = BallQuality.fromValue(prefs[Keys.ballQuality])
+            dice3dEnabled = prefs[Keys.dice3dEnabled] ?: false,
+            graphicsQuality = SimulationQuality.fromValue(prefs[Keys.graphicsQuality])
         )
     }
 
@@ -372,9 +380,16 @@ class SettingsRepository @Inject constructor(
         }
     }
 
-    suspend fun setBallQuality(quality: BallQuality) {
+    suspend fun setDice3dEnabled(enabled: Boolean) {
         appContext.dataStore.edit { prefs ->
-            prefs[Keys.ballQuality] = quality.value
+            prefs[Keys.dice3dEnabled] = enabled
+        }
+    }
+
+    /** The one tier both 3D scenes run at. */
+    suspend fun setGraphicsQuality(quality: SimulationQuality) {
+        appContext.dataStore.edit { prefs ->
+            prefs[Keys.graphicsQuality] = quality.value
         }
     }
 

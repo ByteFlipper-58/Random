@@ -1,5 +1,8 @@
 package com.byteflipper.random.domain.ball.physics
 
+import com.byteflipper.random.domain.physics.Quat
+import com.byteflipper.random.domain.physics.SimulationQualityTier
+import com.byteflipper.random.domain.physics.Vec3
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.atan2
@@ -26,7 +29,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
  * behind the phone.
  */
 class BallEngine(
-    tuning: BallEngineTuning = BallEngineTuning.forTier(BallQualityTier.BALANCED),
+    tuning: BallEngineTuning = BallEngineTuning.forTier(SimulationQualityTier.BALANCED),
     private val random: Random = Random.Default
 ) {
 
@@ -131,7 +134,6 @@ class BallEngine(
      * belong to whichever thread is stepping.
      */
     fun setTuning(tuning: BallEngineTuning) {
-        if (tuning == this.tuning) return
         commands.offer(BallCommand.Retune(tuning))
     }
 

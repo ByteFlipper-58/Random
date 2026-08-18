@@ -1,4 +1,4 @@
-package com.byteflipper.random.ui.ball.gl
+package com.byteflipper.random.ui.gl
 
 import android.opengl.GLES30
 import java.nio.ByteBuffer

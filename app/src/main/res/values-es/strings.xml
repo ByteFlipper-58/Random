@@ -175,6 +175,15 @@
     <string name="sum">Suma</string>
     <string name="tails">Cruz</string>
 
+    <!-- Dice: the 3D tray -->
+    <string name="dice_3d">Dados 3D</string>
+    <string name="dice_3d_desc">Cubos reales que ruedan por la bandeja y se detienen sobre una cara</string>
+
+    <!-- Dice tray accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="dice_a11y_tray">Bandeja de dados. Agita el dispositivo o toca para lanzar.</string>
+    <string name="dice_a11y_roll">lanzar los dados</string>
+    <string name="dice_a11y_result">Resultado: %1$s</string>
+
     <!-- Generator settings -->
     <string name="allow_repetitions">Permitir repeticiones</string>
     <string name="custom_delay_enabled">Retraso personalizado entre resultados</string>
@@ -219,6 +228,7 @@
     <string name="fab_size_small">S (Pequeño)</string>
     <string name="fab_size_small_desc">Tamaño compacto</string>
     <string name="general">General</string>
+    <string name="graphics">Gráficos</string>
     <string name="language">Idioma</string>
     <string name="language_description">Elige el idioma de la app</string>
     <string name="language_english">English</string>
@@ -234,6 +244,7 @@
     <string name="light_theme">Claro</string>
     <string name="settings_appearance_subtitle">Tema, colores dinámicos, tamaño FAB</string>
     <string name="settings_general_subtitle">Idioma y vibración</string>
+    <string name="settings_graphics_subtitle">Calidad de la Bola del Destino y los dados 3D</string>
     <string name="system_theme">Sistema</string>
     <string name="theme">Tema</string>
     <string name="theme_description">Elige el tema de la app</string>
@@ -250,6 +261,14 @@
     <string name="shake_to_generate_description">Agita el dispositivo para generar valores</string>
     <string name="shake_to_generate_description_on">Agita para generar en Números, Dados y Listas</string>
     <string name="shake_to_generate_description_off">Agitar para generar está desactivado</string>
+
+    <!-- Settings: graphics. One tier for every 3D scene — the ball of fate and the dice tray. -->
+    <string name="quality">Calidad gráfica</string>
+    <string name="quality_desc">Menos calidad significa más fluidez y menos consumo de batería</string>
+    <string name="quality_auto">Automática</string>
+    <string name="quality_high">Alta</string>
+    <string name="quality_balanced">Equilibrada</string>
+    <string name="quality_battery">Ahorro de batería</string>
 
     <!-- About screen -->
     <string name="about_app">Sobre la app</string>
@@ -351,12 +370,6 @@
     <string name="ball_no_repeats_desc">La siguiente respuesta siempre será distinta de la anterior</string>
     <string name="ball_tilt">Control por inclinación</string>
     <string name="ball_tilt_desc">El líquido sigue la inclinación del dispositivo</string>
-    <string name="ball_quality">Calidad gráfica</string>
-    <string name="ball_quality_desc">Menos calidad significa más fluidez y menos consumo de batería</string>
-    <string name="ball_quality_auto">Automática</string>
-    <string name="ball_quality_high">Alta</string>
-    <string name="ball_quality_balanced">Equilibrada</string>
-    <string name="ball_quality_battery">Ahorro de batería</string>
 
     <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
     <string name="ball_a11y_ball">Bola del Destino. Agita el dispositivo o desliza el dedo para girarla.</string>

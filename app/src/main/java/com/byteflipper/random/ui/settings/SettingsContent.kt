@@ -18,7 +18,8 @@ import com.byteflipper.random.ui.settings.components.SettingsCategoryCard
 fun SettingsContent(
     modifier: Modifier = Modifier,
     onOpenGeneral: () -> Unit,
-    onOpenAppearance: () -> Unit
+    onOpenAppearance: () -> Unit,
+    onOpenGraphics: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -39,6 +40,13 @@ fun SettingsContent(
             description = stringResource(R.string.settings_appearance_subtitle),
             iconRes = R.drawable.palette_24px,
             onClick = onOpenAppearance,
+        )
+
+        SettingsCategoryCard(
+            title = stringResource(R.string.graphics),
+            description = stringResource(R.string.settings_graphics_subtitle),
+            iconRes = R.drawable.bolt_24px,
+            onClick = onOpenGraphics,
         )
 
         Spacer(Modifier.height(4.dp))

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.byteflipper.random.data.settings.AppLanguage
 import com.byteflipper.random.data.settings.FabSizeSetting
 import com.byteflipper.random.data.settings.SettingsRepository
+import com.byteflipper.random.data.settings.SimulationQuality
 import com.byteflipper.random.data.settings.ThemeMode
 import com.byteflipper.random.data.settings.HapticsIntensity
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,6 +43,7 @@ class SettingsViewModel @Inject constructor(
             is SettingsUiEvent.SetHapticsEnabled -> viewModelScope.launch { settingsRepository.setHapticsEnabled(event.enabled) }
             is SettingsUiEvent.SetHapticsIntensity -> viewModelScope.launch { settingsRepository.setHapticsIntensity(event.intensity) }
             is SettingsUiEvent.SetShakeToGenerateEnabled -> viewModelScope.launch { settingsRepository.setShakeToGenerateEnabled(event.enabled) }
+            is SettingsUiEvent.SetGraphicsQuality -> viewModelScope.launch { settingsRepository.setGraphicsQuality(event.quality) }
         }
     }
 }
@@ -54,6 +56,9 @@ sealed interface SettingsUiEvent {
     data class SetHapticsEnabled(val enabled: Boolean) : SettingsUiEvent
     data class SetHapticsIntensity(val intensity: HapticsIntensity) : SettingsUiEvent
     data class SetShakeToGenerateEnabled(val enabled: Boolean) : SettingsUiEvent
+
+    /** What a frame of any 3D scene in the app may spend — the ball's and the dice tray's alike. */
+    data class SetGraphicsQuality(val quality: SimulationQuality) : SettingsUiEvent
 }
 
 sealed interface SettingsUiEffect

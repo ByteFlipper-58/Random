@@ -10,7 +10,10 @@ import com.byteflipper.random.domain.ball.physics.BallEngineTuning
 import com.byteflipper.random.domain.ball.physics.BallSnapshot
 import com.byteflipper.random.domain.ball.physics.DieGeometry
 import com.byteflipper.random.domain.ball.physics.FluidFrame
-import com.byteflipper.random.domain.ball.physics.Vec3
+import com.byteflipper.random.domain.physics.Vec3
+import com.byteflipper.random.ui.gl.AutoQualityMeter
+import com.byteflipper.random.ui.gl.GlProgram
+import com.byteflipper.random.ui.gl.Mesh
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 import kotlin.math.PI

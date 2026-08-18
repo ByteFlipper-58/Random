@@ -1,5 +1,7 @@
 package com.byteflipper.random.domain.ball.physics
 
+import com.byteflipper.random.domain.physics.Quat
+import com.byteflipper.random.domain.physics.Vec3
 import kotlin.math.exp
 
 /**

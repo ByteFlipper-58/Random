@@ -40,9 +40,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.byteflipper.random.R
 import com.byteflipper.random.domain.ball.physics.BallCommand
 import com.byteflipper.random.domain.ball.physics.BallEngine
-import javax.microedition.khronos.egl.EGL10
-import javax.microedition.khronos.egl.EGLConfig
-import javax.microedition.khronos.egl.EGLDisplay
+import com.byteflipper.random.ui.gl.MultisampleConfigChooser
+import com.byteflipper.random.ui.gl.toRgb
 import kotlin.math.min
 
 /**
@@ -233,46 +232,3 @@ private const val GLOW_RADIUS_SCALE = 1.9f
 
 /** The shell's own colour, so the placeholder and the lit sphere start from the same black. */
 private val SHELL_COLOR = Color(0.045f, 0.045f, 0.052f)
-
-private fun Color.toRgb(): FloatArray = floatArrayOf(red, green, blue)
-
-/**
- * Picks a 4x multisampled RGB config, and a plain one on a driver with nothing to offer — that part is
- * a negotiation rather than a stand-in, since it is what an [GLSurfaceView.EGLConfigChooser] is for.
- * Either way the config has to be one an ES3 context can draw into, which is the only context here.
- */
-private class MultisampleConfigChooser : GLSurfaceView.EGLConfigChooser {
-
-    override fun chooseConfig(egl: EGL10, display: EGLDisplay): EGLConfig =
-        choose(egl, display, samples = 4)
-            ?: choose(egl, display, samples = 0)
-            ?: error("No suitable EGL config for the ball surface")
-
-    private fun choose(egl: EGL10, display: EGLDisplay, samples: Int): EGLConfig? {
-        val attributes = buildList {
-            addAll(listOf(EGL10.EGL_RED_SIZE, 8))
-            addAll(listOf(EGL10.EGL_GREEN_SIZE, 8))
-            addAll(listOf(EGL10.EGL_BLUE_SIZE, 8))
-            addAll(listOf(EGL10.EGL_ALPHA_SIZE, 0))
-            addAll(listOf(EGL10.EGL_DEPTH_SIZE, 16))
-            addAll(listOf(EGL10.EGL_STENCIL_SIZE, 0))
-            addAll(listOf(EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT))
-            if (samples > 0) {
-                addAll(listOf(EGL10.EGL_SAMPLE_BUFFERS, 1))
-                addAll(listOf(EGL10.EGL_SAMPLES, samples))
-            }
-            add(EGL10.EGL_NONE)
-        }.toIntArray()
-
-        val count = IntArray(1)
-        if (!egl.eglChooseConfig(display, attributes, null, 0, count) || count[0] <= 0) return null
-
-        val configs = arrayOfNulls<EGLConfig>(count[0])
-        if (!egl.eglChooseConfig(display, attributes, configs, count[0], count)) return null
-        return configs.firstOrNull()
-    }
-
-    private companion object {
-        const val EGL_OPENGL_ES3_BIT = 0x0040
-    }
-}

@@ -175,6 +175,15 @@
     <string name="sum">योग</string>
     <string name="tails">पट</string>
 
+    <!-- Dice: the 3D tray -->
+    <string name="dice_3d">3D पासे</string>
+    <string name="dice_3d_desc">असली घन जो ट्रे में लुढ़कते हैं और एक फलक पर रुकते हैं</string>
+
+    <!-- Dice tray accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="dice_a11y_tray">पासों की ट्रे। फेंकने के लिए डिवाइस हिलाएँ या टैप करें।</string>
+    <string name="dice_a11y_roll">पासे फेंकें</string>
+    <string name="dice_a11y_result">परिणाम: %1$s</string>
+
     <!-- Generator settings -->
     <string name="allow_repetitions">दोहराव की अनुमति दें</string>
     <string name="custom_delay_enabled">परिणामों के बीच कस्टम विलंब</string>
@@ -219,6 +228,7 @@
     <string name="fab_size_small">S (छोटा)</string>
     <string name="fab_size_small_desc">कॉम्पैक्ट आकार</string>
     <string name="general">सामान्य</string>
+    <string name="graphics">ग्राफ़िक्स</string>
     <string name="language">भाषा</string>
     <string name="language_description">ऐप की भाषा चुनें</string>
     <string name="language_english">English</string>
@@ -234,6 +244,7 @@
     <string name="light_theme">लाइट</string>
     <string name="settings_appearance_subtitle">थीम, गतिशील रंग, FAB आकार</string>
     <string name="settings_general_subtitle">भाषा और कंपन</string>
+    <string name="settings_graphics_subtitle">भाग्य के गोले और 3D पासों की गुणवत्ता</string>
     <string name="system_theme">सिस्टम</string>
     <string name="theme">थीम</string>
     <string name="theme_description">ऐप की थीम चुनें</string>
@@ -250,6 +261,14 @@
     <string name="shake_to_generate_description">यादृच्छिक मान उत्पन्न करने के लिए डिवाइस को हिलाएं</string>
     <string name="shake_to_generate_description_on">संख्या, पासा, या सूची स्क्रीन पर उत्पन्न करने के लिए डिवाइस को हिलाएं</string>
     <string name="shake_to_generate_description_off">हिलाकर उत्पन्न करना अक्षम है</string>
+
+    <!-- Settings: graphics. One tier for every 3D scene — the ball of fate and the dice tray. -->
+    <string name="quality">ग्राफ़िक्स गुणवत्ता</string>
+    <string name="quality_desc">कम गुणवत्ता से चलन ज़्यादा स्मूद और बैटरी की खपत कम</string>
+    <string name="quality_auto">स्वचालित</string>
+    <string name="quality_high">उच्च</string>
+    <string name="quality_balanced">संतुलित</string>
+    <string name="quality_battery">बैटरी बचत</string>
 
     <!-- About screen -->
     <string name="about_app">ऐप के बारे में</string>
@@ -351,12 +370,6 @@
     <string name="ball_no_repeats_desc">अगला उत्तर हमेशा पिछले उत्तर से अलग होगा</string>
     <string name="ball_tilt">झुकाव से नियंत्रण</string>
     <string name="ball_tilt_desc">तरल डिवाइस के झुकाव के साथ बहता है</string>
-    <string name="ball_quality">ग्राफ़िक्स गुणवत्ता</string>
-    <string name="ball_quality_desc">कम गुणवत्ता से चलन ज़्यादा स्मूद और बैटरी की खपत कम</string>
-    <string name="ball_quality_auto">स्वचालित</string>
-    <string name="ball_quality_high">उच्च</string>
-    <string name="ball_quality_balanced">संतुलित</string>
-    <string name="ball_quality_battery">बैटरी बचत</string>
 
     <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
     <string name="ball_a11y_ball">भाग्य का गोला। घुमाने के लिए डिवाइस हिलाएँ या स्क्रीन पर स्वाइप करें।</string>

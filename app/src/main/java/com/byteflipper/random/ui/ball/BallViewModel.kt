@@ -3,7 +3,7 @@ package com.byteflipper.random.ui.ball
 import android.app.Activity
 import com.byteflipper.random.ads.AdsController
 import com.byteflipper.random.data.preset.ListPresetRepository
-import com.byteflipper.random.data.settings.BallQuality
+import com.byteflipper.random.data.settings.SimulationQuality
 import com.byteflipper.random.data.settings.Settings
 import com.byteflipper.random.data.settings.SettingsRepository
 import com.byteflipper.random.domain.ball.data.BallAnswerProvider
@@ -12,8 +12,8 @@ import com.byteflipper.random.domain.ball.physics.BallCommand
 import com.byteflipper.random.domain.ball.physics.BallEngine
 import com.byteflipper.random.domain.ball.physics.BallEngineEvent
 import com.byteflipper.random.domain.ball.physics.BallEngineTuning
-import com.byteflipper.random.domain.ball.physics.BallQualityTier
-import com.byteflipper.random.domain.ball.physics.Vec3
+import com.byteflipper.random.domain.physics.SimulationQualityTier
+import com.byteflipper.random.domain.physics.Vec3
 import com.byteflipper.random.domain.ball.usecase.AskBallUseCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -48,7 +48,7 @@ class BallViewModel @Inject constructor(
      * The simulation. It lives here rather than in the renderer so that the liquid keeps sloshing
      * across a surface recreation, and so tilt and shake can reach it without a GL context.
      */
-    val engine = BallEngine(BallEngineTuning.forTier(BallQualityTier.BALANCED))
+    val engine = BallEngine(BallEngineTuning.forTier(SimulationQualityTier.BALANCED))
 
     val settings: StateFlow<Settings> = settingsRepository.settingsFlow.stateIn(
         scope = viewModelScope,
@@ -68,7 +68,7 @@ class BallViewModel @Inject constructor(
         val customAnswers: List<String>,
         val noRepeats: Boolean,
         val tiltEnabled: Boolean,
-        val quality: BallQuality
+        val quality: SimulationQuality
     )
 
     init {
@@ -80,7 +80,7 @@ class BallViewModel @Inject constructor(
                         customAnswers = it.ballCustomAnswers,
                         noRepeats = it.ballNoRepeats,
                         tiltEnabled = it.ballTiltEnabled,
-                        quality = it.ballQuality
+                        quality = it.graphicsQuality
                     )
                 }
                 .distinctUntilChanged()
@@ -135,7 +135,6 @@ class BallViewModel @Inject constructor(
             BallUiEvent.Reset -> reset()
             is BallUiEvent.SetNoRepeats -> setNoRepeats(event.enabled)
             is BallUiEvent.SetTiltEnabled -> setTiltEnabled(event.enabled)
-            is BallUiEvent.SetQuality -> setQuality(event.quality)
             is BallUiEvent.ToggleSettingsSheet ->
                 _uiState.update { it.copy(showSettingsSheet = event.visible) }
         }
@@ -207,13 +206,13 @@ class BallViewModel @Inject constructor(
         _uiState.update { it.copy(phase = BallPhase.IDLE, answerIndex = null) }
     }
 
-    private fun BallQuality.toTier(): BallQualityTier = when (this) {
-        BallQuality.High -> BallQualityTier.HIGH
-        BallQuality.Balanced -> BallQualityTier.BALANCED
-        BallQuality.Battery -> BallQualityTier.BATTERY
+    private fun SimulationQuality.toTier(): SimulationQualityTier = when (this) {
+        SimulationQuality.High -> SimulationQualityTier.HIGH
+        SimulationQuality.Balanced -> SimulationQualityTier.BALANCED
+        SimulationQuality.Battery -> SimulationQualityTier.BATTERY
         // Auto starts here and the renderer's frame meter moves it from this tier once it has a
         // reading; the middle one is both the safe default and a fair thing to measure against.
-        BallQuality.Auto -> BallQualityTier.BALANCED
+        SimulationQuality.Auto -> SimulationQualityTier.BALANCED
     }
 
     private fun setNoRepeats(enabled: Boolean) {
@@ -224,11 +223,6 @@ class BallViewModel @Inject constructor(
     private fun setTiltEnabled(enabled: Boolean) {
         _uiState.update { it.copy(tiltEnabled = enabled) }
         viewModelScope.launch { settingsRepository.setBallTiltEnabled(enabled) }
-    }
-
-    private fun setQuality(quality: BallQuality) {
-        _uiState.update { it.copy(quality = quality) }
-        viewModelScope.launch { settingsRepository.setBallQuality(quality) }
     }
 
     fun checkAd(activity: Activity) {

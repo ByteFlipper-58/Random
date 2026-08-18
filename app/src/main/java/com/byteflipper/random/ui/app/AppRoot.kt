@@ -34,6 +34,7 @@ import com.byteflipper.random.navigation.PeoplePicker
 import com.byteflipper.random.navigation.Settings
 import com.byteflipper.random.navigation.SettingsAppearance
 import com.byteflipper.random.navigation.SettingsGeneral
+import com.byteflipper.random.navigation.SettingsGraphics
 import com.byteflipper.random.navigation.Setup
 import com.byteflipper.random.navigation.Teams
 import com.byteflipper.random.navigation.Wheel
@@ -56,6 +57,7 @@ import com.byteflipper.random.ui.people.PeopleScreen
 import com.byteflipper.random.ui.settings.SettingsScreen
 import com.byteflipper.random.ui.settings.appearance.SettingsAppearanceScreen
 import com.byteflipper.random.ui.settings.general.SettingsGeneralScreen
+import com.byteflipper.random.ui.settings.graphics.SettingsGraphicsScreen
 import com.byteflipper.random.ui.setup.SetupScreen
 import com.byteflipper.random.ui.teams.PeoplePickerScreen
 import com.byteflipper.random.ui.teams.TeamsScreen
@@ -181,11 +183,13 @@ fun AppRoot() {
                             SettingsScreen(
                                 onBack = { navigator.goBack() },
                                 onOpenGeneral = { navigator.navigate(SettingsGeneral) },
-                                onOpenAppearance = { navigator.navigate(SettingsAppearance) }
+                                onOpenAppearance = { navigator.navigate(SettingsAppearance) },
+                                onOpenGraphics = { navigator.navigate(SettingsGraphics) }
                             )
                         }
                         entry<SettingsGeneral> { SettingsGeneralScreen(onBack = { navigator.goBack() }) }
                         entry<SettingsAppearance> { SettingsAppearanceScreen(onBack = { navigator.goBack() }) }
+                        entry<SettingsGraphics> { SettingsGraphicsScreen(onBack = { navigator.goBack() }) }
                         entry<About> { AboutScreen(onBack = { navigator.goBack() }) }
                         entry<ListEditor> { key ->
                             val listViewModel = hiltViewModel<ListViewModel, ListViewModel.Factory>(

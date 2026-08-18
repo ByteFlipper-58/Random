@@ -1,6 +1,6 @@
-package com.byteflipper.random.ui.ball.gl
+package com.byteflipper.random.ui.gl
 
-import com.byteflipper.random.domain.ball.physics.BallQualityTier
+import com.byteflipper.random.domain.physics.SimulationQualityTier
 
 /**
  * Watches frame times and names the quality tier, for when the player leaves the choice to us.
@@ -14,7 +14,7 @@ import com.byteflipper.random.domain.ball.physics.BallQualityTier
  * Pure arithmetic on purpose: the renderer feeds it frame deltas from the GL thread, and everything
  * it decides can be checked without a GPU.
  */
-class AutoQualityMeter(startTier: BallQualityTier) {
+class AutoQualityMeter(startTier: SimulationQualityTier) {
 
     private var tier = startTier
     private var frames = 0
@@ -31,7 +31,7 @@ class AutoQualityMeter(startTier: BallQualityTier) {
      * [frameSeconds] is the wall-clock time the frame took; a value of zero (the very first frame)
      * counts towards the warm-up like any other.
      */
-    fun observe(frameSeconds: Float): BallQualityTier? {
+    fun observe(frameSeconds: Float): SimulationQualityTier? {
         if (settledOn) return null
 
         frames++
@@ -75,16 +75,16 @@ class AutoQualityMeter(startTier: BallQualityTier) {
         /** Holding ~57 fps or better: there is room for the tier above. */
         const val FAST_FRAME_SECONDS = 0.0175f
 
-        fun BallQualityTier.oneCheaper(): BallQualityTier = when (this) {
-            BallQualityTier.HIGH -> BallQualityTier.BALANCED
-            BallQualityTier.BALANCED -> BallQualityTier.BATTERY
-            BallQualityTier.BATTERY -> BallQualityTier.BATTERY
+        fun SimulationQualityTier.oneCheaper(): SimulationQualityTier = when (this) {
+            SimulationQualityTier.HIGH -> SimulationQualityTier.BALANCED
+            SimulationQualityTier.BALANCED -> SimulationQualityTier.BATTERY
+            SimulationQualityTier.BATTERY -> SimulationQualityTier.BATTERY
         }
 
-        fun BallQualityTier.oneRicher(): BallQualityTier = when (this) {
-            BallQualityTier.HIGH -> BallQualityTier.HIGH
-            BallQualityTier.BALANCED -> BallQualityTier.HIGH
-            BallQualityTier.BATTERY -> BallQualityTier.BALANCED
+        fun SimulationQualityTier.oneRicher(): SimulationQualityTier = when (this) {
+            SimulationQualityTier.HIGH -> SimulationQualityTier.HIGH
+            SimulationQualityTier.BALANCED -> SimulationQualityTier.HIGH
+            SimulationQualityTier.BATTERY -> SimulationQualityTier.BALANCED
         }
     }
 }

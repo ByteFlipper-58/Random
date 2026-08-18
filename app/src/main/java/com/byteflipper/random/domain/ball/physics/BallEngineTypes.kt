@@ -1,5 +1,8 @@
 package com.byteflipper.random.domain.ball.physics
 
+import com.byteflipper.random.domain.physics.Quat
+import com.byteflipper.random.domain.physics.Vec3
+
 /** What the UI can ask the simulation to do. Submitted from any thread, applied on the GL thread. */
 sealed interface BallCommand {
 

@@ -25,7 +25,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.byteflipper.random.R
-import com.byteflipper.random.data.settings.BallQuality
+import com.byteflipper.random.data.settings.SimulationQuality
 import com.byteflipper.random.ui.ball.components.BallAnswerCaption
 import com.byteflipper.random.ui.ball.components.BallSettingsSheet
 import com.byteflipper.random.ui.ball.gl.BallGlSurface
@@ -137,7 +137,7 @@ fun BallScreen(
                 onAsk = { viewModel.onEvent(BallUiEvent.Ask) },
                 faceLabels = uiState.faceLabels,
                 // Auto is the renderer's to decide; the other tiers are the player's word and stand.
-                autoQuality = uiState.quality == BallQuality.Auto,
+                autoQuality = uiState.quality == SimulationQuality.Auto,
                 topColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 bottomColor = MaterialTheme.colorScheme.surfaceContainerLowest,
                 glowColor = MaterialTheme.colorScheme.primary,
@@ -167,9 +167,7 @@ fun BallScreen(
         noRepeats = uiState.noRepeats,
         onNoRepeatsChange = { viewModel.onEvent(BallUiEvent.SetNoRepeats(it)) },
         tiltEnabled = uiState.tiltEnabled,
-        onTiltEnabledChange = { viewModel.onEvent(BallUiEvent.SetTiltEnabled(it)) },
-        quality = uiState.quality,
-        onQualityChange = { viewModel.onEvent(BallUiEvent.SetQuality(it)) }
+        onTiltEnabledChange = { viewModel.onEvent(BallUiEvent.SetTiltEnabled(it)) }
     )
 }
 

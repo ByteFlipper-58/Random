@@ -175,6 +175,15 @@
     <string name="sum">Сума</string>
     <string name="tails">Рэшка</string>
 
+    <!-- Dice: the 3D tray -->
+    <string name="dice_3d">3D-кубікі</string>
+    <string name="dice_3d_desc">Сапраўдныя кубікі коцяцца па латку і спыняюцца на адной з граняў</string>
+
+    <!-- Dice tray accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="dice_a11y_tray">Латок для кубікаў. Страсяніце прыладу або дакраніцеся, каб кінуць.</string>
+    <string name="dice_a11y_roll">кінуць кубікі</string>
+    <string name="dice_a11y_result">Выпала: %1$s</string>
+
     <!-- Generator settings -->
     <string name="allow_repetitions">Дазволіць паўторы</string>
     <string name="custom_delay_enabled">Свая затрымка паміж вынікамі</string>
@@ -219,6 +228,7 @@
     <string name="fab_size_small">S (Малы)</string>
     <string name="fab_size_small_desc">Кампактны памер</string>
     <string name="general">Агульныя</string>
+    <string name="graphics">Графіка</string>
     <string name="language">Мова</string>
     <string name="language_description">Абярыце мову прыкладання</string>
     <string name="language_english">Англійская</string>
@@ -234,6 +244,7 @@
     <string name="light_theme">Светлая</string>
     <string name="settings_appearance_subtitle">Тэма, дынамічныя колеры, памер FAB</string>
     <string name="settings_general_subtitle">Мова і вібрацыя</string>
+    <string name="settings_graphics_subtitle">Якасць Шара Долі і 3D-кубікаў</string>
     <string name="system_theme">Сістэмная</string>
     <string name="theme">Тэма</string>
     <string name="theme_description">Абярыце тэму прыкладання</string>
@@ -250,6 +261,14 @@
     <string name="shake_to_generate_description">Страсяніце прыладу для генерацыі выпадковых значэнняў</string>
     <string name="shake_to_generate_description_on">Страсяніце прыладу на экранах Лікаў, Кубікаў або Спісаў</string>
     <string name="shake_to_generate_description_off">Генерацыя страсянаннем адключана</string>
+
+    <!-- Settings: graphics. One tier for every 3D scene — the ball of fate and the dice tray. -->
+    <string name="quality">Якасць графікі</string>
+    <string name="quality_desc">Чым ніжэйшая якасць, тым плаўнейшая карцінка і меншы расход батарэі</string>
+    <string name="quality_auto">Аўтаматычна</string>
+    <string name="quality_high">Высокая</string>
+    <string name="quality_balanced">Збалансаваная</string>
+    <string name="quality_battery">Эканомія батарэі</string>
 
     <!-- About screen -->
     <string name="about_app">Пра праграму</string>
@@ -351,12 +370,6 @@
     <string name="ball_no_repeats_desc">Наступны адказ заўсёды адрозніваецца ад папярэдняга</string>
     <string name="ball_tilt">Кіраванне нахілам</string>
     <string name="ball_tilt_desc">Вадкасць рухаецца за нахілам прылады</string>
-    <string name="ball_quality">Якасць графікі</string>
-    <string name="ball_quality_desc">Чым ніжэйшая якасць, тым плаўнейшая карцінка і меншы расход батарэі</string>
-    <string name="ball_quality_auto">Аўтаматычна</string>
-    <string name="ball_quality_high">Высокая</string>
-    <string name="ball_quality_balanced">Збалансаваная</string>
-    <string name="ball_quality_battery">Эканомія батарэі</string>
 
     <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
     <string name="ball_a11y_ball">Шар Долі. Страсяніце прыладу або правядзіце па экране, каб раскруціць яго.</string>

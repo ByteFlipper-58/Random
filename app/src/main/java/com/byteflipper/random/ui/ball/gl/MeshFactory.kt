@@ -1,5 +1,7 @@
 package com.byteflipper.random.ui.ball.gl
 
+import com.byteflipper.random.ui.gl.Mesh
+import com.byteflipper.random.ui.gl.VertexAttribute
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

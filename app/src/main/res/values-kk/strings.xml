@@ -175,6 +175,15 @@
     <string name="sum">Қосынды</string>
     <string name="tails">Сан</string>
 
+    <!-- Dice: the 3D tray -->
+    <string name="dice_3d">3D сүйектер</string>
+    <string name="dice_3d_desc">Шынайы текшелер науада домалап, бір қырына түседі</string>
+
+    <!-- Dice tray accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="dice_a11y_tray">Сүйек науасы. Лақтыру үшін құрылғыны сілкіңіз немесе түртіңіз.</string>
+    <string name="dice_a11y_roll">сүйектерді лақтыру</string>
+    <string name="dice_a11y_result">Лақтыру нәтижесі: %1$s</string>
+
     <!-- Generator settings -->
     <string name="allow_repetitions">Қайталауға рұқсат ету</string>
     <string name="custom_delay_enabled">Нәтижелер арасындағы өз кідірісіңіз</string>
@@ -219,6 +228,7 @@
     <string name="fab_size_small">S (Кіші)</string>
     <string name="fab_size_small_desc">Шағын өлшем</string>
     <string name="general">Жалпы</string>
+    <string name="graphics">Графика</string>
     <string name="language">Тіл</string>
     <string name="language_description">Қолданба тілін таңдаңыз</string>
     <string name="language_english">Ағылшын</string>
@@ -234,6 +244,7 @@
     <string name="light_theme">Жарық</string>
     <string name="settings_appearance_subtitle">Тақырып, динамикалық түстер, FAB өлшемі</string>
     <string name="settings_general_subtitle">Тіл және діріл</string>
+    <string name="settings_graphics_subtitle">Тағдыр шары мен 3D сүйектердің сапасы</string>
     <string name="system_theme">Жүйелік</string>
     <string name="theme">Тақырып</string>
     <string name="theme_description">Қолданба тақырыбын таңдаңыз</string>
@@ -250,6 +261,14 @@
     <string name="shake_to_generate_description">Кездейсоқ мәндерді генерациялау үшін құрылғыны сілкіңіз</string>
     <string name="shake_to_generate_description_on">Сандар, Сүйектер немесе Тізімдер экранында құрылғыны сілкіңіз</string>
     <string name="shake_to_generate_description_off">Сілку арқылы генерациялау өшірулі</string>
+
+    <!-- Settings: graphics. One tier for every 3D scene — the ball of fate and the dice tray. -->
+    <string name="quality">Графика сапасы</string>
+    <string name="quality_desc">Сапа төмен болса, қимыл тегіс және батарея аз жұмсалады</string>
+    <string name="quality_auto">Автоматты</string>
+    <string name="quality_high">Жоғары</string>
+    <string name="quality_balanced">Теңдестірілген</string>
+    <string name="quality_battery">Батареяны сақтау</string>
 
     <!-- About screen -->
     <string name="about_app">Қолданба туралы</string>
@@ -351,12 +370,6 @@
     <string name="ball_no_repeats_desc">Келесі жауап әрқашан алдыңғысынан өзгеше болады</string>
     <string name="ball_tilt">Еңкейтумен басқару</string>
     <string name="ball_tilt_desc">Сұйықтық құрылғының еңкеюіне ілеседі</string>
-    <string name="ball_quality">Графика сапасы</string>
-    <string name="ball_quality_desc">Сапа төмен болса, қимыл тегіс және батарея аз жұмсалады</string>
-    <string name="ball_quality_auto">Автоматты</string>
-    <string name="ball_quality_high">Жоғары</string>
-    <string name="ball_quality_balanced">Теңдестірілген</string>
-    <string name="ball_quality_battery">Батареяны сақтау</string>
 
     <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
     <string name="ball_a11y_ball">Тағдыр шары. Айналдыру үшін құрылғыны шайқаңыз немесе экранды сипаңыз.</string>

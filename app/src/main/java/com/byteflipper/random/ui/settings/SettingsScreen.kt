@@ -10,13 +10,15 @@ import androidx.compose.ui.Modifier
 fun SettingsScreen(
     onBack: () -> Unit,
     onOpenGeneral: () -> Unit,
-    onOpenAppearance: () -> Unit
+    onOpenAppearance: () -> Unit,
+    onOpenGraphics: () -> Unit
 ) {
     SettingsScaffold(onBack) { inner ->
         SettingsContent(
             modifier = Modifier.padding(inner),
             onOpenGeneral = onOpenGeneral,
-            onOpenAppearance = onOpenAppearance
+            onOpenAppearance = onOpenAppearance,
+            onOpenGraphics = onOpenGraphics
         )
     }
 }

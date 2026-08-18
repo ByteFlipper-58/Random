@@ -1,6 +1,6 @@
 package com.byteflipper.random.ui.ball
 
-import com.byteflipper.random.data.settings.BallQuality
+import com.byteflipper.random.data.settings.SimulationQuality
 import com.byteflipper.random.domain.ball.model.BallAnswer
 import com.byteflipper.random.domain.ball.model.BallAnswerSource
 import com.byteflipper.random.domain.ball.physics.DieGeometry
@@ -44,7 +44,8 @@ data class BallUiState(
     val answerIndex: Int? = null,
     val noRepeats: Boolean = true,
     val tiltEnabled: Boolean = true,
-    val quality: BallQuality = BallQuality.Auto,
+    /** The app-wide tier, mirrored here only to tell the renderer whether Auto is in charge. */
+    val quality: SimulationQuality = SimulationQuality.Auto,
     val showSettingsSheet: Boolean = false
 ) {
     val answer: BallAnswer? get() = answerIndex?.let { answers.getOrNull(it) }
@@ -76,7 +77,6 @@ sealed interface BallUiEvent {
     data object Reset : BallUiEvent
     data class SetNoRepeats(val enabled: Boolean) : BallUiEvent
     data class SetTiltEnabled(val enabled: Boolean) : BallUiEvent
-    data class SetQuality(val quality: BallQuality) : BallUiEvent
     data class ToggleSettingsSheet(val visible: Boolean) : BallUiEvent
 }
 

@@ -19,7 +19,7 @@ internal class DiceScreenController(
 ) {
     var diceCount by mutableIntStateOf(2)
     var isAnimating by mutableStateOf(List(maxDice) { false })
-    var diceColors by mutableStateOf(List(maxDice) { diceColorPalette.random() })
+    var diceColors by mutableStateOf(distinctColors())
     var isRolling by mutableStateOf(false)
     var currentRollJob by mutableStateOf<Job?>(null)
 
@@ -28,23 +28,24 @@ internal class DiceScreenController(
     }
 
     fun randomizeDiceColors() {
-        diceColors = List(maxDice) { index ->
-            val currentColor = diceColors[index]
-            var newColor = diceColorPalette.random()
-            while (newColor == currentColor && diceColorPalette.size > 1) {
-                newColor = diceColorPalette.random()
-            }
-            newColor
-        }
+        diceColors = distinctColors()
     }
 
     fun randomizeColorFor(index: Int) {
+        if (index !in diceColors.indices || diceColorPalette.isEmpty()) return
         val currentColor = diceColors[index]
-        var newColor = diceColorPalette.random()
-        while (newColor == currentColor && diceColorPalette.size > 1) {
-            newColor = diceColorPalette.random()
-        }
+        val usedByOthers = diceColors.filterIndexed { at, _ -> at != index }.toSet()
+        val unused = diceColorPalette.filter { it != currentColor && it !in usedByOthers }
+        val alternatives = unused.ifEmpty { diceColorPalette.filter { it != currentColor } }
+        val newColor = alternatives.randomOrNull() ?: currentColor
         diceColors = diceColors.toMutableList().also { it[index] = newColor }
+    }
+
+    /** One pass through the whole palette before any colour repeats. */
+    private fun distinctColors(): List<Color> {
+        if (diceColorPalette.isEmpty()) return List(maxDice) { Color(0xFF52667A) }
+        val shuffled = diceColorPalette.shuffled()
+        return List(maxDice) { index -> shuffled[index % shuffled.size] }
     }
 
     fun normalizedRotation(index: Int): Float {
@@ -72,10 +73,22 @@ internal fun rememberDiceScreenController(): DiceScreenController {
     val maxDice = 10
     val diceColorPalette = remember {
         listOf(
-            Color(0xFFE74C3C), Color(0xFF3498DB), Color(0xFF2ECC71), Color(0xFFF39C12),
-            Color(0xFF9B59B6), Color(0xFF1ABC9C), Color(0xFFE67E22), Color(0xFF34495E),
-            Color(0xFF16A085), Color(0xFF27AE60), Color(0xFF2980B9), Color(0xFF8E44AD),
-            Color(0xFFC0392B), Color(0xFFD35400), Color(0xFF7F8C8D), Color(0xFF2C3E50)
+            Color(0xFFD9415D), // crimson
+            Color(0xFFF06449), // coral
+            Color(0xFFD98F13), // amber
+            Color(0xFF8A9A34), // olive
+            Color(0xFF159A6C), // emerald
+            Color(0xFF168C91), // teal
+            Color(0xFF248AAF), // cyan
+            Color(0xFF3478C9), // azure
+            Color(0xFF5557C8), // indigo
+            Color(0xFF7C4DCC), // violet
+            Color(0xFFA142B8), // purple
+            Color(0xFFC43E83), // magenta
+            Color(0xFFD94A73), // rose
+            Color(0xFF52667A), // slate
+            Color(0xFF374151), // graphite
+            Color(0xFF8A5A44)  // cocoa
         )
     }
 

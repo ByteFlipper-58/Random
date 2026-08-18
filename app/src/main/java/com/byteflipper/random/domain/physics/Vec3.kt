@@ -1,4 +1,4 @@
-package com.byteflipper.random.domain.ball.physics
+package com.byteflipper.random.domain.physics
 
 import kotlin.math.abs
 import kotlin.math.sqrt
@@ -6,8 +6,8 @@ import kotlin.math.sqrt
 /**
  * Immutable 3D vector.
  *
- * The rigid bodies use these directly; the fluid keeps its particles in flat `FloatArray`s instead,
- * because there are hundreds of them per step and the allocations would show up.
+ * The physics engines use these directly; particle collections stay in flat `FloatArray`s where
+ * per-step allocations would otherwise show up.
  */
 data class Vec3(val x: Float, val y: Float, val z: Float) {
 

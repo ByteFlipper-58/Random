@@ -91,3 +91,30 @@ fun SettingsAppearanceTopBar(onBack: () -> Unit) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsGraphicsTopBar(onBack: () -> Unit) {
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.graphics),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(
+                    painter = painterResource(R.drawable.arrow_back_24px),
+                    contentDescription = stringResource(R.string.back),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        },
+        colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface
+        )
+    )
+}
+

@@ -256,6 +256,15 @@
     <string name="tails">Решка</string>
     <string name="distribute">Распределить</string>
 
+    <!-- Dice: the 3D tray -->
+    <string name="dice_3d">3D-кости</string>
+    <string name="dice_3d_desc">Настоящие кубики катятся по лотку и останавливаются на одной из граней</string>
+
+    <!-- Dice tray accessibility (read aloud by TalkBack, not shown on screen) -->
+    <string name="dice_a11y_tray">Лоток для костей. Встряхните устройство или коснитесь, чтобы бросить.</string>
+    <string name="dice_a11y_roll">бросить кости</string>
+    <string name="dice_a11y_result">Выпало: %1$s</string>
+
     <!-- Teams / People -->
     <string name="teams">Команды</string>
     <string name="people">Люди</string>
@@ -394,6 +403,7 @@
     <string name="fab_size_small">S (Малый)</string>
     <string name="fab_size_small_desc">Компактный размер</string>
     <string name="general">Общие</string>
+    <string name="graphics">Графика</string>
     <string name="language">Язык</string>
     <string name="language_description">Выберите язык приложения</string>
     <string name="language_english">Английский</string>
@@ -409,6 +419,7 @@
     <string name="light_theme">Светлая</string>
     <string name="settings_appearance_subtitle">Тема, динамические цвета, размер FAB</string>
     <string name="settings_general_subtitle">Язык и вибрация</string>
+    <string name="settings_graphics_subtitle">Качество Шара Судьбы и 3D-костей</string>
     <string name="system_theme">Системная</string>
     <string name="theme">Тема</string>
     <string name="theme_description">Выберите тему приложения</string>
@@ -425,6 +436,14 @@
     <string name="shake_to_generate_description">Встряхните устройство для генерации случайных значений</string>
     <string name="shake_to_generate_description_on">Встряхните устройство на экранах Чисел, Костей или Списков</string>
     <string name="shake_to_generate_description_off">Генерация встряхиванием отключена</string>
+
+    <!-- Settings: graphics. One tier for every 3D scene — the ball of fate and the dice tray. -->
+    <string name="quality">Качество графики</string>
+    <string name="quality_desc">Чем ниже качество, тем плавнее картинка и меньше расход батареи</string>
+    <string name="quality_auto">Автоматически</string>
+    <string name="quality_high">Высокое</string>
+    <string name="quality_balanced">Сбалансированное</string>
+    <string name="quality_battery">Экономия батареи</string>
 
     <!-- About screen -->
     <string name="about_app">О приложении</string>
@@ -531,12 +550,6 @@
     <string name="ball_no_repeats_desc">Следующий ответ всегда отличается от предыдущего</string>
     <string name="ball_tilt">Управление наклоном</string>
     <string name="ball_tilt_desc">Жидкость следует за наклоном устройства</string>
-    <string name="ball_quality">Качество графики</string>
-    <string name="ball_quality_desc">Чем ниже качество, тем плавнее картинка и меньше расход батареи</string>
-    <string name="ball_quality_auto">Автоматически</string>
-    <string name="ball_quality_high">Высокое</string>
-    <string name="ball_quality_balanced">Сбалансированное</string>
-    <string name="ball_quality_battery">Экономия батареи</string>
 
     <!-- Ball of Fate accessibility (read aloud by TalkBack, not shown on screen) -->
     <string name="ball_a11y_ball">Шар Судьбы. Встряхните устройство или проведите по экрану, чтобы раскрутить его.</string>
