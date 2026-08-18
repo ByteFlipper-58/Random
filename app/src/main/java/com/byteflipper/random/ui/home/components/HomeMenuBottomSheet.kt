@@ -24,7 +24,10 @@ fun HomeMenuBottomSheet(
 ) {
     if (!visible) return
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val sheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
     val scope = rememberCoroutineScope()
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,

@@ -2,7 +2,8 @@ package com.byteflipper.random.ui.wheel.components
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import com.byteflipper.random.data.preset.ListPreset
 import com.byteflipper.random.data.settings.HapticsIntensity
@@ -21,7 +22,10 @@ fun WheelEditorSheet(
     hapticsEnabled: Boolean,
     hapticsIntensity: HapticsIntensity,
     onSaveAsPreset: ((String) -> Unit)? = null,
-    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    sheetState: SheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded)
+    )
 ) {
     val wheelPresetLimit = WHEEL_MAX_ITEMS
     val controller = rememberWheelEditorSheetController(
